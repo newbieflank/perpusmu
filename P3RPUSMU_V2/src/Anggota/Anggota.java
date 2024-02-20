@@ -2,18 +2,18 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-package Buku;
+package Anggota;
 
 /**
  *
  * @author Septian Galoh P
  */
-public class Utama extends javax.swing.JPanel {
+public class Anggota extends javax.swing.JPanel {
 
     /**
-     * Creates new form Utama
+     * Creates new form Anggota
      */
-    public Utama() {
+    public Anggota() {
         initComponents();
     }
 
@@ -28,24 +28,25 @@ public class Utama extends javax.swing.JPanel {
 
         jLabel1 = new javax.swing.JLabel();
 
+        setBackground(new java.awt.Color(255, 255, 255));
+
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        jLabel1.setText("Dashboard");
+        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel1.setText("Anggota");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addComponent(jLabel1)
-                .addContainerGap(837, Short.MAX_VALUE))
+                .addGap(0, 703, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addContainerGap(246, Short.MAX_VALUE))
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 351, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
