@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.util.Observable;
 import javax.swing.JTable;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 /**
@@ -23,33 +24,31 @@ public class Anggota extends javax.swing.JPanel {
     /**
      * Creates new form Anggota
      */
-    
     private Connection con;
     private PreparedStatement pst;
     private ResultSet rs;
-    
+
     public Anggota() {
         initComponents();
         jPanel1.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         UIManager.put("Button.arc", 15);
-        search.putClientProperty( "JComponent.roundRect", true );
+        search.putClientProperty("JComponent.roundRect", true);
     }
-    
+
     private void loadTabel() {
+        DefaultTableModel model = new DefaultTableModel();
         try {
-            pst = con.prepareStatement("select * from anggota") ;
+            pst = con.prepareStatement("select * from anggota");
             rs = pst.executeQuery();
             while (rs.next()) {
-            
-                
+                model.addRow(new Object[]{rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getString(6)});
+
             }
         } catch (Exception e) {
-            
+
         }
     }
-    
-    
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -137,9 +136,8 @@ public class Anggota extends javax.swing.JPanel {
                             .addComponent(jLabel1)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(6, 6, 6)
-                                .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addGap(959, 959, 959)
+                                .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton1))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(40, 40, 40)
