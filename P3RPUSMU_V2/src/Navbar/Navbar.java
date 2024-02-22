@@ -11,6 +11,9 @@ import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 
@@ -25,7 +28,7 @@ public class Navbar extends javax.swing.JFrame {
      */
     private CardLayout card;
 
-    public Navbar() {
+    public Navbar() throws SQLException {
         initComponents();
         
 //        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -347,7 +350,11 @@ public class Navbar extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Navbar().setVisible(true);
+                try {
+                    new Navbar().setVisible(true);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Navbar.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }

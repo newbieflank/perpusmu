@@ -37,11 +37,24 @@ public class Anggota extends javax.swing.JPanel {
     }
 
     private void loadTabel() throws SQLException {
-        DefaultTableModel model = new DefaultTableModel();
+        DefaultTableModel model = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                //all cells false
+                return false;
+            }
+        };
+        model.addColumn("NISN");
+        model.addColumn("Nama");
+        model.addColumn("jurusan");
+        model.addColumn("Jenis Kelamin");
+        model.addColumn("angkatan");
+        model.addColumn("status");
+
         try {
-           pst = con.prepareStatement("select * from anggota");
-           rs = pst.executeQuery();
-            while (rs.next()) {                
+            pst = con.prepareStatement("select * from anggota");
+            rs = pst.executeQuery();
+            while (rs.next()) {
                 model.addRow(new Object[]{rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getString(6)});
             }
             tabel.setModel(model);
