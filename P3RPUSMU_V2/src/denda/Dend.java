@@ -51,15 +51,14 @@ public class Dend extends javax.swing.JPanel {
                 return false;
             }
         };
-        model.addColumn("NISN");
         model.addColumn("Nama");
-        model.addColumn("Jurusan");
-        model.addColumn("Jenis Kelamin");
-        model.addColumn("Angkatan");
-        model.addColumn("Status");
+        model.addColumn("Jumlah Denda");
+        model.addColumn("Status Denda");
+        model.addColumn("Total Pembayaran");
+
 
         try {
-            pst = con.prepareStatement("select * from anggota");
+            pst = con.prepareStatement("select * from a");
             rs = pst.executeQuery();
             while (rs.next()) {
                 model.addRow(new Object[]{rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getString(6)});
