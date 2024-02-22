@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-package Anggota;
+package denda;
 
+import Anggota.*;
 import com.formdev.flatlaf.FlatClientProperties;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,7 +20,7 @@ import java.sql.SQLException;
  *
  * @author Septian Galoh P
  */
-public class Anggota extends javax.swing.JPanel {
+public class Dend extends javax.swing.JPanel {
 
     /**
      * Creates new form Anggota
@@ -28,7 +29,7 @@ public class Anggota extends javax.swing.JPanel {
     private PreparedStatement pst;
     private ResultSet rs;
 
-    public Anggota() throws SQLException {
+    public Dend() throws SQLException {
         con = koneksi.Koneksi();
         initComponents();
         loadTabel();
@@ -94,7 +95,7 @@ public class Anggota extends javax.swing.JPanel {
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel1.setText("LIST DATA ANGGOTA");
+        jLabel1.setText("LIST DATA Denda");
 
         search.setToolTipText("");
         search.addActionListener(new java.awt.event.ActionListener() {
@@ -132,6 +133,7 @@ public class Anggota extends javax.swing.JPanel {
         });
         tabel.setGridColor(new java.awt.Color(0, 0, 0));
         tabel.setShowGrid(true);
+        tabel.setShowHorizontalLines(false);
         tabel.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(tabel);
         if (tabel.getColumnModel().getColumnCount() > 0) {

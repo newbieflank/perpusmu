@@ -106,7 +106,7 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="0" green="0" red="0" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="LIST DATA ANGGOTA"/>
+            <Property name="text" type="java.lang.String" value="LIST DATA Denda"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="search">
@@ -183,6 +183,7 @@
                   <Color blue="0" green="0" red="0" type="rgb"/>
                 </Property>
                 <Property name="showGrid" type="boolean" value="true"/>
+                <Property name="showHorizontalLines" type="boolean" value="false"/>
                 <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                   <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
                 </Property>
