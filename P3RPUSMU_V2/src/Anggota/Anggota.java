@@ -4,16 +4,15 @@
  */
 package Anggota;
 
+import Navbar.Navbar;
 import com.formdev.flatlaf.FlatClientProperties;
-import java.awt.List;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Observable;
-import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
+import Navbar.koneksi;
+import java.sql.SQLException;
 
 /**
  *
@@ -28,24 +27,26 @@ public class Anggota extends javax.swing.JPanel {
     private PreparedStatement pst;
     private ResultSet rs;
 
-    public Anggota() {
+    public Anggota() throws SQLException {
+        con = koneksi.Koneksi();
         initComponents();
+        loadTabel();
         jPanel1.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         UIManager.put("Button.arc", 15);
         search.putClientProperty("JComponent.roundRect", true);
     }
 
-    private void loadTabel() {
+    private void loadTabel() throws SQLException {
         DefaultTableModel model = new DefaultTableModel();
         try {
-            pst = con.prepareStatement("select * from anggota");
-            rs = pst.executeQuery();
-            while (rs.next()) {
-                model.addRow(new Object[]{rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getString(6)});
-
+           pst = con.prepareStatement("select * from anggota");
+           rs = pst.executeQuery();
+            while (rs.next()) {                
+                model.addRow(new Object[]{rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getString(6)});
             }
+            tabel.setModel(model);
         } catch (Exception e) {
-
+            System.out.println("loadTable" + e);
         }
     }
 
@@ -93,7 +94,7 @@ public class Anggota extends javax.swing.JPanel {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false
@@ -107,6 +108,7 @@ public class Anggota extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        tabel.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(tabel);
         if (tabel.getColumnModel().getColumnCount() > 0) {
             tabel.getColumnModel().getColumn(0).setResizable(false);

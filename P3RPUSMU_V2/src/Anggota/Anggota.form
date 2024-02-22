@@ -123,7 +123,7 @@
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                   <Table columnCount="6" rowCount="4">
-                    <Column editable="false" title="NISN" type="java.lang.String"/>
+                    <Column editable="false" title="NISN" type="java.lang.Integer"/>
                     <Column editable="false" title="Nama" type="java.lang.String"/>
                     <Column editable="false" title="Jenis Kelamin" type="java.lang.String"/>
                     <Column editable="false" title="Jurusan" type="java.lang.String"/>
@@ -166,7 +166,7 @@
                   </TableColumnModel>
                 </Property>
                 <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
-                  <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
+                  <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
                 </Property>
               </Properties>
               <AuxValues>
