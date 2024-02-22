@@ -4,7 +4,6 @@
  */
 package Anggota;
 
-import Navbar.Navbar;
 import com.formdev.flatlaf.FlatClientProperties;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,6 +11,7 @@ import java.sql.ResultSet;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import Navbar.koneksi;
+import java.awt.Color;
 import java.sql.SQLException;
 
 /**
@@ -34,6 +34,8 @@ public class Anggota extends javax.swing.JPanel {
         jPanel1.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         UIManager.put("Button.arc", 15);
         search.putClientProperty("JComponent.roundRect", true);
+        tabel.getTableHeader().setBackground(new Color(63,148,105));
+        tabel.getTableHeader().setForeground(Color.white);
     }
 
     private void loadTabel() throws SQLException {
