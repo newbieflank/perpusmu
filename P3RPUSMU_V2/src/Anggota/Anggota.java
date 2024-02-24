@@ -13,7 +13,16 @@ import javax.swing.table.DefaultTableModel;
 import Navbar.koneksi;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.KeyEvent;
 import java.sql.SQLException;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.time.Year;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.TableModel;
 
 /**
  *
@@ -25,24 +34,44 @@ public class Anggota extends javax.swing.JPanel {
      * Creates new form Anggota
      */
     private Connection con;
-    private PreparedStatement pst;
+    private PreparedStatement pst, pst1;
     private ResultSet rs;
+    private String nisn;
 
     public Anggota() throws SQLException {
         con = koneksi.Koneksi();
         initComponents();
         loadTabel();
+        Jdialog();
+        jcombo();
         jPanel1.putClientProperty(FlatClientProperties.STYLE, "arc:30");
-        
+        popup.putClientProperty(FlatClientProperties.STYLE, "arc:30");
+        popup2.putClientProperty(FlatClientProperties.STYLE, "arc:30");
+
         UIManager.put("Button.arc", 15);
         search.putClientProperty("JComponent.roundRect", true);
-        tabel.getTableHeader().setBackground(new Color(63,148,105));
+        tabel.getTableHeader().setBackground(new Color(63, 148, 105));
         tabel.getTableHeader().setForeground(Color.white);
         tabel.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
-        
+        jDialog1.setSize(658, 395);
+    }
+
+    private void Jdialog() {
+        jDialog1.setLocationRelativeTo(null);
+        jDialog1.setBackground(Color.white);
+        jDialog1.getRootPane().setOpaque(false);
+        jDialog1.getContentPane().setBackground(new Color(0, 0, 0, 0));
+        jDialog1.setBackground(new Color(0, 0, 0, 0));
+    }
+
+    private void jcombo() {
+        if (dial_jenis.getSelectedItem() == null) {
+            dial_jenis.setSelectedItem("Pilih Jenis Kelamin");
+        }
     }
 
     private void loadTabel() throws SQLException {
+        tabel.clearSelection();
         DefaultTableModel model = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -78,19 +107,245 @@ public class Anggota extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jDialog1 = new javax.swing.JDialog();
+        popup = new javax.swing.JPanel();
+        popup2 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        dial_nisn = new javax.swing.JTextField();
+        dial_nama = new javax.swing.JTextField();
+        dial_angkatan = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        dial_simpan = new javax.swing.JButton();
+        dial_batal = new javax.swing.JButton();
+        dial_jenis = new javax.swing.JComboBox<>();
+        dial_status = new javax.swing.JComboBox<>();
+        dial_jurusan = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         search = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabel = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        addButton = new javax.swing.JButton();
+        editButton = new javax.swing.JButton();
+        deleteButton = new javax.swing.JButton();
+
+        jDialog1.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        jDialog1.setBackground(new java.awt.Color(255, 255, 255));
+        jDialog1.setIconImage(null);
+        jDialog1.setMaximumSize(new java.awt.Dimension(658, 395));
+        jDialog1.setMinimumSize(new java.awt.Dimension(658, 395));
+        jDialog1.setUndecorated(true);
+        jDialog1.setResizable(false);
+        jDialog1.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jDialog1FocusLost(evt);
+            }
+        });
+        jDialog1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jDialog1KeyPressed(evt);
+            }
+        });
+
+        popup.setBackground(new java.awt.Color(204, 204, 204));
+
+        popup2.setBackground(new java.awt.Color(63, 148, 105));
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setText("ANGGOTA");
+
+        javax.swing.GroupLayout popup2Layout = new javax.swing.GroupLayout(popup2);
+        popup2.setLayout(popup2Layout);
+        popup2Layout.setHorizontalGroup(
+            popup2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(popup2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        popup2Layout.setVerticalGroup(
+            popup2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(popup2Layout.createSequentialGroup()
+                .addComponent(jLabel2)
+                .addGap(0, 6, Short.MAX_VALUE))
+        );
+
+        jLabel3.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel3.setText("Nama");
+
+        jLabel4.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel4.setText("NISN");
+
+        jLabel5.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel5.setText("Jenis Kelamin");
+
+        jLabel6.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel6.setText("Jurusan");
+
+        jLabel7.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel7.setText("Angkatan");
+
+        jLabel8.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel8.setText("Status");
+
+        dial_simpan.setBackground(new java.awt.Color(63, 148, 105));
+        dial_simpan.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        dial_simpan.setForeground(new java.awt.Color(255, 255, 255));
+        dial_simpan.setText("SIMPAN");
+        dial_simpan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dial_simpanActionPerformed(evt);
+            }
+        });
+
+        dial_batal.setBackground(new java.awt.Color(255, 0, 0));
+        dial_batal.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        dial_batal.setForeground(new java.awt.Color(255, 255, 255));
+        dial_batal.setText("BATAL");
+        dial_batal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dial_batalActionPerformed(evt);
+            }
+        });
+
+        dial_jenis.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Laki-Laki", "Perempuan" }));
+
+        dial_status.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Aktif", "Lulus" }));
+
+        javax.swing.GroupLayout popupLayout = new javax.swing.GroupLayout(popup);
+        popup.setLayout(popupLayout);
+        popupLayout.setHorizontalGroup(
+            popupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(popupLayout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addGroup(popupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(popupLayout.createSequentialGroup()
+                        .addGroup(popupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(popupLayout.createSequentialGroup()
+                                .addGroup(popupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(dial_nama, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(dial_jenis, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(dial_nisn, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(84, 84, 84)
+                                .addGroup(popupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(dial_angkatan, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(dial_status, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(dial_jurusan, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(popupLayout.createSequentialGroup()
+                                .addGap(200, 200, 200)
+                                .addComponent(dial_batal, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(51, 51, 51)
+                                .addComponent(dial_simpan)))
+                        .addContainerGap(21, Short.MAX_VALUE))
+                    .addGroup(popupLayout.createSequentialGroup()
+                        .addGap(8, 8, 8)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel7)
+                        .addGap(203, 203, 203))
+                    .addGroup(popupLayout.createSequentialGroup()
+                        .addGap(9, 9, 9)
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel8)
+                        .addGap(227, 227, 227))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, popupLayout.createSequentialGroup()
+                        .addGap(9, 9, 9)
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel6)
+                        .addGap(214, 214, 214))))
+            .addComponent(popup2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        popupLayout.setVerticalGroup(
+            popupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(popupLayout.createSequentialGroup()
+                .addComponent(popup2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12)
+                .addGroup(popupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel6))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(popupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(dial_nisn, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dial_jurusan, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(28, 28, 28)
+                .addGroup(popupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel7))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(popupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(dial_nama, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dial_angkatan, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(28, 28, 28)
+                .addGroup(popupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel8))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(popupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(dial_status, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dial_jenis, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(30, 30, 30)
+                .addGroup(popupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(dial_simpan)
+                    .addComponent(dial_batal))
+                .addContainerGap(27, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
+        jDialog1.getContentPane().setLayout(jDialog1Layout);
+        jDialog1Layout.setHorizontalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(popup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jDialog1Layout.setVerticalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(popup, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        popup.getAccessibleContext().setAccessibleName("");
+
+        jDialog1.getAccessibleContext().setAccessibleParent(null);
 
         setBackground(new java.awt.Color(204, 204, 204));
+        addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                formAncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                formMouseClicked(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setToolTipText("");
+        jPanel1.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                jPanel1AncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
@@ -133,6 +388,11 @@ public class Anggota extends javax.swing.JPanel {
         tabel.setGridColor(new java.awt.Color(0, 0, 0));
         tabel.setShowGrid(true);
         tabel.getTableHeader().setReorderingAllowed(false);
+        tabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tabelMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tabel);
         if (tabel.getColumnModel().getColumnCount() > 0) {
             tabel.getColumnModel().getColumn(0).setResizable(false);
@@ -149,27 +409,27 @@ public class Anggota extends javax.swing.JPanel {
             tabel.getColumnModel().getColumn(5).setHeaderValue("Status");
         }
 
-        jButton1.setBackground(new java.awt.Color(63, 148, 105));
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/+.png"))); // NOI18N
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        addButton.setBackground(new java.awt.Color(63, 148, 105));
+        addButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/+.png"))); // NOI18N
+        addButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                addButtonActionPerformed(evt);
             }
         });
 
-        jButton2.setBackground(new java.awt.Color(255, 227, 130));
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/edit_1160515 3.png"))); // NOI18N
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        editButton.setBackground(new java.awt.Color(255, 227, 130));
+        editButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/edit_1160515 3.png"))); // NOI18N
+        editButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                editButtonActionPerformed(evt);
             }
         });
 
-        jButton3.setBackground(new java.awt.Color(255, 145, 66));
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/trash-can_7343703 2.png"))); // NOI18N
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        deleteButton.setBackground(new java.awt.Color(255, 145, 66));
+        deleteButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/trash-can_7343703 2.png"))); // NOI18N
+        deleteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                deleteButtonActionPerformed(evt);
             }
         });
 
@@ -189,11 +449,11 @@ public class Anggota extends javax.swing.JPanel {
                                 .addGap(6, 6, 6)
                                 .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(editButton, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(40, 40, 40)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1313, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -207,9 +467,9 @@ public class Anggota extends javax.swing.JPanel {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(editButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -236,26 +496,169 @@ public class Anggota extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_searchActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+        jDialog1.setVisible(true);
+    }//GEN-LAST:event_addButtonActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+        try {
+            pst = con.prepareStatement("select * from anggota where NISN = " + nisn);
+            rs = pst.executeQuery();
+            rs.next();
+            String ag_nama = rs.getString("nama");
+            String ag_Jenis = rs.getString("jenis_kelamin");
+            String ag_jurusan = rs.getString("jurusan");
+            Date angkatan = rs.getDate("angkatan");
+            Format formater = new SimpleDateFormat("yyyy");
+            String ag_angkatan = formater.format(angkatan);
+            String ag_status = rs.getString("status");
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+            dial_nisn.setText(nisn);
+            dial_nama.setText(ag_nama);
+            dial_jenis.setSelectedItem(ag_Jenis);
+            dial_jurusan.setText(ag_jurusan);
+            dial_angkatan.setText(ag_angkatan);
+            dial_status.setSelectedItem(ag_status);
+            dial_nisn.enable(false);
+
+            jDialog1.setVisible(true);
+        } catch (Exception e) {
+            System.out.println("click" + e);
+            JOptionPane.showMessageDialog(popup, "Pilih Dahulu Data Yang Akan Di Ubah");
+        }
+
+    }//GEN-LAST:event_editButtonActionPerformed
+
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_deleteButtonActionPerformed
+
+    private void jDialog1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jDialog1FocusLost
+        // TODO add your handling code here:
+        jDialog1.dispose();
+    }//GEN-LAST:event_jDialog1FocusLost
+
+    private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
+        // TODO add your handling code here:
+        jDialog1.dispose();
+    }//GEN-LAST:event_formMouseClicked
+
+    private void jDialog1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jDialog1KeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            jDialog1.setVisible(true);
+        }
+    }//GEN-LAST:event_jDialog1KeyPressed
+
+    private void jPanel1AncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_jPanel1AncestorAdded
+        try {
+            // TODO add your handling code here:
+            loadTabel();
+            Jdialog();
+        } catch (SQLException ex) {
+            Logger.getLogger(Anggota.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jPanel1AncestorAdded
+
+    private void dial_batalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dial_batalActionPerformed
+        // TODO add your handling code here:
+        dial_nisn.setText(null);
+        dial_nama.setText(null);
+        dial_jenis.setSelectedItem(null);
+        dial_jurusan.setText(null);
+        dial_angkatan.setText(null);
+        dial_status.setSelectedItem(this);
+
+        jDialog1.dispose();
+    }//GEN-LAST:event_dial_batalActionPerformed
+
+    private void tabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelMouseClicked
+        // TODO add your handling code here:
+        int index = tabel.getSelectedRow();
+        TableModel model = tabel.getModel();
+        nisn = model.getValueAt(index, 0).toString();
+    }//GEN-LAST:event_tabelMouseClicked
+
+    private void dial_simpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dial_simpanActionPerformed
+        // TODO add your handling code here:
+        String NISN = dial_nisn.getText();
+        String NAMA = dial_nama.getText();
+        Object JENIS = dial_jenis.getSelectedItem();
+        String JURUSAN = dial_jurusan.getText();
+        String ANGKATAN = dial_angkatan.getText();
+        Object STATUS = dial_status.getSelectedItem();
+
+        if (NISN == null || NAMA == null || JURUSAN == null || ANGKATAN == null) {
+            JOptionPane.showMessageDialog(jDialog1, "Anda Harus Mengisi Semua Data Terlebih Dahulu");
+        } else {
+            int result = JOptionPane.showConfirmDialog(jDialog1, "Apakah Anda Ingin Menyimpan?", "Konfirmasi",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+            if (result == JOptionPane.YES_OPTION) {
+                try {
+                    pst = con.prepareStatement("select * from anggota where NISN = " + NISN);
+                    rs = pst.executeQuery();
+                    if (rs.next()) {
+                        pst = con.prepareStatement("update anggota set nama='" + NAMA + "', jenis_kelamin='" + JENIS + "', "
+                                + "jurusan='" + JURUSAN + "', angkatan=" + ANGKATAN + ", status='" + STATUS +"' where NISN="+ NISN );
+                        pst.execute();
+                    } else {
+                        try {
+                            pst1 = con.prepareStatement("Insert into anggota (NISN, nama, jenis_kelamin, jurusan, angkatan, status)"
+                                    + " values ('" + NISN + "','" + NAMA + "','" + JENIS + "','" + JURUSAN + "'," + ANGKATAN + " ,'" + STATUS + "')");
+                            pst1.execute();
+                        } catch (Exception r) {
+                            System.out.println("insert simpan " + r);
+                        }
+                    }
+                    
+                    loadTabel();
+                } catch (Exception e) {
+                    System.out.println("nisn anggota" + e);
+                }
+                
+                jDialog1.dispose();
+            }
+        }
+    }//GEN-LAST:event_dial_simpanActionPerformed
+
+    private void formAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_formAncestorAdded
+        try {
+            // TODO add your handling code here:
+            loadTabel();
+        } catch (SQLException ex) {
+            Logger.getLogger(Anggota.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_formAncestorAdded
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton addButton;
+    private javax.swing.JButton deleteButton;
+    private javax.swing.JTextField dial_angkatan;
+    private javax.swing.JButton dial_batal;
+    private javax.swing.JComboBox<String> dial_jenis;
+    private javax.swing.JTextField dial_jurusan;
+    private javax.swing.JTextField dial_nama;
+    private javax.swing.JTextField dial_nisn;
+    private javax.swing.JButton dial_simpan;
+    private javax.swing.JComboBox<String> dial_status;
+    private javax.swing.JButton editButton;
+    private javax.swing.JDialog jDialog1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPanel popup;
+    private javax.swing.JPanel popup2;
     private javax.swing.JTextField search;
     private javax.swing.JTable tabel;
     // End of variables declaration//GEN-END:variables
