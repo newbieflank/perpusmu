@@ -17,7 +17,6 @@ import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.time.Year;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -95,6 +94,34 @@ public class Anggota extends javax.swing.JPanel {
             tabel.setModel(model);
         } catch (Exception e) {
             System.out.println("loadTable" + e);
+        }
+    }
+
+    private void searchList() throws SQLException {
+        tabel.clearSelection();
+        DefaultTableModel model = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                //all cells false
+                return false;
+            }
+        };
+        model.addColumn("NISN");
+        model.addColumn("Nama");
+        model.addColumn("Jurusan");
+        model.addColumn("Jenis Kelamin");
+        model.addColumn("Angkatan");
+        model.addColumn("Status");
+
+        try {
+            pst = con.prepareStatement("select * from anggota where nama Like '%" + search.getText() + "%'");
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                model.addRow(new Object[]{rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getString(6)});
+            }
+            tabel.setModel(model);
+        } catch (Exception e) {
+            System.out.println("searchTable" + e);
         }
     }
 
@@ -357,6 +384,11 @@ public class Anggota extends javax.swing.JPanel {
                 searchActionPerformed(evt);
             }
         });
+        search.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                searchKeyPressed(evt);
+            }
+        });
 
         tabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tabel.setModel(new javax.swing.table.DefaultTableModel(
@@ -498,6 +530,14 @@ public class Anggota extends javax.swing.JPanel {
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         // TODO add your handling code here:
+        dial_nisn.setText(null);
+        dial_nama.setText(null);
+        dial_jenis.setSelectedItem(this);
+        dial_jurusan.setText(null);
+        dial_angkatan.setText(null);
+        dial_status.setSelectedItem(this);
+
+        dial_nisn.setEnabled(true);
         jDialog1.setVisible(true);
     }//GEN-LAST:event_addButtonActionPerformed
 
@@ -533,6 +573,21 @@ public class Anggota extends javax.swing.JPanel {
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         // TODO add your handling code here:
+        if (nisn != null) {
+            int result = JOptionPane.showConfirmDialog(jDialog1, "Apakah Anda Yakin Ingin Menghapus?", "Konfirmasi",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+            if (result == JOptionPane.YES_OPTION) {
+                try {
+                    pst = con.prepareStatement("delete from anggota where NISN = " + nisn);
+                    pst.execute();
+                    loadTabel();
+                } catch (Exception e) {
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(jDialog1, "Pilih Dahulu Data Yang Ingin di Hapus");
+        }
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void jDialog1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jDialog1FocusLost
@@ -566,11 +621,12 @@ public class Anggota extends javax.swing.JPanel {
         // TODO add your handling code here:
         dial_nisn.setText(null);
         dial_nama.setText(null);
-        dial_jenis.setSelectedItem(null);
+        dial_jenis.setSelectedItem(this);
         dial_jurusan.setText(null);
         dial_angkatan.setText(null);
         dial_status.setSelectedItem(this);
 
+        nisn = null;
         jDialog1.dispose();
     }//GEN-LAST:event_dial_batalActionPerformed
 
@@ -590,7 +646,7 @@ public class Anggota extends javax.swing.JPanel {
         String ANGKATAN = dial_angkatan.getText();
         Object STATUS = dial_status.getSelectedItem();
 
-        if (NISN == null || NAMA == null || JURUSAN == null || ANGKATAN == null) {
+        if (NISN.equals("") || NAMA.equals("") || JURUSAN.equals("") || ANGKATAN.equals("")) {
             JOptionPane.showMessageDialog(jDialog1, "Anda Harus Mengisi Semua Data Terlebih Dahulu");
         } else {
             int result = JOptionPane.showConfirmDialog(jDialog1, "Apakah Anda Ingin Menyimpan?", "Konfirmasi",
@@ -602,7 +658,7 @@ public class Anggota extends javax.swing.JPanel {
                     rs = pst.executeQuery();
                     if (rs.next()) {
                         pst = con.prepareStatement("update anggota set nama='" + NAMA + "', jenis_kelamin='" + JENIS + "', "
-                                + "jurusan='" + JURUSAN + "', angkatan=" + ANGKATAN + ", status='" + STATUS +"' where NISN="+ NISN );
+                                + "jurusan='" + JURUSAN + "', angkatan=" + ANGKATAN + ", status='" + STATUS + "' where NISN=" + NISN);
                         pst.execute();
                     } else {
                         try {
@@ -613,12 +669,12 @@ public class Anggota extends javax.swing.JPanel {
                             System.out.println("insert simpan " + r);
                         }
                     }
-                    
+
                     loadTabel();
                 } catch (Exception e) {
                     System.out.println("nisn anggota" + e);
                 }
-                
+                nisn = null;
                 jDialog1.dispose();
             }
         }
@@ -632,6 +688,17 @@ public class Anggota extends javax.swing.JPanel {
             Logger.getLogger(Anggota.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_formAncestorAdded
+
+    private void searchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            try {
+                searchList();
+            } catch (SQLException ex) {
+                Logger.getLogger(Anggota.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_searchKeyPressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
