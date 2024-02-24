@@ -4,7 +4,6 @@
  */
 package denda;
 
-import Anggota.*;
 import com.formdev.flatlaf.FlatClientProperties;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

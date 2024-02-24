@@ -15,8 +15,6 @@ import java.awt.Toolkit;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.UIManager;
 
 /**
@@ -45,7 +43,7 @@ public class Navbar extends javax.swing.JFrame {
 
         main.add(new Anggota(), "anggota");
         main.add(new Buku(), "Buku");
-        main.add(new denda(), "denda");
+        main.add(new Denda(), "denda");
 
         card.show(main, "Buku");
     }
@@ -298,6 +296,7 @@ public class Navbar extends javax.swing.JFrame {
 
     private void bukuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bukuActionPerformed
         // TODO add your handling code here:
+        card.show(main, "Buku");
     }//GEN-LAST:event_bukuActionPerformed
 
     private void anggotaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_anggotaActionPerformed

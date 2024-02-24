@@ -1,6 +1,5 @@
 package Buku;
 
-import Anggota.Anggota;
 import com.formdev.flatlaf.FlatClientProperties;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,15 +9,12 @@ import javax.swing.table.DefaultTableModel;
 import Navbar.koneksi;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import javax.swing.JDialog;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import javax.swing.JOptionPane;
@@ -575,10 +571,10 @@ public class Buku extends javax.swing.JPanel {
 
     private void btn_editActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editActionPerformed
         try {
-            pst = con.prepareStatement("SELECT * FROM buku WHERE kode_buku = ?");
-            pst.setString(1, kode_buku);
+            pst = con.prepareStatement("SELECT * FROM buku WHERE kode_buku = '"+kode_buku+"'");
             rs = pst.executeQuery();
             rs.next();
+            System.out.println(kode_buku);
             String judul_buku = rs.getString("judul_buku");
             String jilid = rs.getString("jilid");
             String kategori = rs.getString("kategori");
@@ -762,7 +758,7 @@ public class Buku extends javax.swing.JPanel {
     private void JTabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JTabel1MouseClicked
         int index = JTabel1.getSelectedRow();
         TableModel model = JTabel1.getModel();
-        kode_buku = model.getValueAt(index, 0).toString();
+        kode_buku = model.getValueAt(index, 1).toString();
     }//GEN-LAST:event_JTabel1MouseClicked
 
     private void JdialogFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_JdialogFocusLost
