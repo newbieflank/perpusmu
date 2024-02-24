@@ -565,6 +565,7 @@ public class Anggota extends javax.swing.JPanel {
         } catch (Exception e) {
             System.out.println("click" + e);
             JOptionPane.showMessageDialog(popup, "Pilih Dahulu Data Yang Akan Di Ubah");
+            jDialog1.setVisible(false);
         }
 
     }//GEN-LAST:event_editButtonActionPerformed
@@ -590,12 +591,10 @@ public class Anggota extends javax.swing.JPanel {
 
     private void jDialog1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jDialog1FocusLost
         // TODO add your handling code here:
-        jDialog1.dispose();
     }//GEN-LAST:event_jDialog1FocusLost
 
     private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
         // TODO add your handling code here:
-        jDialog1.dispose();
     }//GEN-LAST:event_formMouseClicked
 
     private void jDialog1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jDialog1KeyPressed
