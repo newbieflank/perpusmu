@@ -8,14 +8,13 @@ import Anggota.Anggota;
 import Buku.Utama;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.FlatLightLaf;
-import denda.denda;
+import denda.Denda;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
 import javax.swing.UIManager;
 
 /**
@@ -44,7 +43,7 @@ public class Navbar extends javax.swing.JFrame {
 
         main.add(new Anggota(), "anggota");
         main.add(new Utama(), "utama");
-        main.add(new denda(), "denda");
+        main.add(new Denda(), "denda");
 
         card.show(main, "utama");
     }
