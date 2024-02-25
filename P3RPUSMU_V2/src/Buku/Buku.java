@@ -18,7 +18,9 @@ import java.util.Date;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
 import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 
 public class Buku extends javax.swing.JPanel {
@@ -26,7 +28,9 @@ public class Buku extends javax.swing.JPanel {
     private PreparedStatement pst, pst1;
     private ResultSet rs;
     private String kode_buku;
-
+    private String No_buku;
+    private int noBukuEdit = -1;
+    
     public Buku() throws SQLException {
         con = koneksi.Koneksi();
         initComponents();
@@ -39,7 +43,7 @@ public class Buku extends javax.swing.JPanel {
         JTabel1.getTableHeader().setBackground(new Color(63, 148, 105));
         JTabel1.getTableHeader().setForeground(Color.white);
         JTabel1.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
-        Jdialog.setSize(558, 514);
+        Jdialog.setSize(570, 514);
     }
     
     private void Jdialog () {
@@ -135,6 +139,7 @@ public class Buku extends javax.swing.JPanel {
         btn_tambah = new javax.swing.JButton();
         btn_edit = new javax.swing.JButton();
         btn_hapus = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
 
         Jdialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         Jdialog.setUndecorated(true);
@@ -149,7 +154,7 @@ public class Buku extends javax.swing.JPanel {
             }
         });
 
-        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel2.setBackground(new java.awt.Color(204, 204, 204));
         jPanel2.setMaximumSize(new java.awt.Dimension(649, 649));
         jPanel2.setMinimumSize(new java.awt.Dimension(649, 649));
 
@@ -167,7 +172,7 @@ public class Buku extends javax.swing.JPanel {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel2)
-                .addContainerGap(375, Short.MAX_VALUE))
+                .addContainerGap(389, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -334,8 +339,10 @@ public class Buku extends javax.swing.JPanel {
                                 .addComponent(btn_cancel)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(btn_simpan))
-                            .addComponent(dial_stock, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(dial_stock, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -397,7 +404,7 @@ public class Buku extends javax.swing.JPanel {
         Jdialog.getContentPane().setLayout(JdialogLayout);
         JdialogLayout.setHorizontalGroup(
             JdialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 558, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 570, Short.MAX_VALUE)
         );
         JdialogLayout.setVerticalGroup(
             JdialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -439,6 +446,11 @@ public class Buku extends javax.swing.JPanel {
         txt_search.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txt_searchActionPerformed(evt);
+            }
+        });
+        txt_search.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txt_searchKeyReleased(evt);
             }
         });
 
@@ -488,7 +500,7 @@ public class Buku extends javax.swing.JPanel {
         }
 
         btn_tambah.setBackground(new java.awt.Color(63, 148, 105));
-        btn_tambah.setIcon(new javax.swing.ImageIcon("C:\\Users\\Mafir\\OneDrive\\Documents\\NetBeansProjects\\P3RPUSMU_V2\\perpusmu\\P3RPUSMU_V2\\src\\img_15\\image_button\\+.png")); // NOI18N
+        btn_tambah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/+.png"))); // NOI18N
         btn_tambah.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_tambahActionPerformed(evt);
@@ -496,7 +508,7 @@ public class Buku extends javax.swing.JPanel {
         });
 
         btn_edit.setBackground(new java.awt.Color(255, 227, 130));
-        btn_edit.setIcon(new javax.swing.ImageIcon("C:\\Users\\Mafir\\OneDrive\\Documents\\NetBeansProjects\\P3RPUSMU_V2\\perpusmu\\P3RPUSMU_V2\\src\\img_15\\image_button\\edit_1160515 3.png")); // NOI18N
+        btn_edit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/edit_1160515 3.png"))); // NOI18N
         btn_edit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_editActionPerformed(evt);
@@ -504,32 +516,38 @@ public class Buku extends javax.swing.JPanel {
         });
 
         btn_hapus.setBackground(new java.awt.Color(255, 145, 66));
-        btn_hapus.setIcon(new javax.swing.ImageIcon("C:\\Users\\Mafir\\OneDrive\\Documents\\NetBeansProjects\\P3RPUSMU_V2\\perpusmu\\P3RPUSMU_V2\\src\\img_15\\image_button\\trash-can_7343703 2.png")); // NOI18N
+        btn_hapus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/trash-can_7343703 2.png"))); // NOI18N
         btn_hapus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_hapusActionPerformed(evt);
             }
         });
 
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel4.setText("Search");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addGap(6, 6, 6)
-                            .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btn_edit, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(btn_hapus, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(btn_tambah, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1259, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1259, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btn_edit, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btn_hapus, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btn_tambah, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(83, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -537,11 +555,13 @@ public class Buku extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btn_edit, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_tambah, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_hapus, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_edit, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_tambah, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_hapus, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel4))
                 .addGap(13, 13, 13)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE)
                 .addContainerGap())
@@ -566,15 +586,40 @@ public class Buku extends javax.swing.JPanel {
     }//GEN-LAST:event_txt_searchActionPerformed
 
     private void btn_tambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tambahActionPerformed
+        dial_kode.setText(null);
+        dial_judul.setText(null);
+        dial_jilid.setText(null);
+        dial_kategori.setSelectedItem(null);
+        dial_pengarang.setText(null);
+        dial_lokasi.setText(null);
+        dial_kondisi.setSelectedItem(null);
+        dial_tahun.setText(String.valueOf(""));
+        dial_asal.setText(null);
+        dial_harga.setText(String.valueOf(""));
+        dial_stock.setText(String.valueOf(""));
+        dial_kode.setEnabled(true);
+        noBukuEdit=-1;
+        
         Jdialog.setVisible(true);
     }//GEN-LAST:event_btn_tambahActionPerformed
 
     private void btn_editActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editActionPerformed
+//        get index table selected
+        int row = JTabel1.getSelectedRow();
+        System.out.println("index "+row);
+//        cek jika tidak ada row yang diselect
+        if (row < 0) {
+            JOptionPane.showMessageDialog(jPanel2, "Pilih Dahulu Data Yang Akan Di Ubah");
+        }
         try {
-            pst = con.prepareStatement("SELECT * FROM buku WHERE kode_buku = '"+kode_buku+"'");
+            //get data dari table  berdasarkan row index dan colom keberapa
+            //0 index colom no buku
+            int noBuku = Integer.parseInt((String) JTabel1.getValueAt(row, 0));
+            pst = con.prepareStatement("SELECT * FROM buku WHERE No_buku = '"+noBuku+"'");
             rs = pst.executeQuery();
             rs.next();
-            System.out.println(kode_buku);
+            System.out.println(noBuku);
+            String kode_buku = rs.getString("kode_buku");
             String judul_buku = rs.getString("judul_buku");
             String jilid = rs.getString("jilid");
             String kategori = rs.getString("kategori");
@@ -600,10 +645,10 @@ public class Buku extends javax.swing.JPanel {
             dial_harga.setText(String.valueOf(harga));
             dial_stock.setText(String.valueOf(jumlah_stock));
             dial_kode.enable(false);
-
+            noBukuEdit = noBuku;
             Jdialog.setVisible(true);
         } catch (Exception e) {
-            System.out.println("click" + e);
+            System.out.println("click" + e.getMessage());
             JOptionPane.showMessageDialog(jPanel2, "Pilih Dahulu Data Yang Akan Di Ubah");
         }
     }//GEN-LAST:event_btn_editActionPerformed
@@ -633,9 +678,10 @@ public class Buku extends javax.swing.JPanel {
 
                     // Hapus baris dari model tabel
                     model.removeRow(selectedRowIndex);
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
+                } catch (Exception e) {
+            System.out.println("click" + e);
+            JOptionPane.showMessageDialog(jPanel2, "Pilih Dahulu Data Yang Akan Di Hapus");
+        }
             }
         }
     }//GEN-LAST:event_btn_hapusActionPerformed
@@ -661,35 +707,38 @@ public class Buku extends javax.swing.JPanel {
                     JOptionPane.QUESTION_MESSAGE);
             if (result == JOptionPane.YES_OPTION) {
                 try {
-                    pst = con.prepareStatement("SELECT * FROM buku WHERE kode_buku = ?");
-                    pst.setString(1, kode_buku);
+                    pst = con.prepareStatement("SELECT * FROM buku WHERE No_buku = ?");
+                    pst.setString(1, String.valueOf(noBukuEdit));
                     rs = pst.executeQuery();
                     if (rs.next()) {
-                        pst = con.prepareStatement("UPDATE buku SET judul_buku = ?, jilid = ?, kategori = ?, pengarang = ?, lokasi = ?, kondisi_buku = ?, tahun_terbit = ?, asal_buku = ?, harga =?, jumlah_stock = ? WHERE kode_buku = ?");
-                        pst.setString(1, judul_buku);
-                        pst.setString(2, jilid);
-                        pst.setString(3, (String) kategori);
-                        pst.setString(4, pengarang);
-                        pst.setString(5, lokasi);
-                        pst.setString(6, (String) kondisi_buku);
+                        pst = con.prepareStatement("UPDATE buku SET kode_buku = ?, judul_buku = ?, jilid = ?, kategori = ?, pengarang = ?, lokasi = ?, kondisi_buku = ?, tahun_terbit = ?, asal_buku = ?, harga =?, jumlah_stock = ? WHERE No_buku = ?");
+                        pst.setString(1, kode_buku);
+                        pst.setString(2, judul_buku);
+                        pst.setString(3, jilid);
+                        pst.setString(4, (String) kategori);
+                        pst.setString(5, pengarang);
+                        pst.setString(6, lokasi);
+                        pst.setString(7, (String) kondisi_buku);
                         if (tahun_terbit != 0) {
-                            pst.setInt(7, tahun_terbit);
+                            pst.setInt(8, tahun_terbit);
                         } else {
-                            pst.setNull(7, java.sql.Types.INTEGER);
+                            pst.setNull(8, java.sql.Types.INTEGER);
                         }
-                        pst.setString(8, asal_buku);
+                        pst.setString(9, asal_buku);
                         if (harga != 0) {
-                            pst.setInt(9, harga);
-                        } else {
-                            pst.setNull(9, java.sql.Types.INTEGER);
-                        }
-                        if (jumlah_stock != 0) {
-                            pst.setInt(10, jumlah_stock);
+                            pst.setInt(10, harga);
                         } else {
                             pst.setNull(10, java.sql.Types.INTEGER);
                         }
-                        pst.setString(11, kode_buku);
+                        if (jumlah_stock != 0) {
+                            pst.setInt(11, jumlah_stock);
+                        } else {
+                            pst.setNull(11, java.sql.Types.INTEGER);
+                        }
+                        
+                          pst.setInt(12, noBukuEdit);
                         pst.executeUpdate();
+                        noBukuEdit=-1;
 
                     } else {
                         try {
@@ -713,7 +762,7 @@ public class Buku extends javax.swing.JPanel {
                     
                     loadTabel();
                 } catch (Exception e) {
-                    System.out.println("kode_buku buku" + e);
+                    System.out.println("No_buku buku" + e.getMessage());
                 }
                 
                 Jdialog.dispose();
@@ -794,6 +843,67 @@ public class Buku extends javax.swing.JPanel {
         Jdialog.dispose();
     }//GEN-LAST:event_formMouseClicked
 
+    private void txt_searchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_searchKeyReleased
+        String keyword = txt_search.getText().trim();
+        String sql = "SELECT * FROM buku "
+                + "WHERE No_buku LIKE '%" + keyword + "%' OR "
+                + "kode_buku LIKE '%" + keyword + "%' OR "
+                + "judul_buku LIKE '%" + keyword + "%' OR "
+                + "jilid LIKE '%" + keyword + "%' OR "
+                + "kategori LIKE '%" + keyword + "%' OR "
+                + "pengarang LIKE '%" + keyword + "%' OR "
+                + "lokasi LIKE '%" + keyword + "%' OR "
+                + "kondisi_buku LIKE '%" + keyword + "%' OR "
+                + "tahun_terbit LIKE '%" + keyword + "%' OR "
+                + "asal_buku LIKE '%" + keyword + "%' OR "
+                + "harga LIKE '%" + keyword + "%' OR "
+                + "jumlah_stock LIKE '%" + keyword + "%'";
+
+        try {
+            pst = con.prepareStatement(sql);
+            rs = pst.executeQuery();
+
+            // Creating a model to store the filtered data
+            DefaultTableModel filteredModel = new DefaultTableModel();
+            filteredModel.addColumn("No");
+            filteredModel.addColumn("Kode Buku");
+            filteredModel.addColumn("Judul Buku");
+            filteredModel.addColumn("Jilid");
+            filteredModel.addColumn("Kategori");
+            filteredModel.addColumn("Pengarang");
+            filteredModel.addColumn("Lokasi");
+            filteredModel.addColumn("Kondisi");
+            filteredModel.addColumn("Tahun Terbit");
+            filteredModel.addColumn("Asal Buku");
+            filteredModel.addColumn("Harga");
+            filteredModel.addColumn("Stock");
+
+            while (rs.next()) {
+                filteredModel.addRow(new Object[]{
+                    rs.getString("No_buku"),
+                    rs.getString("kode_buku"),
+                    rs.getString("judul_buku"),
+                    rs.getString("jilid"),
+                    rs.getString("kategori"),
+                    rs.getString("pengarang"),
+                    rs.getString("lokasi"),
+                    rs.getString("kondisi_buku"),
+                    rs.getString("tahun_terbit"),
+                    rs.getString("asal_buku"),
+                    rs.getString("harga"),
+                    rs.getString("jumlah_stock")
+                });
+            }
+
+            // Set the filtered model to the JTable
+            JTabel1.setModel(filteredModel);
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+
+    }//GEN-LAST:event_txt_searchKeyReleased
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable JTabel1;
@@ -827,6 +937,7 @@ public class Buku extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
