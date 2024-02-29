@@ -59,8 +59,9 @@
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="jToggleButton1" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
               </Group>
               <Component id="jScrollPane1" pref="1392" max="32767" attributes="0"/>
           </Group>
@@ -160,7 +161,7 @@
               <Color blue="66" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/img_15/printer-88 1.png"/>
+              <Image iconType="3" name="/img_15/image_button/printer-88 2_1.png"/>
             </Property>
           </Properties>
           <Events>

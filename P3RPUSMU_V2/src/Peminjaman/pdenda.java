@@ -24,28 +24,30 @@ import javax.swing.JOptionPane;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.view.JasperViewer;
+
 public class pdenda extends javax.swing.JPanel {
+
     public pdenda() throws SQLException {
         initComponents();
         load_table();
-       jTable2.getTableHeader().setBackground(new Color(63,148,105));
+        jTable2.getTableHeader().setBackground(new Color(63, 148, 105));
         jTable2.getTableHeader().setForeground(Color.white);
-        
+
     }
-   private void load_table() throws SQLException {
-      DefaultTableModel model = new DefaultTableModel() {
+
+    private void load_table() throws SQLException {
+        DefaultTableModel model = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
                 //all cells false
                 return false;
-        }
-};
+            }
+        };
         model.addColumn("Nama");
         model.addColumn("Jumlah Denda");
         model.addColumn("Status Denda");
         model.addColumn("Total Dembayaran");
 
-        
         try {
             String sql = "SELECT anggota.nama, denda.jumlah_denda, denda.status_denda, denda.total_pembayaran, detail_pengembalian.tanggal FROM denda JOIN anggota ON anggota.NISN = denda.NISN JOIN detail_pengembalian ON detail_pengembalian.kode_pengembalian = denda.kode_pengembalian;";
             java.sql.Connection conn = (Connection) conek.configDB();
@@ -57,8 +59,9 @@ public class pdenda extends javax.swing.JPanel {
             jTable2.setModel(model);
         } catch (Exception e) {
         }
-        
-   }
+
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -110,7 +113,7 @@ public class pdenda extends javax.swing.JPanel {
 
         jToggleButton1.setBackground(new java.awt.Color(51, 153, 0));
         jToggleButton1.setForeground(new java.awt.Color(255, 255, 102));
-        jToggleButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/printer-88 1.png"))); // NOI18N
+        jToggleButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/printer-88 2_1.png"))); // NOI18N
         jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jToggleButton1ActionPerformed(evt);
@@ -144,8 +147,9 @@ public class pdenda extends javax.swing.JPanel {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(0, 0, Short.MAX_VALUE)))
-                .addGap(33, 33, 33)
-                .addComponent(jToggleButton1))
+                .addGap(18, 18, 18)
+                .addComponent(jToggleButton1)
+                .addGap(15, 15, 15))
             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1392, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
@@ -193,10 +197,10 @@ public class pdenda extends javax.swing.JPanel {
     }//GEN-LAST:event_txtcariActionPerformed
 
     private void txtcariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtcariKeyReleased
-   String keyword = txtcari.getText().trim();
-     String sql = "SELECT anggota.nama, denda.jumlah_denda, denda.status_denda, denda.total_pembayaran, detail_pengembalian.tanggal FROM denda JOIN anggota ON anggota.NISN = denda.NISN JOIN detail_pengembalian ON detail_pengembalian.kode_pengembalian = denda.kode_pengembalian WHERE nama LIKE '%" +keyword + "%' ";
+        String keyword = txtcari.getText().trim();
+        String sql = "SELECT anggota.nama, denda.jumlah_denda, denda.status_denda, denda.total_pembayaran, detail_pengembalian.tanggal FROM denda JOIN anggota ON anggota.NISN = denda.NISN JOIN detail_pengembalian ON detail_pengembalian.kode_pengembalian = denda.kode_pengembalian WHERE nama LIKE '%" + keyword + "%' ";
         try {
-               java.sql.Connection conn = (java.sql.Connection) conek.configDB();
+            java.sql.Connection conn = (java.sql.Connection) conek.configDB();
             java.sql.PreparedStatement pst = conn.prepareStatement(sql);
             java.sql.ResultSet rs = pst.executeQuery();
             DefaultTableModel filteredModel = new DefaultTableModel();
@@ -204,16 +208,13 @@ public class pdenda extends javax.swing.JPanel {
             filteredModel.addColumn("Jumlah Denda");
             filteredModel.addColumn("Status Denda");
             filteredModel.addColumn("Total Pembayaran");
-        
-       
-             while (rs.next()) {
+
+            while (rs.next()) {
                 filteredModel.addRow(new Object[]{
                     rs.getString("nama"),
                     rs.getString("jumlah_denda"),
                     rs.getString("status_denda"),
-                    rs.getString("total_pembayaran"),
-
-                });
+                    rs.getString("total_pembayaran"),});
             }
 
             // Set the filtered model to the JTable
@@ -222,15 +223,14 @@ public class pdenda extends javax.swing.JPanel {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
-       
-        
+
+
     }//GEN-LAST:event_txtcariKeyReleased
 
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
-    try {
+        try {
             String reportPath = "src/peminjaman/report2.jasper";
-            Connection conn= conek.configDB();
-            
+            Connection conn = conek.configDB();
 
             HashMap<String, Object> parameters = new HashMap<>();
             parameters.put("tgl1", jDate.getDate());
@@ -245,31 +245,31 @@ public class pdenda extends javax.swing.JPanel {
     }//GEN-LAST:event_jToggleButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-       String tampilan1 = "yyyy-MM-dd";
-SimpleDateFormat tgl1 = new SimpleDateFormat(tampilan1);
-String tanggalawal = String.valueOf(tgl1.format(jDate.getDate()));
+        String tampilan1 = "yyyy-MM-dd";
+        SimpleDateFormat tgl1 = new SimpleDateFormat(tampilan1);
+        String tanggalawal = String.valueOf(tgl1.format(jDate.getDate()));
 
-String tampilan2 = "yyyy-MM-dd";
-SimpleDateFormat tgl2 = new SimpleDateFormat(tampilan2); // Fix: Use tampilan2 for tgl2
-String tanggalakhir = String.valueOf(tgl2.format(jDate1.getDate()));
-System.out.println(tanggalawal + tanggalakhir);
-try {
-    int No = 1;
-   String sql ="SELECT anggota.nama, denda.jumlah_denda, denda.status_denda, denda.total_pembayaran, detail_pengembalian.tanggal FROM denda JOIN anggota ON anggota.NISN = denda.NISN JOIN detail_pengembalian ON detail_pengembalian.kode_pengembalian = denda.kode_pengembalian WHERE detail_pengembalian.tanggal BETWEEN '"+tanggalawal+"' AND '"+tanggalakhir+"';";
-   java.sql.Connection conn = (Connection) conek.configDB();
-    // Create a Statement
-    java.sql.Statement stm = conn.createStatement();
-   
-    java.sql.ResultSet res = stm.executeQuery(sql);// Fix: Add WHERE clause
-    DefaultTableModel table = (DefaultTableModel) jTable2.getModel();
-    table.setRowCount(0);
-    while (res.next()) {
-       
-       table.addRow(new Object[]{res.getString(1), res.getString(2), res.getString(3), res.getString(4)});
-}
-} catch (Exception e) {
-    Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, e);
-}
+        String tampilan2 = "yyyy-MM-dd";
+        SimpleDateFormat tgl2 = new SimpleDateFormat(tampilan2); // Fix: Use tampilan2 for tgl2
+        String tanggalakhir = String.valueOf(tgl2.format(jDate1.getDate()));
+        System.out.println(tanggalawal + tanggalakhir);
+        try {
+            int No = 1;
+            String sql = "SELECT anggota.nama, denda.jumlah_denda, denda.status_denda, denda.total_pembayaran, detail_pengembalian.tanggal FROM denda JOIN anggota ON anggota.NISN = denda.NISN JOIN detail_pengembalian ON detail_pengembalian.kode_pengembalian = denda.kode_pengembalian WHERE detail_pengembalian.tanggal BETWEEN '" + tanggalawal + "' AND '" + tanggalakhir + "';";
+            java.sql.Connection conn = (Connection) conek.configDB();
+            // Create a Statement
+            java.sql.Statement stm = conn.createStatement();
+
+            java.sql.ResultSet res = stm.executeQuery(sql);// Fix: Add WHERE clause
+            DefaultTableModel table = (DefaultTableModel) jTable2.getModel();
+            table.setRowCount(0);
+            while (res.next()) {
+
+                table.addRow(new Object[]{res.getString(1), res.getString(2), res.getString(3), res.getString(4)});
+            }
+        } catch (Exception e) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, e);
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
 

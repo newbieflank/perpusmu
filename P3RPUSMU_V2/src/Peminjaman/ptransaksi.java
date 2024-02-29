@@ -128,7 +128,7 @@ public class ptransaksi extends javax.swing.JPanel {
 
         jToggleButton1.setBackground(new java.awt.Color(51, 153, 0));
         jToggleButton1.setForeground(new java.awt.Color(153, 204, 0));
-        jToggleButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/printer-88 1.png"))); // NOI18N
+        jToggleButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/printer-88 2_1.png"))); // NOI18N
         jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jToggleButton1ActionPerformed(evt);

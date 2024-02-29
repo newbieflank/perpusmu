@@ -6,6 +6,7 @@ package Navbar;
 
 import Anggota.Anggota;
 import Buku.Buku;
+import Peminjaman.Psatu;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.FlatLightLaf;
 import denda.Denda;
@@ -44,6 +45,7 @@ public class Navbar extends javax.swing.JFrame {
         main.add(new Anggota(), "anggota");
         main.add(new Buku(), "Buku");
         main.add(new Denda(), "denda");
+        main.add(new Psatu(), "laporan");
 
         card.show(main, "Buku");
     }
@@ -292,6 +294,7 @@ public class Navbar extends javax.swing.JFrame {
 
     private void laporanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_laporanActionPerformed
         // TODO add your handling code here:
+        card.show(main, "laporan");
     }//GEN-LAST:event_laporanActionPerformed
 
     private void bukuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bukuActionPerformed

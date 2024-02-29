@@ -221,7 +221,7 @@
               <Color blue="0" green="cc" red="99" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/img_15/printer-88 1.png"/>
+              <Image iconType="3" name="/img_15/image_button/printer-88 2_1.png"/>
             </Property>
           </Properties>
           <Events>

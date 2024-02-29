@@ -45,7 +45,8 @@ public class Anggota extends javax.swing.JPanel {
         jcombo();
         jPanel1.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         popup.putClientProperty(FlatClientProperties.STYLE, "arc:30");
-        popup2.putClientProperty(FlatClientProperties.STYLE, "arc:30");
+        popup2.putClientProperty(FlatClientProperties.STYLE, "arc:20");
+        search.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Cari Anggota");
 
         UIManager.put("Button.arc", 15);
         search.putClientProperty("JComponent.roundRect", true);
@@ -71,11 +72,14 @@ public class Anggota extends javax.swing.JPanel {
 
     private void loadTabel() throws SQLException {
         tabel.clearSelection();
+        tabel.getTableHeader().setReorderingAllowed(false);
+        tabel.getTableHeader().setResizingAllowed(false);
         DefaultTableModel model = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
+            
         };
         model.addColumn("NISN");
         model.addColumn("Nama");
@@ -88,7 +92,7 @@ public class Anggota extends javax.swing.JPanel {
             pst = con.prepareStatement("select * from anggota");
             rs = pst.executeQuery();
             while (rs.next()) {
-                model.addRow(new Object[]{rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getString(6)});
+                model.addRow(new Object[]{rs.getString(1), rs.getString(2), rs.getString(4), rs.getString(3), rs.getInt(5), rs.getString(6)});
             }
             tabel.setModel(model);
         } catch (Exception e) {
@@ -200,6 +204,21 @@ public class Anggota extends javax.swing.JPanel {
                 .addComponent(jLabel2)
                 .addGap(0, 6, Short.MAX_VALUE))
         );
+
+        dial_nisn.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                dial_nisnKeyTyped(evt);
+            }
+        });
+
+        dial_angkatan.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                dial_angkatanKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                dial_angkatanKeyTyped(evt);
+            }
+        });
 
         jLabel3.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(0, 0, 0));
@@ -386,6 +405,9 @@ public class Anggota extends javax.swing.JPanel {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 searchKeyPressed(evt);
             }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                searchKeyReleased(evt);
+            }
         });
 
         tabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -468,15 +490,14 @@ public class Anggota extends javax.swing.JPanel {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(40, 40, 40)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(6, 6, 6)
                                 .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(editButton, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -484,25 +505,20 @@ public class Anggota extends javax.swing.JPanel {
                                 .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(40, 40, 40)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1313, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1313, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(40, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jLabel1)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(editButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(10, 10, 10)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(editButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(9, 9, 9)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE)
                 .addContainerGap())
@@ -696,6 +712,55 @@ public class Anggota extends javax.swing.JPanel {
             }
         }
     }//GEN-LAST:event_searchKeyPressed
+
+    private void searchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchKeyReleased
+        // TODO add your handling code here:
+        String key = search.getText().trim();
+        try {
+            searchList();
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_searchKeyReleased
+
+    private void dial_angkatanKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dial_angkatanKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dial_angkatanKeyReleased
+
+    private void dial_angkatanKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dial_angkatanKeyTyped
+        // TODO add your handling code here:
+        String angkat = dial_angkatan.getText();
+        int angka = angkat.length();
+        if (!(Character.isAlphabetic(evt.getKeyChar()) || (Character.isWhitespace(evt.getKeyChar())))) {
+            if (angka >= 4) {
+                JOptionPane.showMessageDialog(jDialog1, "Hanya Bisa di Isi 4 Karakter");
+                evt.consume();
+            }
+        } else if (Character.isWhitespace(evt.getKeyChar())) {
+            JOptionPane.showMessageDialog(jDialog1, "Tidak Boleh ada Spasi");
+            evt.consume();
+        } else {
+            JOptionPane.showMessageDialog(jDialog1, "Hanya Bisa di isi dengan Angka");
+            evt.consume();
+        }
+    }//GEN-LAST:event_dial_angkatanKeyTyped
+
+    private void dial_nisnKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dial_nisnKeyTyped
+        // TODO add your handling code here:
+        String batas = dial_nisn.getText();
+        int batasan = batas.length();
+        if (!(Character.isAlphabetic(evt.getKeyChar()) || (Character.isWhitespace(evt.getKeyChar())))) {
+            if (batasan >= 10) {
+                JOptionPane.showMessageDialog(jDialog1, "Hanya Bisa di 10 Karakter");
+                evt.consume();
+            }
+        } else if (Character.isWhitespace(evt.getKeyChar())) {
+            JOptionPane.showMessageDialog(jDialog1, "Tidak Boleh ada Spasi");
+            evt.consume();
+        } else {
+            JOptionPane.showMessageDialog(jDialog1, "Hanya Bisa di isi dengan Angka");
+            evt.consume();
+        }
+    }//GEN-LAST:event_dial_nisnKeyTyped
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
