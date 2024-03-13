@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8a07879b-21c6-4a5a-ab0e-dc304190cba3">
+	<property name="ireport.zoom" value="1.4641000000000013"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="tgl1" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tgl2" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT anggota.nama, denda.jumlah_denda,denda.status_denda,denda.total_pembayaran FROM denda JOIN anggota ON anggota.NISN=denda.NISN]]>
+	</queryString>
+	<field name="nama" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="jumlah_denda" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="status_denda" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="total_pembayaran" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement x="74" y="0" width="100" height="20" uuid="bd2247cd-f1ab-4232-b66d-440e3fcd3299"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="174" y="0" width="100" height="20" uuid="390f6578-ce8f-47ff-8c5b-9c65ef38016e"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="274" y="0" width="100" height="20" uuid="d59e0846-3c2c-4ed4-94e8-71cc586b21ce"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="374" y="0" width="100" height="20" uuid="728efb18-ec41-438b-b493-ab7ad40989b7"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="74" y="0" width="100" height="20" uuid="6390305a-dad1-475b-a0cb-2ada5824c9d3"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Nama]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="174" y="0" width="100" height="20" uuid="ce2b2fbe-34e7-487a-84e8-2f565da5f7a4"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Jumlah Denda]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="274" y="0" width="100" height="20" uuid="55443dba-2a7f-40cd-abb1-8aacae2324aa"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Status Denda]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="374" y="0" width="100" height="20" uuid="f4b3eb0a-c070-4cce-82c0-f9864cc748c0"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Total Pembayaran]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement x="74" y="0" width="100" height="20" uuid="39d8592b-dc77-474f-8122-bc190b3b2260"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="174" y="0" width="100" height="20" uuid="1fd01a2b-764f-45ef-8efa-9bedd6a6c829"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="274" y="0" width="100" height="20" uuid="41118713-dd76-4338-aedd-42b9e8e6eff6"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="374" y="0" width="100" height="20" uuid="fcc590f1-c2b1-4ffa-aa68-fdefb69fbbdf"/>
+			</rectangle>
+			<textField>
+				<reportElement x="74" y="0" width="100" height="20" uuid="83010de8-5bb4-4658-b3b7-5008dc64c983"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{nama}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="174" y="0" width="100" height="20" uuid="cc2a6412-018c-4a7a-a046-bf1cf6d3475e"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{jumlah_denda}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="274" y="0" width="100" height="20" uuid="224208b5-0a0c-466e-b312-f8c267f9cf81"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{status_denda}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="374" y="0" width="100" height="20" uuid="c91d0c9a-fee0-494a-a99e-624b86e94bee"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{total_pembayaran}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
