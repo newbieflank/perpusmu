@@ -12,6 +12,7 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import Navbar.koneksi;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
@@ -21,6 +22,7 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.plaf.FontUIResource;
 import javax.swing.table.TableModel;
 
 /**
@@ -42,11 +44,11 @@ public class Anggota extends javax.swing.JPanel {
         initComponents();
         loadTabel();
         Jdialog();
-        jcombo();
         jPanel1.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         popup.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         popup2.putClientProperty(FlatClientProperties.STYLE, "arc:20");
         search.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Cari Anggota");
+        dial_jenis.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Pilih Jenis Kelamin");
 
         UIManager.put("Button.arc", 15);
         search.putClientProperty("JComponent.roundRect", true);
@@ -64,12 +66,6 @@ public class Anggota extends javax.swing.JPanel {
         jDialog1.setBackground(new Color(0, 0, 0, 0));
     }
 
-    private void jcombo() {
-        if (dial_jenis.getSelectedItem() == null) {
-            dial_jenis.setSelectedItem("Pilih Jenis Kelamin");
-        }
-    }
-
     private void loadTabel() throws SQLException {
         tabel.clearSelection();
         tabel.getTableHeader().setReorderingAllowed(false);
@@ -79,7 +75,7 @@ public class Anggota extends javax.swing.JPanel {
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
-            
+
         };
         model.addColumn("NISN");
         model.addColumn("Nama");
@@ -116,7 +112,8 @@ public class Anggota extends javax.swing.JPanel {
         model.addColumn("Status");
 
         try {
-            pst = con.prepareStatement("select * from anggota where nama Like '%" + search.getText() + "%'");
+            pst = con.prepareStatement("select * from anggota where nama Like '%" + search.getText() + "%' or NISN Like '%" + search.getText() + "%' "
+                    + "or jurusan Like '%" + search.getText() + "%'");
             rs = pst.executeQuery();
             while (rs.next()) {
                 model.addRow(new Object[]{rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getString(6)});
@@ -597,6 +594,7 @@ public class Anggota extends javax.swing.JPanel {
                     pst = con.prepareStatement("delete from anggota where NISN = " + nisn);
                     pst.execute();
                     loadTabel();
+                    JOptionPane.showMessageDialog(jDialog1, "Data Berhasil di hapus");
                 } catch (Exception e) {
                 }
             }
@@ -673,11 +671,13 @@ public class Anggota extends javax.swing.JPanel {
                         pst = con.prepareStatement("update anggota set nama='" + NAMA + "', jenis_kelamin='" + JENIS + "', "
                                 + "jurusan='" + JURUSAN + "', angkatan=" + ANGKATAN + ", status='" + STATUS + "' where NISN=" + NISN);
                         pst.execute();
+                        JOptionPane.showMessageDialog(jDialog1, "Data berhasil di edit");
                     } else {
                         try {
                             pst1 = con.prepareStatement("Insert into anggota (NISN, nama, jenis_kelamin, jurusan, angkatan, status)"
                                     + " values ('" + NISN + "','" + NAMA + "','" + JENIS + "','" + JURUSAN + "'," + ANGKATAN + " ,'" + STATUS + "')");
                             pst1.execute();
+                            JOptionPane.showMessageDialog(jDialog1, "Data berhasil Di Tambahkan");
                         } catch (Exception r) {
                             System.out.println("insert simpan " + r);
                         }

@@ -4,9 +4,12 @@
  */
 package Navbar;
 
+import Admin.Admin;
 import Anggota.Anggota;
 import Buku.Buku;
+import dashboard.Dashboard1;
 import Peminjaman.Psatu;
+import Transaksi.Transaksi;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.FlatLightLaf;
 import denda.Denda;
@@ -16,6 +19,7 @@ import java.awt.Toolkit;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 /**
@@ -46,8 +50,11 @@ public class Navbar extends javax.swing.JFrame {
         main.add(new Buku(), "Buku");
         main.add(new Denda(), "denda");
         main.add(new Psatu(), "laporan");
+        main.add(new Transaksi(), "transaksi");
+        main.add(new Dashboard1(), "dashboard");
+        main.add(new Admin(), "admin");
 
-        card.show(main, "Buku");
+        card.show(main, "dashboard");
     }
 
     /**
@@ -285,11 +292,12 @@ public class Navbar extends javax.swing.JFrame {
 
     private void dashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dashboardActionPerformed
         // TODO add your handling code here:
-        card.show(main, "Buku");
+        card.show(main, "dashboard");
     }//GEN-LAST:event_dashboardActionPerformed
 
     private void transaksiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transaksiActionPerformed
         // TODO add your handling code here:
+        card.show(main, "transaksi");
     }//GEN-LAST:event_transaksiActionPerformed
 
     private void laporanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_laporanActionPerformed
@@ -309,6 +317,7 @@ public class Navbar extends javax.swing.JFrame {
 
     private void adminActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adminActionPerformed
         // TODO add your handling code here:
+        card.show(main, "admin");
     }//GEN-LAST:event_adminActionPerformed
 
     private void dendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dendaActionPerformed
@@ -318,7 +327,11 @@ public class Navbar extends javax.swing.JFrame {
 
     private void LogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogoutActionPerformed
         // TODO add your handling code here:
-        dispose();
+        int dialogResult = JOptionPane.showConfirmDialog(null, "Apakah Anda Ingin Keluar?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+
+        if (dialogResult == JOptionPane.YES_OPTION) {
+            this.dispose();
+        }
     }//GEN-LAST:event_LogoutActionPerformed
 
     /**

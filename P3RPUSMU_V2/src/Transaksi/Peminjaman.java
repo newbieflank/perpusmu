@@ -5,9 +5,12 @@
  */
 package Transaksi;
 
+import Login.Config;
 import Navbar.koneksi;
 import java.awt.Color;
+import java.awt.im.InputContext;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,9 +20,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -31,16 +33,15 @@ import javax.swing.table.TableModel;
 public class Peminjaman extends javax.swing.JPanel {
 
     private int nomorUrutanTerakhir = 0;
+
     private Connection con;
-    private PreparedStatement pst;
-    private ResultSet rs;
 
     /**
      * Creates new form Peminjaman1
      */
     public Peminjaman() throws SQLException {
-        initComponents();
         con = koneksi.Koneksi();
+        initComponents();
         UIManager.put("Button.arc", 15);
         menu.add(nisn);
         menu2.add(kode_buku);
@@ -64,9 +65,9 @@ public class Peminjaman extends javax.swing.JPanel {
     private void id_autoincrement() {
         try {
             String sqlquery = "SELECT kode_peminjaman FROM peminjaman ORDER BY kode_peminjaman DESC LIMIT 1";
-            pst = con.prepareStatement(sqlquery);
-            rs = pst.executeQuery();
-            String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMyy"));
+            PreparedStatement pst = con.prepareStatement(sqlquery);
+            ResultSet rs = pst.executeQuery();
+            String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyMMdd"));
 
             int newNumber = 1; // Default newNumber
             if (rs.next()) {
@@ -94,10 +95,11 @@ public class Peminjaman extends javax.swing.JPanel {
 
         try {
             String sql = "select * from users";
-            pst = con.prepareStatement(sql);
-            rs = pst.executeQuery();
-            while (rs.next()) {
-                model.addRow(new Object[]{rs.getString(1)});
+            java.sql.Connection con = (Connection) Config.configDB();
+            java.sql.Statement stm = con.createStatement();
+            java.sql.ResultSet res = stm.executeQuery(sql);
+            while (res.next()) {
+                model.addRow(new Object[]{res.getString(1)});
             }
             tabel_users.setModel(model);
         } catch (Exception e) {
@@ -112,10 +114,11 @@ public class Peminjaman extends javax.swing.JPanel {
 
         try {
             String sql = "select * from anggota";
-            pst = con.prepareStatement(sql);
-            rs = pst.executeQuery();
-            while (rs.next()) {
-                model.addRow(new Object[]{rs.getString(1), rs.getString(2)});
+            java.sql.Connection con = (Connection) Config.configDB();
+            java.sql.Statement stm = con.createStatement();
+            java.sql.ResultSet res = stm.executeQuery(sql);
+            while (res.next()) {
+                model.addRow(new Object[]{res.getString(1), res.getString(2)});
             }
             tabel_anggota.setModel(model);
         } catch (Exception e) {
@@ -124,7 +127,6 @@ public class Peminjaman extends javax.swing.JPanel {
     }
 
     private void load_table2() {
-        tabel_buku.clearSelection();
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("Kode Buku");
         model.addColumn("Judul Buku");
@@ -132,10 +134,11 @@ public class Peminjaman extends javax.swing.JPanel {
 
         try {
             String sql = "select * from buku";
-            pst = con.prepareStatement(sql);
-            rs = pst.executeQuery();
-            while (rs.next()) {
-                model.addRow(new Object[]{rs.getString(1), rs.getString(2), rs.getString(3)});
+            java.sql.Connection con = (Connection) Config.configDB();
+            java.sql.Statement stm = con.createStatement();
+            java.sql.ResultSet res = stm.executeQuery(sql);
+            while (res.next()) {
+                model.addRow(new Object[]{res.getString(1), res.getString(2), res.getString(3)});
             }
             tabel_buku.setModel(model);
         } catch (Exception e) {
@@ -205,7 +208,7 @@ public class Peminjaman extends javax.swing.JPanel {
     private boolean isKodePeminjamanExists(String kodepeminjaman) {
         try {
             String query = "SELECT * FROM peminjaman WHERE kode_peminjaman = ?";
-            try (PreparedStatement pst = con.prepareStatement(query)) {
+            try (Connection con = koneksi.Koneksi(); PreparedStatement pst = con.prepareStatement(query)) {
                 pst.setString(1, kodepeminjaman);
                 try (ResultSet rs = pst.executeQuery()) {
                     return rs.next();
@@ -227,6 +230,7 @@ public class Peminjaman extends javax.swing.JPanel {
     private String getKodeBukuByJudulFromDatabase(String judulBuku) {
         String kodeBuku = "";
         try {
+            // Menghubungkan ke database Anda
 
             // Membuat kueri untuk mendapatkan kode buku berdasarkan judul buku
             String query = "SELECT kode_buku FROM buku WHERE judul_buku = ?";
@@ -242,6 +246,9 @@ public class Peminjaman extends javax.swing.JPanel {
             }
 
             // Menutup koneksi dan sumber daya terkait
+//            resultSet.close();
+//            statement.close();
+//            con.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -255,11 +262,11 @@ public class Peminjaman extends javax.swing.JPanel {
         }
 
         try {
-
+//            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/perpusmu_v2", "root", "");
             String sqlquery = "SELECT kode_peminjaman FROM peminjaman ORDER BY kode_peminjaman DESC LIMIT 1";
             PreparedStatement pst = con.prepareStatement(sqlquery);
             ResultSet rs = pst.executeQuery();
-            String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMyy"));
+            String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyMMdd"));
 
             int newNumber = 1; // Default newNumber
             if (rs.next()) {
@@ -274,8 +281,10 @@ public class Peminjaman extends javax.swing.JPanel {
             }
 
             String formattedNumber = String.format("%02d", newNumber); // Format new number with leading zeros
+            System.out.println(formattedNumber);
             String newId = currentDate + formattedNumber; // Concatenate current date and formatted number
             txt_kode_peminjaman.setText(newId); // Set the new ID to the text field
+            System.out.println(newId);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
         }
@@ -430,9 +439,9 @@ public class Peminjaman extends javax.swing.JPanel {
             public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
                 formAncestorAdded(evt);
             }
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
-            }
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
             }
         });
 
@@ -484,9 +493,6 @@ public class Peminjaman extends javax.swing.JPanel {
         txt_nisn.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txt_nisnKeyReleased(evt);
-            }
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txt_nisnKeyTyped(evt);
             }
         });
 
@@ -801,8 +807,9 @@ public class Peminjaman extends javax.swing.JPanel {
         String sql = "SELECT * FROM anggota WHERE nisn LIKE '%" + keyword + "%' OR nama LIKE '%" + keyword + "%'";
 
         try {
-            pst = con.prepareStatement(sql);
-            rs = pst.executeQuery();
+//            java.sql.Connection con = (java.sql.Connection) Config.configDB();
+            java.sql.PreparedStatement pst = con.prepareStatement(sql);
+            java.sql.ResultSet rs = pst.executeQuery();
 
             // Creating a model to store the filtered data
             DefaultTableModel filteredModel = new DefaultTableModel();
@@ -848,7 +855,6 @@ public class Peminjaman extends javax.swing.JPanel {
 
     private void txt_kode_bukuKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_kode_bukuKeyReleased
         String search = txt_kode_buku.getText();
-        tabel_buku.clearSelection();
         if (!search.equals("")) {
             menu2.show(txt_kode_buku, 0, txt_kode_buku.getHeight());
         }
@@ -856,8 +862,9 @@ public class Peminjaman extends javax.swing.JPanel {
         String sql = "SELECT * FROM buku WHERE kode_buku LIKE '%" + keyword + "%' OR judul_buku LIKE '%" + keyword + "%'";
 
         try {
-            pst = con.prepareStatement(sql);
-            rs = pst.executeQuery();
+//            java.sql.Connection con = (java.sql.Connection) Config.configDB();
+            java.sql.PreparedStatement pst = con.prepareStatement(sql);
+            java.sql.ResultSet rs = pst.executeQuery();
 
             // Creating a model to store the filtered data
             DefaultTableModel filteredModel = new DefaultTableModel();
@@ -876,6 +883,7 @@ public class Peminjaman extends javax.swing.JPanel {
 
             // Set the filtered model to the JTable
             tabel_buku.setModel(filteredModel);
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
@@ -912,7 +920,7 @@ public class Peminjaman extends javax.swing.JPanel {
             String tanggalkembaliFormatted = dateFormat.format(tanggalkembali);
 
             // Tambahkan baris baru ke dalam tabel
-            Object[] row = {kodepeminjaman, tanggalpinjamFormatted, tanggalkembaliFormatted, nama, totalpeminjaman, judulbuku, username};
+            Object[] row = {kodepeminjaman, tanggalpinjamFormatted, tanggalkembaliFormatted, nama, judulbuku, totalpeminjaman, username};
             model.addRow(row);
             clear();
         }
@@ -957,60 +965,55 @@ public class Peminjaman extends javax.swing.JPanel {
         if (model.getRowCount() == 0) {
             JOptionPane.showMessageDialog(this, "Tabel kosong");
         } else {
-            try {
-                con.setAutoCommit(false); // Mulai transaksi
+            try (Connection conn = Config.configDB()) {
+                conn.setAutoCommit(false); // Mulai transaksi
 
                 // Proses baris pertama untuk tabel peminjaman
                 int barisPertama = 0;
                 String kodePeminjamanPertama = model.getValueAt(barisPertama, 0).toString();
                 String nisnPertama = model.getValueAt(barisPertama, 3).toString();
                 String idPetugasPertama = model.getValueAt(barisPertama, 6).toString();
+
                 try {
                     if (!isKodePeminjamanExists(kodePeminjamanPertama)) {
-//                         Insert into tabel peminjaman
+                        // Insert into tabel peminjaman
+                        String sqlPeminjaman = "INSERT INTO peminjaman (kode_peminjaman, NISN, ID_users) VALUES (?, (SELECT NISN FROM anggota WHERE nama = ?), (SELECT ID_users FROM users WHERE username = ?))";
+                        try (PreparedStatement pstPeminjaman = conn.prepareStatement(sqlPeminjaman)) {
+                            pstPeminjaman.setString(1, kodePeminjamanPertama);
+                            pstPeminjaman.setString(2, nisnPertama);
+                            pstPeminjaman.setString(3, idPetugasPertama);
+                            pstPeminjaman.executeUpdate();
+                        }
 
                         // Proses sisa baris untuk tabel detail_peminjaman
                         for (int i = 0; i < model.getRowCount(); i++) {
                             String kodePeminjaman = model.getValueAt(i, 0).toString();
-                            String totalPeminjamanStr = model.getValueAt(i, 4).toString();
+                            String totalPeminjamanStr = model.getValueAt(i, 5).toString();
                             String tanggalpinjam = model.getValueAt(i, 1).toString();
                             String tanggalkembali = model.getValueAt(i, 2).toString();
-                            String kodeBuku = model.getValueAt(i, 5).toString();
-
-                            String sqlPeminjaman = "INSERT INTO peminjaman (kode_peminjaman, NISN, ID_users) VALUES (?, (SELECT NISN FROM anggota WHERE nama = ?), (SELECT ID_users FROM users WHERE username = ?))";
-                            try {
-                                pst = con.prepareStatement(sqlPeminjaman);
-                                pst.setString(1, kodePeminjamanPertama);
-                                pst.setString(2, nisnPertama);
-                                pst.setString(3, idPetugasPertama);
-                                pst.execute();
-                            } catch (Exception r) {
-                                System.out.println("peminjaman" + r);
-                            }
+                            String kodeBuku = model.getValueAt(i, 4).toString();
 
                             // Pengecekan stok buku
                             int jumlahPeminjaman = Integer.parseInt(totalPeminjamanStr);
-                            int stokBuku = getStokBuku(con, kodeBuku);
+                            int stokBuku = getStokBuku(conn, kodeBuku);
                             if (stokBuku >= jumlahPeminjaman) {
                                 // Jika stok mencukupi, kurangi jumlah stok buku
-                                kurangiStokBuku(con, kodeBuku, jumlahPeminjaman);
+                                kurangiStokBuku(conn, kodeBuku, jumlahPeminjaman);
 
                                 // Insert ke dalam tabel detail_peminjaman
                                 String detailPeminjamanSql = "INSERT INTO detail_peminjaman (kode_peminjaman, jumlah_peminjaman, status_peminjaman, tanggal_peminjaman, tanggal_kembali, No_buku) VALUES (?, ?, ?, ?, ?, (SELECT No_buku FROM buku WHERE judul_buku = ?))";
-                                try (PreparedStatement pstDetailPeminjaman = con.prepareStatement(detailPeminjamanSql)) {
+                                try (PreparedStatement pstDetailPeminjaman = conn.prepareStatement(detailPeminjamanSql)) {
                                     pstDetailPeminjaman.setString(1, kodePeminjaman);
                                     pstDetailPeminjaman.setInt(2, jumlahPeminjaman);
                                     pstDetailPeminjaman.setString(3, "dipinjam");
                                     pstDetailPeminjaman.setString(4, tanggalpinjam);
                                     pstDetailPeminjaman.setString(5, tanggalkembali);
                                     pstDetailPeminjaman.setString(6, kodeBuku);
-                                    pstDetailPeminjaman.execute();
-                                } catch (Exception e) {
-                                    System.out.println("detail" + e);
+                                    pstDetailPeminjaman.executeUpdate();
                                 }
                             } else {
                                 // Jika stok tidak mencukupi, batalkan transaksi dan tampilkan pesan notifikasi
-                                con.rollback();
+                                conn.rollback();
                                 JOptionPane.showMessageDialog(this, "Error: Stok buku tidak mencukupi untuk peminjaman");
                                 return;
                             }
@@ -1021,7 +1024,8 @@ public class Peminjaman extends javax.swing.JPanel {
                 } catch (NumberFormatException e) {
                     JOptionPane.showMessageDialog(this, "Error: Format Total Peminjaman tidak valid pada baris " + (barisPertama + 1));
                 }
-                con.commit(); // Commit transaksi
+
+                conn.commit(); // Commit transaksi
                 JOptionPane.showMessageDialog(this, "Peminjaman berhasil disimpan!");
                 kosong();
                 refresh();
@@ -1034,7 +1038,7 @@ public class Peminjaman extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton21ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton21ActionPerformed
-        clear1();
+        clear();
     }//GEN-LAST:event_jButton21ActionPerformed
 
     private void txt_petugasKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_petugasKeyReleased
@@ -1046,8 +1050,8 @@ public class Peminjaman extends javax.swing.JPanel {
         String sql = "SELECT * FROM users WHERE username LIKE '%" + keyword + "%'";
 
         try {
-            pst = con.prepareStatement(sql);
-            rs = pst.executeQuery();
+            java.sql.PreparedStatement pst = con.prepareStatement(sql);
+            java.sql.ResultSet rs = pst.executeQuery();
 
             // Creating a model to store the filtered data
             DefaultTableModel filteredModel = new DefaultTableModel();
@@ -1077,19 +1081,8 @@ public class Peminjaman extends javax.swing.JPanel {
     }//GEN-LAST:event_tabel_usersMouseClicked
 
     private void formAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_formAncestorAdded
-        try {
-            loadtable();
-            load_table1();
-            load_table2();
-            load_table3();
-        } catch (SQLException ex) {
-            Logger.getLogger(Peminjaman.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }//GEN-LAST:event_formAncestorAdded
 
-    private void txt_nisnKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_nisnKeyTyped
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_nisnKeyTyped
+    }//GEN-LAST:event_formAncestorAdded
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

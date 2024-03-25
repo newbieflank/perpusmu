@@ -5,8 +5,14 @@
     <Container class="javax.swing.JDialog" name="jDialog1">
       <Properties>
         <Property name="defaultCloseOperation" type="int" value="2"/>
+        <Property name="locationByPlatform" type="boolean" value="true"/>
         <Property name="undecorated" type="boolean" value="true"/>
       </Properties>
+      <AccessibilityProperties>
+        <Property name="AccessibleContext.accessibleParent" type="javax.accessibility.Accessible" editor="org.netbeans.modules.form.ComponentChooserEditor">
+          <ComponentRef name="null"/>
+        </Property>
+      </AccessibilityProperties>
 
       <Layout>
         <DimensionLayout dim="0">
@@ -151,6 +157,9 @@
             <Component class="javax.swing.JTextField" name="denda_nama">
             </Component>
             <Component class="javax.swing.JTextField" name="denda_total">
+              <Events>
+                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="denda_totalKeyReleased"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JComboBox" name="denda_status">
               <Properties>
@@ -253,6 +262,9 @@
       <Color blue="cc" green="cc" red="cc" type="rgb"/>
     </Property>
   </Properties>
+  <Events>
+    <EventHandler event="ancestorAdded" listener="javax.swing.event.AncestorListener" parameters="javax.swing.event.AncestorEvent" handler="formAncestorAdded"/>
+  </Events>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
@@ -350,7 +362,7 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="0" green="0" red="0" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="LIST DATA Denda"/>
+            <Property name="text" type="java.lang.String" value="LIST DATA DENDA"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="search">
@@ -362,6 +374,7 @@
           </AccessibilityProperties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="searchActionPerformed"/>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="searchKeyReleased"/>
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value=""/>

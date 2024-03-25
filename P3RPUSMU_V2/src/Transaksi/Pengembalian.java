@@ -5,11 +5,11 @@
  */
 package Transaksi;
 
+import Login.Config;
 import Navbar.koneksi;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -47,6 +47,9 @@ public class Pengembalian extends javax.swing.JPanel {
         jDialog1();
         id_autoincrement();
         loadtable2();
+        txt_denda_total.setText("0");
+        txt_denda_telat.setVisible(false);
+        txt_denda_kondisi.setVisible(false);
 
         tabel_return.getTableHeader().setBackground(new Color(63, 148, 105));
         tabel_return.getTableHeader().setForeground(Color.white);
@@ -57,6 +60,23 @@ public class Pengembalian extends javax.swing.JPanel {
         tabel_pending.getColumnModel().getColumn(0).setPreferredWidth(20);
 
         jDialog1.setSize(1000, 700);
+
+    }
+
+    public int getHargaBuku(String judul_buku) {
+        int harga = 0;
+        try {
+            String query = "SELECT harga FROM buku WHERE judul_buku = ?";
+            PreparedStatement preparedStatement = con.prepareStatement(query);
+            preparedStatement.setString(1, judul_buku);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                harga = resultSet.getInt("harga");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return harga;
     }
 
     private void loadtable2() throws SQLException {
@@ -76,10 +96,9 @@ public class Pengembalian extends javax.swing.JPanel {
 
     private void id_autoincrement() {
         try {
-
             String sqlquery = "SELECT kode_pengembalian FROM pengembalian ORDER BY kode_pengembalian DESC LIMIT 1";
-            pst = con.prepareStatement(sqlquery);
-            rs = pst.executeQuery();
+            PreparedStatement pst = con.prepareStatement(sqlquery);
+            ResultSet rs = pst.executeQuery();
             String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyMMdd"));
 
             int newNumber = 1; // Default newNumber
@@ -102,14 +121,7 @@ public class Pengembalian extends javax.swing.JPanel {
         }
     }
 
-    private void insDenda() {
-        try {
-        } catch (Exception e) {
-        }
-    }
-
     private void load_table() {
-
         DefaultTableModel model = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -126,26 +138,36 @@ public class Pengembalian extends javax.swing.JPanel {
         model.addColumn("Jumlah Pinjam");
         model.addColumn("Kode Buku");
         model.addColumn("Judul Buku");
+        model.addColumn("Status Peminjaman");
 
         try {
             loadtable2();
             pst = con.prepareStatement("delete from detail_peminjaman where jumlah_peminjaman = 0");
             pst.execute();
-            String sql = "SELECT peminjaman.kode_peminjaman, anggota.nama, users.username, detail_peminjaman.tanggal_peminjaman, detail_peminjaman.tanggal_kembali, detail_peminjaman.jumlah_peminjaman, buku.kode_buku, buku.judul_buku FROM peminjaman JOIN users ON peminjaman.id_users = users.id_users JOIN detail_peminjaman ON peminjaman.kode_peminjaman = detail_peminjaman.kode_peminjaman JOIN buku ON detail_peminjaman.No_buku = buku.No_buku JOIN anggota ON peminjaman.NISN = anggota.NISN;";
+            String sql = "SELECT peminjaman.kode_peminjaman, anggota.nama, users.username, detail_peminjaman.tanggal_peminjaman, detail_peminjaman.tanggal_kembali, detail_peminjaman.jumlah_peminjaman, buku.kode_buku, buku.judul_buku, detail_peminjaman.status_peminjaman FROM peminjaman JOIN users ON peminjaman.id_users = users.id_users JOIN detail_peminjaman ON peminjaman.kode_peminjaman = detail_peminjaman.kode_peminjaman JOIN buku ON detail_peminjaman.No_buku = buku.No_buku JOIN anggota ON peminjaman.NISN = anggota.NISN;";
 
-            pst = con.prepareStatement(sql);
-            rs = pst.executeQuery();
+            Statement stm = con.createStatement();
+            ResultSet res = stm.executeQuery(sql);
 
-            while (rs.next()) {
+            while (res.next()) {
+                String statusPeminjaman;
+                int jumlahPeminjaman = res.getInt("jumlah_peminjaman");
+
+                if (jumlahPeminjaman != 0) {
+                    statusPeminjaman = "Dipinjam";
+                } else {
+                    statusPeminjaman = "Kembali";
+                }
                 model.addRow(new Object[]{
-                    rs.getString("kode_peminjaman"),
-                    rs.getString("nama"),
-                    rs.getString("username"),
-                    rs.getString("tanggal_peminjaman"),
-                    rs.getString("tanggal_kembali"),
-                    rs.getString("jumlah_peminjaman"), // Pastikan nama kolom sesuai dengan hasil query
-                    rs.getString("kode_buku"),
-                    rs.getString("judul_buku"),});
+                    res.getString("kode_peminjaman"),
+                    res.getString("nama"),
+                    res.getString("username"),
+                    res.getString("tanggal_peminjaman"),
+                    res.getString("tanggal_kembali"),
+                    res.getString("jumlah_peminjaman"), // Pastikan nama kolom sesuai dengan hasil query
+                    res.getString("kode_buku"),
+                    res.getString("judul_buku"),
+                    res.getString("status_peminjaman"),});
             }
 
             // Set model untuk tabel_pengembalian
@@ -178,21 +200,29 @@ public class Pengembalian extends javax.swing.JPanel {
         try {
             String sql = "SELECT pengembalian.kode_pengembalian, anggota.nama, users.username, detail_pengembalian.jumlah_pengembalian, detail_pengembalian.status_pengembalian,detail_pengembalian.waktu_pengembalian, buku.kode_buku,buku.judul_buku,detail_pengembalian.kondisi_buku, detail_pengembalian.denda FROM pengembalian JOIN detail_pengembalian ON pengembalian.kode_pengembalian = detail_pengembalian.kode_pengembalian JOIN buku ON detail_pengembalian.No_buku = buku.No_buku JOIN users ON pengembalian.id_users = users.id_users JOIN anggota ON detail_pengembalian.NISN = anggota.NISN;";
 
-            pst = con.prepareStatement(sql);
-            rs = pst.executeQuery();
+            Statement stm = con.createStatement();
+            ResultSet res = stm.executeQuery(sql);
 
-            while (rs.next()) {
+            while (res.next()) {
+                String statusPeminjaman;
+                int jumlahPeminjaman = res.getInt("jumlah_pengembalian");
+
+                if (jumlahPeminjaman != 0) {
+                    statusPeminjaman = "kembali";
+                } else {
+                    statusPeminjaman = "Kembali";
+                }
                 model.addRow(new Object[]{
-                    rs.getString("kode_pengembalian"),
-                    rs.getString("nama"),
-                    rs.getString("username"),
-                    rs.getString("jumlah_pengembalian"),
-                    rs.getString("status_pengembalian"),
-                    rs.getString("waktu_pengembalian"),
-                    rs.getString("kode_buku"), // Pastikan nama kolom sesuai dengan hasil query
-                    rs.getString("judul_buku"),
-                    rs.getString("kondisi_buku"),
-                    rs.getString("denda"),});
+                    res.getString("kode_pengembalian"),
+                    res.getString("nama"),
+                    res.getString("username"),
+                    res.getString("jumlah_pengembalian"),
+                    res.getString("status_pengembalian"),
+                    res.getString("waktu_pengembalian"),
+                    res.getString("kode_buku"), // Pastikan nama kolom sesuai dengan hasil query
+                    res.getString("judul_buku"),
+                    res.getString("kondisi_buku"),
+                    res.getString("denda"),});
             }
 
             // Set model untuk tabel_pengembalian
@@ -207,24 +237,23 @@ public class Pengembalian extends javax.swing.JPanel {
     private String getKodeBukuByJudulFromDatabase(String judulBuku) {
         String kodeBuku = "";
         try {
-            // Menghubungkan ke database Anda
 
             // Membuat kueri untuk mendapatkan kode buku berdasarkan judul buku
             String query = "SELECT kode_buku FROM buku WHERE judul_buku = ?";
-            pst = con.prepareStatement(query);
-            pst.setString(1, judulBuku);
+            PreparedStatement statement = con.prepareStatement(query);
+            statement.setString(1, judulBuku);
 
             // Mengeksekusi kueri
-            rs = pst.executeQuery();
+            ResultSet resultSet = statement.executeQuery();
 
             // Mengambil hasil kueri jika ada
-            if (rs.next()) {
-                kodeBuku = rs.getString("kode_buku");
+            if (resultSet.next()) {
+                kodeBuku = resultSet.getString("kode_buku");
             }
 
             // Menutup koneksi dan sumber daya terkait
-            rs.close();
-            pst.close();
+            resultSet.close();
+            statement.close();
             con.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -232,40 +261,76 @@ public class Pengembalian extends javax.swing.JPanel {
         return kodeBuku;
     }
 
-    private void masuktabelreturn() {
-        DefaultTableModel model = (DefaultTableModel) tabel_return.getModel();
-// Mendapatkan teks dari field-field yang relevan
+    private void masuktabelpending() {
+        DefaultTableModel model = (DefaultTableModel) tabel_pending.getModel();
+        // Mendapatkan teks dari field-field yang relevan
         String kodepeminjaman = txt_kode_peminjaman.getText();
         String nama = txt_nama.getText();
         String username = txt_petugas.getText();
+        java.sql.Date tanggalpinjam = new java.sql.Date(tanggal_pinjam.getDate().getTime());
+        java.sql.Date tanggalkembali = new java.sql.Date(tanggal_kembali_awal.getDate().getTime());
         int totalpeminjaman = (int) spinner_pinjam.getValue();
-        String statuskembali = (String) status_pengembalian.getSelectedItem();
-        String waktukembali = (String) waktu_pengembalian.getSelectedItem();
+        String kodebuku = txt_kode_buku.getText();
+        String judulbuku = txt_judul_buku.getText();
+        String statuskembali;
+
+        if (totalpeminjaman != 0) {
+            statuskembali = "Dipinjam";
+        } else {
+            statuskembali = "Kembali";
+        }
+
+        // Tambahkan baris baru ke dalam tabel
+        Object[] row = {kodepeminjaman, nama, username, tanggalpinjam, tanggalkembali, totalpeminjaman, kodebuku, judulbuku, statuskembali};
+        model.addRow(row);
+    }
+
+    private void masuktabelreturn() {
+        DefaultTableModel model = (DefaultTableModel) tabel_return.getModel();
+        // Mendapatkan teks dari field-field yang relevan
+        String kodepeminjaman = txt_kode_peminjaman.getText();
+        String nama = txt_nama.getText();
+        String username = txt_petugas.getText();
+        int totalpeminjaman = (int) spinner_kembali.getValue();
+        String statuskembali = "Kembali"; // Mengatur status menjadi "Kembali" untuk semua data
+
+        // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
+        Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
+        Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
+
+        // Mendapatkan waktukembali berdasarkan perbandingan tanggal
+        String waktukembali;
+        if (tanggalKembaliAkhir.after(tanggalKembaliAwal)) {
+            waktukembali = "Telat";
+        } else {
+            waktukembali = "Tepat Waktu";
+        }
+
         String kodebuku = txt_kode_buku.getText();
         String judulbuku = txt_judul_buku.getText();
         String kondisikembali = (String) kondisi_buku.getSelectedItem();
-        String denda = txt_denda.getText();
+        String denda = txt_denda_total.getText();
 
         // Tambahkan baris baru ke dalam tabel
         Object[] row = {kodepeminjaman, nama, username, totalpeminjaman, statuskembali, waktukembali, kodebuku, judulbuku, kondisikembali, denda};
         model.addRow(row);
     }
 
-    private void tambahStokBuku(Connection conn, String namabuku, int jumlahkembali) throws SQLException {
+    private void tambahStokBuku(Connection con, int jumlahPengembalian, String kodeBuku) throws SQLException {
         String sql = "UPDATE buku SET jumlah_stock = jumlah_stock + ? WHERE No_buku = (SELECT No_buku FROM buku WHERE judul_buku = ?)";
-        try (PreparedStatement pst1 = conn.prepareStatement(sql)) {
-            pst1.setInt(1, jumlahkembali);
-            pst1.setString(2, namabuku);
-            int rowsAffected = pst1.executeUpdate();
+        try (PreparedStatement pst = con.prepareStatement(sql)) {
+            pst.setInt(1, jumlahPengembalian);
+            pst.setString(2, kodeBuku);
+            int rowsAffected = pst.executeUpdate();
             if (rowsAffected == 0) {
                 throw new SQLException("Gagal menambahkan stok buku");
             }
         }
     }
 
-    private int getStokBuku(Connection conn, String kodeBuku) throws SQLException {
+    private int getStokBuku(Connection con, String kodeBuku) throws SQLException {
         String sql = "SELECT jumlah_stock FROM buku WHERE No_buku = (SELECT No_buku FROM buku WHERE judul_buku = ?)";
-        try (PreparedStatement pst = conn.prepareStatement(sql)) {
+        try (PreparedStatement pst = con.prepareStatement(sql)) {
             pst.setString(1, kodeBuku);
             try (ResultSet rs = pst.executeQuery()) {
                 if (rs.next()) {
@@ -296,31 +361,29 @@ public class Pengembalian extends javax.swing.JPanel {
         txt_kode_peminjaman = new javax.swing.JTextField();
         txt_nama = new javax.swing.JTextField();
         btn_tambah = new javax.swing.JButton();
-        status_pengembalian = new javax.swing.JComboBox<>();
         jLabel7 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
         txt_petugas = new javax.swing.JTextField();
         txt_kode_buku = new javax.swing.JTextField();
         txt_judul_buku = new javax.swing.JTextField();
         txt_kode_pengembalian = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
-        kondisi_buku = new javax.swing.JComboBox<>();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
-        txt_denda = new javax.swing.JTextField();
+        txt_denda_total = new javax.swing.JTextField();
         jLabel15 = new javax.swing.JLabel();
         spinner_kembali = new javax.swing.JSpinner();
         spinner_pinjam = new javax.swing.JSpinner();
-        jLabel16 = new javax.swing.JLabel();
-        waktu_pengembalian = new javax.swing.JComboBox<>();
         tanggal_pinjam = new com.toedter.calendar.JDateChooser();
         tanggal_kembali_awal = new com.toedter.calendar.JDateChooser();
         jLabel17 = new javax.swing.JLabel();
         tanggal_kembali_akhir = new com.toedter.calendar.JDateChooser();
+        kondisi_buku = new javax.swing.JComboBox<>();
+        txt_denda_telat = new javax.swing.JTextField();
+        txt_denda_kondisi = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jLabel20 = new javax.swing.JLabel();
@@ -337,7 +400,6 @@ public class Pengembalian extends javax.swing.JPanel {
         txt_search1 = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
 
-        jDialog1.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         jDialog1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jDialog1.setUndecorated(true);
 
@@ -372,14 +434,6 @@ public class Pengembalian extends javax.swing.JPanel {
             }
         });
 
-        status_pengembalian.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
-        status_pengembalian.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "dipinjam", "kembali" }));
-        status_pengembalian.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                status_pengembalianActionPerformed(evt);
-            }
-        });
-
         jLabel7.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         jLabel7.setText("Tanggal Kembali");
 
@@ -401,10 +455,6 @@ public class Pengembalian extends javax.swing.JPanel {
         jLabel10.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         jLabel10.setText("Judul Buku");
 
-        jLabel11.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
-        jLabel11.setText("Waktu Peminjaman");
-        jLabel11.setPreferredSize(new java.awt.Dimension(169, 25));
-
         txt_petugas.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         txt_petugas.setEnabled(false);
 
@@ -425,16 +475,27 @@ public class Pengembalian extends javax.swing.JPanel {
         jLabel12.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         jLabel12.setText("Kondisi");
 
-        kondisi_buku.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
-        kondisi_buku.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Baik", "Rusak", "Hilang" }));
-
         jLabel13.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         jLabel13.setText("Kode Pengembalian");
 
         jLabel14.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         jLabel14.setText("Denda");
 
-        txt_denda.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        txt_denda_total.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        txt_denda_total.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                txt_denda_totalAncestorAdded(evt);
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
+        txt_denda_total.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_denda_totalActionPerformed(evt);
+            }
+        });
 
         jLabel15.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         jLabel15.setText("Total Kembali");
@@ -443,40 +504,27 @@ public class Pengembalian extends javax.swing.JPanel {
         spinner_kembali.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
         spinner_kembali.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         spinner_kembali.setPreferredSize(new java.awt.Dimension(37, 25));
+        spinner_kembali.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                spinner_kembaliAncestorAdded(evt);
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
         spinner_kembali.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 spinner_kembaliStateChanged(evt);
-            }
-        });
-        spinner_kembali.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                spinner_kembaliMouseClicked(evt);
-            }
-        });
-        spinner_kembali.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                spinner_kembaliPropertyChange(evt);
-            }
-        });
-        spinner_kembali.addVetoableChangeListener(new java.beans.VetoableChangeListener() {
-            public void vetoableChange(java.beans.PropertyChangeEvent evt)throws java.beans.PropertyVetoException {
-                spinner_kembaliVetoableChange(evt);
             }
         });
 
         spinner_pinjam.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         spinner_pinjam.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
         spinner_pinjam.setPreferredSize(new java.awt.Dimension(37, 25));
-
-        jLabel16.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
-        jLabel16.setText("Status Peminjaman");
-        jLabel16.setPreferredSize(new java.awt.Dimension(169, 25));
-
-        waktu_pengembalian.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
-        waktu_pengembalian.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "tepat waktu", "telat" }));
-        waktu_pengembalian.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                waktu_pengembalianActionPerformed(evt);
+        spinner_pinjam.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                spinner_pinjamStateChanged(evt);
             }
         });
 
@@ -491,23 +539,15 @@ public class Pengembalian extends javax.swing.JPanel {
 
         tanggal_kembali_akhir.setDateFormatString("yyyy-MM-dd");
         tanggal_kembali_akhir.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
             public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
                 tanggal_kembali_akhirAncestorAdded(evt);
-            }
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
             }
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
             }
         });
-        tanggal_kembali_akhir.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                tanggal_kembali_akhirFocusLost(evt);
-            }
-        });
         tanggal_kembali_akhir.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tanggal_kembali_akhirMouseClicked(evt);
-            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 tanggal_kembali_akhirMouseEntered(evt);
             }
@@ -515,14 +555,18 @@ public class Pengembalian extends javax.swing.JPanel {
                 tanggal_kembali_akhirMousePressed(evt);
             }
         });
-        tanggal_kembali_akhir.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                tanggal_kembali_akhirPropertyChange(evt);
+
+        kondisi_buku.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        kondisi_buku.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Baik", "Rusak", "Hilang" }));
+        kondisi_buku.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                kondisi_bukuItemStateChanged(evt);
             }
         });
-        tanggal_kembali_akhir.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                tanggal_kembali_akhirKeyPressed(evt);
+
+        txt_denda_kondisi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_denda_kondisiActionPerformed(evt);
             }
         });
 
@@ -530,81 +574,84 @@ public class Pengembalian extends javax.swing.JPanel {
         pengembalian.setLayout(pengembalianLayout);
         pengembalianLayout.setHorizontalGroup(
             pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pengembalianLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pengembalianLayout.createSequentialGroup()
                 .addGap(25, 25, 25)
-                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pengembalianLayout.createSequentialGroup()
-                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txt_kode_peminjaman, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel6)
-                            .addComponent(txt_nama, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pengembalianLayout.createSequentialGroup()
                         .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(status_pengembalian, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(waktu_pengembalian, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(pengembalianLayout.createSequentialGroup()
-                                    .addComponent(spinner_pinjam, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(spinner_kembali, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(pengembalianLayout.createSequentialGroup()
-                                    .addComponent(jLabel5)
-                                    .addGap(162, 162, 162)
-                                    .addComponent(jLabel15))
-                                .addGroup(pengembalianLayout.createSequentialGroup()
-                                    .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel7)
-                                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                            .addComponent(tanggal_kembali_awal, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(jLabel16, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                                    .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(pengembalianLayout.createSequentialGroup()
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(jLabel17))
-                                        .addGroup(pengembalianLayout.createSequentialGroup()
-                                            .addGap(63, 63, 63)
-                                            .addComponent(tanggal_kembali_akhir, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)))
-                                    .addGap(4, 4, 4))))
-                        .addGap(154, 154, 154)
-                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel14)
-                            .addComponent(jLabel12)
-                            .addComponent(jLabel9)
-                            .addComponent(txt_kode_buku, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel10)
-                            .addComponent(txt_judul_buku, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(kondisi_buku, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txt_denda, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(pengembalianLayout.createSequentialGroup()
-                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addComponent(tanggal_pinjam, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pengembalianLayout.createSequentialGroup()
-                                .addGap(158, 158, 158)
-                                .addComponent(jLabel8)
-                                .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pengembalianLayout.createSequentialGroup()
+                                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txt_kode_peminjaman, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel1))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(txt_petugas, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(25, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pengembalianLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jLabel13)
-                .addGap(405, 405, 405))
+                                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel6)
+                                    .addComponent(txt_nama, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(pengembalianLayout.createSequentialGroup()
+                                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pengembalianLayout.createSequentialGroup()
+                                        .addComponent(spinner_pinjam, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(spinner_kembali, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pengembalianLayout.createSequentialGroup()
+                                        .addComponent(jLabel5)
+                                        .addGap(162, 162, 162)
+                                        .addComponent(jLabel15))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pengembalianLayout.createSequentialGroup()
+                                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel7)
+                                            .addComponent(tanggal_kembali_awal, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(pengembalianLayout.createSequentialGroup()
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(jLabel17))
+                                            .addGroup(pengembalianLayout.createSequentialGroup()
+                                                .addGap(63, 63, 63)
+                                                .addComponent(tanggal_kembali_akhir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                        .addGap(4, 4, 4))
+                                    .addComponent(jLabel12)
+                                    .addComponent(kondisi_buku, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(158, 158, 158)
+                                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel14)
+                                    .addComponent(jLabel9)
+                                    .addComponent(txt_kode_buku, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel10)
+                                    .addComponent(txt_judul_buku, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txt_denda_total, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(pengembalianLayout.createSequentialGroup()
+                                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel4)
+                                    .addComponent(tanggal_pinjam, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(pengembalianLayout.createSequentialGroup()
+                                        .addGap(158, 158, 158)
+                                        .addComponent(jLabel8)
+                                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pengembalianLayout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(txt_petugas, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addContainerGap(25, Short.MAX_VALUE))
+                    .addGroup(pengembalianLayout.createSequentialGroup()
+                        .addGap(252, 252, 252)
+                        .addComponent(txt_denda_telat, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(217, 217, 217)
+                        .addComponent(txt_denda_kondisi, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pengembalianLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(pengembalianLayout.createSequentialGroup()
-                        .addComponent(btn_tambah, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1))
-                    .addComponent(txt_kode_pengembalian, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(291, 291, 291))
+                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pengembalianLayout.createSequentialGroup()
+                        .addComponent(jLabel13)
+                        .addGap(405, 405, 405))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pengembalianLayout.createSequentialGroup()
+                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(pengembalianLayout.createSequentialGroup()
+                                .addComponent(btn_tambah, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButton1))
+                            .addComponent(txt_kode_pengembalian, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(295, 295, 295))))
         );
         pengembalianLayout.setVerticalGroup(
             pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -649,7 +696,7 @@ public class Pengembalian extends javax.swing.JPanel {
                                     .addGap(22, 22, 22)
                                     .addComponent(jLabel10)))
                             .addGroup(pengembalianLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel5)
                                 .addGap(4, 4, 4)))
                         .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -657,37 +704,30 @@ public class Pengembalian extends javax.swing.JPanel {
                                 .addComponent(spinner_pinjam, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(spinner_kembali, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(txt_judul_buku, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(22, 22, 22)
-                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel12))
-                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pengembalianLayout.createSequentialGroup()
-                                .addGap(4, 4, 4)
-                                .addComponent(status_pengembalian, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(pengembalianLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(kondisi_buku, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(22, 22, 22)
+                        .addGap(34, 34, 34)
                         .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel14))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(waktu_pengembalian, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txt_denda, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel13)
-                        .addGap(18, 18, 18)
-                        .addComponent(txt_kode_pengembalian, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btn_tambah, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(69, 69, 69))
+                            .addComponent(jLabel12)
+                            .addComponent(jLabel14)))
                     .addGroup(pengembalianLayout.createSequentialGroup()
                         .addComponent(tanggal_kembali_akhir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(457, Short.MAX_VALUE))))
+                        .addGap(162, 162, 162)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_denda_total, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(kondisi_buku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel13)
+                .addGap(18, 18, 18)
+                .addComponent(txt_kode_pengembalian, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_tambah, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(43, 43, 43)
+                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_denda_kondisi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txt_denda_telat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(59, 59, 59))
         );
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
@@ -733,10 +773,10 @@ public class Pengembalian extends javax.swing.JPanel {
         );
 
         addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
             public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
                 formAncestorAdded(evt);
-            }
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
             }
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
             }
@@ -947,6 +987,7 @@ public class Pengembalian extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void tabel_pendingMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabel_pendingMouseClicked
+        int selectedRow = tabel_pending.getSelectedRow();
         int index = tabel_pending.getSelectedRow();
         TableModel model = tabel_pending.getModel();
         String kodepeminjaman = model.getValueAt(index, 0).toString();
@@ -957,6 +998,9 @@ public class Pengembalian extends javax.swing.JPanel {
         String idpetugas = model.getValueAt(index, 2).toString();
         String judulbuku = model.getValueAt(index, 7).toString();
         String kodebuku = model.getValueAt(index, 6).toString();
+        tanggal_kembali_akhir.setDate(null);
+        spinner_kembali.setValue(0);
+        kondisi_buku.setSelectedItem("Baik");
 
         txt_kode_peminjaman.setText(kodepeminjaman);
         try {
@@ -979,133 +1023,177 @@ public class Pengembalian extends javax.swing.JPanel {
         txt_petugas.setText(idpetugas);
         txt_judul_buku.setText(judulbuku);
         txt_kode_buku.setText(kodebuku);
-        spinner_pinjam.enable(false);
+
+        // Menghapus baris yang diklik dari tabel
+        ((DefaultTableModel) model).removeRow(selectedRow);
 
         jDialog1.setVisible(true);
     }//GEN-LAST:event_tabel_pendingMouseClicked
 
     private void btn_tambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tambahActionPerformed
-        {
+        int jumlahpeminjaman = (int) spinner_pinjam.getValue();
+        String kodebuku = txt_judul_buku.getText();
+        String kodepeminjaman = txt_kode_peminjaman.getText();
+        String kodepengembalian = txt_kode_pengembalian.getText();
+        String petugas = txt_petugas.getText();
 
-            String selectedStatus = (String) status_pengembalian.getSelectedItem();
-            int jumlahpeminjaman = (int) spinner_pinjam.getValue();
-            String namabuku = txt_judul_buku.getText();
-            String kodebuku = txt_kode_buku.getText();
-            String kodepeminjaman = txt_kode_peminjaman.getText();
+        String kondisiBukuStatus;
+        if (jumlahpeminjaman != 0) {
+            kondisiBukuStatus = "Dipinjam";
+        } else {
+            kondisiBukuStatus = "Kembali";
+        }
 
-            // Query UPDATE
-            String sqlUpdate = "UPDATE detail_peminjaman SET status_peminjaman = ?, jumlah_peminjaman = ? WHERE kode_peminjaman = ? AND No_buku = (SELECT No_buku from buku where judul_buku = ?)";
+        String kondisibuku = (String) kondisi_buku.getSelectedItem();
+        int jumlahkembali = (int) spinner_kembali.getValue();
+        String kodebuku1 = txt_judul_buku.getText();
+        String denda = txt_denda_total.getText();
+        String nama = txt_nama.getText();
 
-            try (Connection conn = koneksi.Koneksi(); PreparedStatement pstUpdate = conn.prepareStatement(sqlUpdate)) {
+        try {
+            con.setAutoCommit(false); // Mulai transaksi
 
-                pstUpdate.setString(1, selectedStatus);
+            // Update detail peminjaman
+            String sqlUpdate = "UPDATE detail_peminjaman SET status_peminjaman = ?, jumlah_peminjaman = ? WHERE kode_peminjaman = ? AND No_buku = (SELECT No_buku FROM buku WHERE judul_buku = ?)";
+            try (PreparedStatement pstUpdate = con.prepareStatement(sqlUpdate)) {
+                pstUpdate.setString(1, kondisiBukuStatus);
                 pstUpdate.setInt(2, jumlahpeminjaman);
-                pstUpdate.setString(3, kodepeminjaman);  // Urutan parameter sesuai dengan urutan pada query
-                pstUpdate.setString(4, namabuku);
+                pstUpdate.setString(3, kodepeminjaman);
+                pstUpdate.setString(4, kodebuku);
+                masuktabelpending();
                 int rowsAffected = pstUpdate.executeUpdate();
-
-                String kodepengembalian = txt_kode_pengembalian.getText();
-                String kodepeminjaman1 = txt_kode_peminjaman.getText();
-                String petugas = txt_petugas.getText();
-
-                // Insert data ke tabel 'pengembalian'
-                String sqlInsertPengembalian = "INSERT INTO pengembalian (kode_pengembalian, kode_peminjaman, ID_users) VALUES (?, ?, (SELECT ID_users FROM users WHERE username = ?))";
-                try (PreparedStatement pstInsertPengembalian = conn.prepareStatement(sqlInsertPengembalian)) {
-                    pstInsertPengembalian.setString(1, kodepengembalian);
-                    pstInsertPengembalian.setString(2, kodepeminjaman1);
-                    pstInsertPengembalian.setString(3, petugas);
-
-                    pstInsertPengembalian.executeUpdate();
-                } catch (Exception r) {
-                    System.out.println("ins pengembalian" + r);
+                if (rowsAffected == 0) {
+                    throw new SQLException("Update gagal. Tidak ada baris yang terpengaruh.");
                 }
-
-                String kodepengembalian1 = txt_kode_pengembalian.getText();
-                String selectedStatus1 = (String) status_pengembalian.getSelectedItem();
-                String waktupengembalian = (String) waktu_pengembalian.getSelectedItem();
-                String kondisibuku = (String) kondisi_buku.getSelectedItem();
-                int jumlahkembali = (int) spinner_kembali.getValue();
-                String kodebuku1 = txt_kode_buku.getText();
-                int denda = Integer.parseInt(txt_denda.getText());
-                String nama = txt_nama.getText();
-
-                // Insert data ke tabel 'detail_pengembalian'
-                String sqlInsertDetailPengembalian = "INSERT INTO detail_pengembalian VALUES (?, ?, ?, ?, ?, ?, (SELECT No_buku from buku where judul_buku = ?), ?, (SELECT NISN FROM anggota WHERE nama = ?))";
-                try (PreparedStatement pstInsertDetailPengembalian = conn.prepareStatement(sqlInsertDetailPengembalian)) {
-                    pstInsertDetailPengembalian.setString(1, kodepengembalian1);
-                    pstInsertDetailPengembalian.setString(2, selectedStatus1);
-                    pstInsertDetailPengembalian.setString(3, waktupengembalian);
-                    pstInsertDetailPengembalian.setString(4, kondisibuku);
-                    java.sql.Date tanggalPinjamSQL = new java.sql.Date(tanggal_pinjam.getDate().getTime());
-                    pstInsertDetailPengembalian.setDate(5, tanggalPinjamSQL);
-                    pstInsertDetailPengembalian.setInt(6, jumlahkembali);
-                    pstInsertDetailPengembalian.setString(7, namabuku);
-                    pstInsertDetailPengembalian.setInt(8, denda);
-                    pstInsertDetailPengembalian.setString(9, nama);
-
-                    System.out.println(pstInsertDetailPengembalian);
-
-                    pstInsertDetailPengembalian.executeUpdate();
-
-                    try {
-                        pst = con.prepareStatement("Select nama, jumlah_denda from denda where nama = '" + nama + "'");
-                        rs = pst.executeQuery();
-                        rs.next();
-                        int jml_denda = rs.getInt(2);
-                        int tot_denda = jml_denda + denda;
-                        if (rs.next()) {
-                            pst = con.prepareStatement("INSERT INTO denda (jumlah_denda, status_denda, total_pembayaran, NISN, No_buku, kode_pengembalian) VALUES (\n"
-                                    + "?, 'Belum Lunas', 0, (SELECT NISN FROM anggota WHERE nama = ?), (SELECT No_buku from buku where judul_buku = ?), ?);");
-                            pst.setInt(1, denda);
-                            pst.setString(2, nama);
-                            pst.setString(3, namabuku);
-                            pst.setString(4, kodepengembalian);
-                            pst.execute();
-                        } else {
-                            pst = con.prepareStatement("update denda set jumlah_denda = ? where nama = ?");
-                            pst.setInt(1, tot_denda);
-                            pst.setString(2, nama);
-                            pst.execute();
-                        }
-                    } catch (Exception e) {
-                    }
-
-                    pst = con.prepareStatement("delete from denda where jumlah_denda = 0");
-                    pst.execute();
-                } catch (Exception e) {
-                    System.out.println("ins detPengembalian" + e);
-                }
-
-                // Update status kondisi buku
-                String kondisiBukuStatus = (Integer.parseInt(spinner_pinjam.getValue().toString()) != 0) ? "kembali" : "kembali"; // Ubah sesuai kebutuhan
-                JOptionPane.showMessageDialog(null, "Update berhasil");
-                spinner_kembali.setValue(0);
-                tanggal_kembali_akhir.setDate(null);
-
-                jDialog1.dispose();
-                masuktabelreturn();
-                id_autoincrement();
-                tambahStokBuku(conn, namabuku, jumlahkembali);
-                load_table();
-                // Tambahkan stok buku
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Gagal: " + e.getMessage());
             }
+
+            // Insert data ke tabel 'pengembalian'
+            String sqlInsertPengembalian = "INSERT INTO pengembalian (kode_pengembalian, kode_peminjaman, ID_users) VALUES (?, ?, (SELECT ID_users FROM users WHERE username = ?LIMIT 1))";
+            try (PreparedStatement pstInsertPengembalian = con.prepareStatement(sqlInsertPengembalian)) {
+                pstInsertPengembalian.setString(1, kodepengembalian);
+                pstInsertPengembalian.setString(2, kodepeminjaman);
+                pstInsertPengembalian.setString(3, petugas);
+                pstInsertPengembalian.executeUpdate();
+            }
+
+            // Insert data ke tabel 'detail_pengembalian'
+            String sqlInsertDetailPengembalian = "INSERT INTO detail_pengembalian VALUES (?, ?, ?, ?, ?, ?, (SELECT No_buku FROM buku WHERE judul_buku = ? LIMIT 1), ?, (SELECT NISN FROM anggota WHERE nama = ?LIMIT 1))";
+            try (PreparedStatement pstInsertDetailPengembalian = con.prepareStatement(sqlInsertDetailPengembalian)) {
+                // Set status menjadi "Kembali" untuk semua data yang diinsert ke detail_pengembalian
+                String statusDetailPengembalian = "Kembali";
+
+                // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
+                Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
+                Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
+
+                // Mendapatkan status waktu kembali berdasarkan perbandingan tanggal
+                String waktupengembalian;
+                if (tanggalKembaliAkhir != null && tanggalKembaliAwal != null) {
+                    if (tanggalKembaliAkhir.after(tanggalKembaliAwal)) {
+                        waktupengembalian = "Telat";
+                    } else {
+                        waktupengembalian = "Tepat Waktu";
+                    }
+                } else {
+                    waktupengembalian = "Tidak Diketahui";
+                }
+
+                pstInsertDetailPengembalian.setString(1, kodepengembalian);
+                pstInsertDetailPengembalian.setString(2, statusDetailPengembalian);
+                pstInsertDetailPengembalian.setString(3, waktupengembalian);
+                pstInsertDetailPengembalian.setString(4, kondisibuku);
+                java.sql.Date tanggalPinjamSQL = new java.sql.Date(tanggal_pinjam.getDate().getTime());
+                pstInsertDetailPengembalian.setDate(5, tanggalPinjamSQL);
+                pstInsertDetailPengembalian.setInt(6, jumlahkembali);
+                pstInsertDetailPengembalian.setString(7, kodebuku1);
+                pstInsertDetailPengembalian.setString(8, denda);
+                pstInsertDetailPengembalian.setString(9, nama);
+                pstInsertDetailPengembalian.executeUpdate();
+            }
+
+            // Tambahkan logika untuk memasukkan data ke tabel 'denda' jika jumlah denda tidak sama dengan nol
+            if (!denda.equals("0")) {
+                // Cek apakah ada entri denda dengan NISN yang sama
+                String sqlCheckExistingDenda = "SELECT COUNT(*) FROM denda WHERE NISN = (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1)";
+                try (PreparedStatement pstCheckExistingDenda = con.prepareStatement(sqlCheckExistingDenda)) {
+                    pstCheckExistingDenda.setString(1, nama); // Gunakan NISN atau nama sesuai kebutuhan Anda
+                    ResultSet rs = pstCheckExistingDenda.executeQuery();
+                    rs.next();
+                    int rowCount = rs.getInt(1);
+                    if (rowCount > 0) {
+                        // Jika ada, update jumlah denda yang ada dengan jumlah denda yang baru ditambahkan
+                        String sqlUpdateDenda = "UPDATE denda SET jumlah_denda = jumlah_denda + ? WHERE NISN = (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1)";
+                        try (PreparedStatement pstUpdateDenda = con.prepareStatement(sqlUpdateDenda)) {
+                            pstUpdateDenda.setString(1, denda);
+                            pstUpdateDenda.setString(2, nama); // Gunakan NISN atau nama sesuai kebutuhan Anda
+                            pstUpdateDenda.executeUpdate();
+                        }
+                    } else {
+                        // Jika tidak ada, masukkan data baru ke tabel 'denda'
+                        String sqlInsertDenda = "INSERT INTO denda (jumlah_denda, status_denda, total_pembayaran, NISN, No_buku, kode_pengembalian) VALUES (?, ?, ?, (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1), (SELECT No_buku FROM buku WHERE judul_buku = ? LIMIT 1), ?)";
+                        try (PreparedStatement pstInsertDenda = con.prepareStatement(sqlInsertDenda)) {
+                            pstInsertDenda.setString(1, denda);
+                            pstInsertDenda.setString(2, "Belum Lunas"); // Mengasumsikan status awal adalah 'Belum Lunas'
+                            pstInsertDenda.setString(3, "0"); // Mengasumsikan total_pembayaran awal sama dengan jumlah_denda
+                            pstInsertDenda.setString(4, nama);
+                            pstInsertDenda.setString(5, kodebuku1);
+                            pstInsertDenda.setString(6, kodepengembalian);
+                            pstInsertDenda.executeUpdate();
+                        }
+                    }
+                }
+            }
+
+            // Jika tabel 'denda' kosong, atur ID_denda ke 1
+            String sqlCheckEmptyDenda = "SELECT COUNT(*) FROM denda";
+            try (PreparedStatement pstCheckEmptyDenda = con.prepareStatement(sqlCheckEmptyDenda)) {
+                ResultSet rs = pstCheckEmptyDenda.executeQuery();
+                rs.next();
+                int rowCount = rs.getInt(1);
+                if (rowCount == 0) {
+                    // Tabel 'denda' kosong, atur ID_denda ke 1
+                    String sqlResetID = "ALTER TABLE denda AUTO_INCREMENT = 1";
+                    try (PreparedStatement pstResetID = con.prepareStatement(sqlResetID)) {
+                        pstResetID.executeUpdate();
+                    }
+                }
+            }
+
+            try {
+                pst = con.prepareStatement("DELETE FROM denda WHERE jumlah_denda = 0");
+                pst.execute();
+            } catch (Exception e) {
+                System.out.println("sat" + e);
+            }
+            // Tambahkan stok buku
+            if (!kondisi_buku.getSelectedItem().equals("Hilang")) {
+                tambahStokBuku(con, jumlahkembali, kodebuku1);
+
+            }
+
+            // Selesai transaksi
+            con.commit();
+            JOptionPane.showMessageDialog(null, "Update berhasil");
+            masuktabelreturn();
+            id_autoincrement();
+            jDialog1.dispose();
+            load_table();
+            txt_denda_total.setText("0");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Gagal: " + e.getMessage());
         }
     }//GEN-LAST:event_btn_tambahActionPerformed
 
-    private void status_pengembalianActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_status_pengembalianActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_status_pengembalianActionPerformed
-
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-
         spinner_kembali.setValue(0);
-        tanggal_kembali_akhir.setDate(null);
+        txt_denda_total.setText("0");
+        kondisi_buku.setSelectedItem("Baik");
+        txt_denda_telat.setText("0");
+        txt_denda_kondisi.setText("0");
 
         jDialog1.dispose();
+        load_table();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void txt_judul_bukuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_judul_bukuActionPerformed
@@ -1113,15 +1201,15 @@ public class Pengembalian extends javax.swing.JPanel {
     }//GEN-LAST:event_txt_judul_bukuActionPerformed
 
     private void spinner_kembaliStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spinner_kembaliStateChanged
-        // TODO add your handling code here:
         Object kmbl = spinner_kembali.getValue();
         Object pnjm = spinner_pinjam.getValue();
         String str = String.valueOf(kmbl);
         int jmlh_pnjm = Integer.parseInt(String.valueOf(pnjm));
         int jmlh_Kem = Integer.parseInt(str);
+        txt_denda_kondisi.setText("0");
         System.out.println(jmlh_Kem);
         if (jmlh_Kem <= 0) {
-            txt_denda.setText("0");
+            txt_denda_telat.setText("0");
         } else {
             if (tanggal_kembali_akhir.getDate() != null) {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -1138,8 +1226,14 @@ public class Pengembalian extends javax.swing.JPanel {
                     if (selisih >= 0) {
                         int total_denda = selisih * 1000;
                         int total_keseluruhan = jmlh_Kem * total_denda;
+                        txt_denda_telat.setText(Integer.toString(total_keseluruhan));
+                        // Menangani langsung jika kondisi "Baik"
+                        kondisi_buku.getSelectedItem().toString().equals("Baik");
+                        // Mengambil nilai dari txt_denda_telat
+                        int denda_telat = Integer.parseInt(txt_denda_telat.getText());
 
-                        txt_denda.setText(Integer.toString(total_keseluruhan));
+                        // Menetapkan nilai denda langsung ke txt_denda_total
+                        txt_denda_total.setText(String.valueOf(denda_telat));
                     } else {
                         JOptionPane.showMessageDialog(pengembalian, "Pastikan ada memasukkan tanggal pengembalian yang benar");
                         spinner_kembali.setValue(jmlh_Kem - 1);
@@ -1156,11 +1250,11 @@ public class Pengembalian extends javax.swing.JPanel {
                 spinner_kembali.setValue(0);
             }
         }
-    }//GEN-LAST:event_spinner_kembaliStateChanged
 
-    private void waktu_pengembalianActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_waktu_pengembalianActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_waktu_pengembalianActionPerformed
+        // Recalculate the value of jmlh_pnjm based on the values of spinner_pinjam and spinner_kembali
+        jmlh_pnjm = Integer.parseInt(spinner_pinjam.getValue().toString()) - 1;
+        spinner_pinjam.setValue(jmlh_pnjm);
+    }//GEN-LAST:event_spinner_kembaliStateChanged
 
     private void formAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_formAncestorAdded
         load_table();
@@ -1180,7 +1274,7 @@ public class Pengembalian extends javax.swing.JPanel {
 
     private void txt_searchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_searchKeyReleased
         String keyword = txt_search.getText().trim();
-        String sql = "SELECT peminjaman.kode_peminjaman,anggota.nama,users.username,detail_peminjaman.tanggal_peminjaman,detail_peminjaman.tanggal_kembali, detail_peminjaman.jumlah_peminjaman, buku.kode_buku,buku.judul_buku, detail_peminjaman.status_peminjaman \n"
+        String sql = "SELECT peminjaman.kode_peminjaman,anggota.nama,users.username,detail_peminjaman.tanggal_peminjaman,detail_peminjaman.tanggal_kembali, detail_peminjaman.jumlah_peminjaman, buku.kode_buku,buku.judul_buku \n"
                 + "FROM peminjaman \n"
                 + "LEFT JOIN detail_peminjaman ON peminjaman.kode_peminjaman = detail_peminjaman.kode_peminjaman \n"
                 + "LEFT JOIN anggota ON peminjaman.NISN = anggota.NISN \n"
@@ -1191,8 +1285,9 @@ public class Pengembalian extends javax.swing.JPanel {
                 + "detail_peminjaman.jumlah_peminjaman LIKE '%" + keyword + "%'";
 
         try {
-            pst = con.prepareStatement(sql);
-            rs = pst.executeQuery();
+//            java.sql.Connection con = (java.sql.Connection) Config.configDB();
+            java.sql.PreparedStatement pst = con.prepareStatement(sql);
+            java.sql.ResultSet rs = pst.executeQuery();
 
             // Creating a model to store the filtered data
             DefaultTableModel filteredModel = new DefaultTableModel() {
@@ -1243,8 +1338,9 @@ public class Pengembalian extends javax.swing.JPanel {
                 + "detail_pengembalian.jumlah_pengembalian LIKE '%" + keyword + "%'";
 
         try {
-            pst = con.prepareStatement(sql);
-            rs = pst.executeQuery();
+
+            java.sql.PreparedStatement pst = con.prepareStatement(sql);
+            java.sql.ResultSet rs = pst.executeQuery();
 
             // Creating a model to store the filtered data
             DefaultTableModel filteredModel = new DefaultTableModel() {
@@ -1288,34 +1384,62 @@ public class Pengembalian extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_txt_search1KeyReleased
 
-    private void tanggal_kembali_akhirPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tanggal_kembali_akhirPropertyChange
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tanggal_kembali_akhirPropertyChange
+    private void spinner_kembaliAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_spinner_kembaliAncestorAdded
 
-    private void tanggal_kembali_akhirFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tanggal_kembali_akhirFocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tanggal_kembali_akhirFocusLost
+    }//GEN-LAST:event_spinner_kembaliAncestorAdded
 
-    private void tanggal_kembali_akhirKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tanggal_kembali_akhirKeyPressed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tanggal_kembali_akhirKeyPressed
+    private void kondisi_bukuItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_kondisi_bukuItemStateChanged
+        String kondisi = kondisi_buku.getSelectedItem().toString();
+        String judul_buku = txt_judul_buku.getText();
+        String kode_buku = txt_kode_buku.getText();
+        int denda = 0;
 
-    private void tanggal_kembali_akhirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tanggal_kembali_akhirMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tanggal_kembali_akhirMouseClicked
+        if (!txt_denda_kondisi.getText().isEmpty()) {
+            denda = Integer.parseInt(txt_denda_kondisi.getText());
+        }
 
-    private void spinner_kembaliMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spinner_kembaliMouseClicked
-        // TODO add your handling code here:
+        int harga_buku = getHargaBuku(judul_buku);
+        System.out.println(harga_buku);
 
-    }//GEN-LAST:event_spinner_kembaliMouseClicked
+        if (kondisi.equals("Baik")) {
+            denda = 0;
+        } else if (kondisi.equals("Rusak")) {
+            denda = harga_buku / 2;
+        } else if (kondisi.equals("Hilang")) {
+            denda = harga_buku;
+        }
 
-    private void spinner_kembaliPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_spinner_kembaliPropertyChange
-        // TODO add your handling code here:
-    }//GEN-LAST:event_spinner_kembaliPropertyChange
+        txt_denda_kondisi.setText(String.valueOf(denda));
 
-    private void spinner_kembaliVetoableChange(java.beans.PropertyChangeEvent evt)throws java.beans.PropertyVetoException {//GEN-FIRST:event_spinner_kembaliVetoableChange
         // TODO add your handling code here:
-    }//GEN-LAST:event_spinner_kembaliVetoableChange
+        // Mengambil nilai dari txt_denda_telat dan txt_denda_kondisi
+        int denda_telat = Integer.parseInt(txt_denda_telat.getText());
+        int denda_kondisi = Integer.parseInt(txt_denda_kondisi.getText());
+
+        // Menjumlahkan nilai dari txt_denda_telat dengan txt_denda_kondisi
+        int total_denda = denda_telat + denda_kondisi;
+        System.out.println(total_denda);
+
+        // Menetapkan nilai total denda ke txt_denda_total
+        txt_denda_total.setText(String.valueOf(total_denda));
+
+    }//GEN-LAST:event_kondisi_bukuItemStateChanged
+
+    private void txt_denda_totalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_denda_totalActionPerformed
+
+    }//GEN-LAST:event_txt_denda_totalActionPerformed
+
+    private void txt_denda_kondisiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_denda_kondisiActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_denda_kondisiActionPerformed
+
+    private void txt_denda_totalAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_txt_denda_totalAncestorAdded
+
+    }//GEN-LAST:event_txt_denda_totalAncestorAdded
+
+    private void spinner_pinjamStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spinner_pinjamStateChanged
+
+    }//GEN-LAST:event_spinner_pinjamStateChanged
 
     DefaultTableModel model = new DefaultTableModel() {
         public boolean isCellEditable(int row, int column) {
@@ -1329,12 +1453,10 @@ public class Pengembalian extends javax.swing.JPanel {
     private javax.swing.JDialog jDialog1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
@@ -1354,17 +1476,18 @@ public class Pengembalian extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    public javax.swing.JComboBox<String> kondisi_buku;
+    private javax.swing.JComboBox<String> kondisi_buku;
     private javax.swing.JPanel pengembalian;
     private javax.swing.JSpinner spinner_kembali;
     public javax.swing.JSpinner spinner_pinjam;
-    public javax.swing.JComboBox<String> status_pengembalian;
     private javax.swing.JTable tabel_pending;
     private javax.swing.JTable tabel_return;
     private com.toedter.calendar.JDateChooser tanggal_kembali_akhir;
     public com.toedter.calendar.JDateChooser tanggal_kembali_awal;
     public com.toedter.calendar.JDateChooser tanggal_pinjam;
-    public javax.swing.JTextField txt_denda;
+    private javax.swing.JTextField txt_denda_kondisi;
+    private javax.swing.JTextField txt_denda_telat;
+    public javax.swing.JTextField txt_denda_total;
     public javax.swing.JTextField txt_judul_buku;
     public javax.swing.JTextField txt_kode_buku;
     public javax.swing.JTextField txt_kode_peminjaman;
@@ -1373,6 +1496,5 @@ public class Pengembalian extends javax.swing.JPanel {
     public javax.swing.JTextField txt_petugas;
     private javax.swing.JTextField txt_search;
     private javax.swing.JTextField txt_search1;
-    public javax.swing.JComboBox<String> waktu_pengembalian;
     // End of variables declaration//GEN-END:variables
 }
