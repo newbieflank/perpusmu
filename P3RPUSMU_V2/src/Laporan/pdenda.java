@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Peminjaman;
+package Laporan;
 
 import Login.Login;
 import Navbar.Navbar;
