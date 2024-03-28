@@ -12,8 +12,12 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import Navbar.koneksi;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.TableModel;
 
@@ -39,7 +43,7 @@ public class Denda extends javax.swing.JPanel {
         jPanel1.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         denda_popup.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         denda_popup2.putClientProperty(FlatClientProperties.STYLE, "arc:30");
-        jDialog1.setSize(640, 293);
+        search.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Cari Nama");
 
         UIManager.put("Button.arc", 15);
         search.putClientProperty("JComponent.roundRect", true);
@@ -50,11 +54,22 @@ public class Denda extends javax.swing.JPanel {
     }
 
     private void Jdialog() {
-        jDialog1.setLocationRelativeTo(null);
-        jDialog1.setBackground(Color.white);
-        jDialog1.getRootPane().setOpaque(false);
-        jDialog1.getContentPane().setBackground(new Color(0, 0, 0, 0));
-        jDialog1.setBackground(new Color(0, 0, 0, 0));
+        jDialog1.setSize(640, 293);
+
+        final Toolkit toolkit = Toolkit.getDefaultToolkit();
+        final Dimension screenSize = toolkit.getScreenSize();
+        final int x = (screenSize.width - jDialog1.getWidth()) / 2;
+        final int y = (screenSize.height - jDialog1.getHeight()) / 2;
+        jDialog1.setLocation(x, y);
+    }
+
+    private void update() {
+        try {
+            pst = con.prepareStatement("UPDATE denda set jumlah_denda = jumlah_denda - total_pembayaran, total_pembayaran = 0;");
+            pst.execute();
+        } catch (Exception e) {
+            System.out.println("update" + e);
+        }
     }
 
     private void loadTabel() throws SQLException {
@@ -72,7 +87,8 @@ public class Denda extends javax.swing.JPanel {
 
         try {
             pst = con.prepareStatement("SELECT anggota.nama , denda.jumlah_denda, denda.status_denda, denda.total_pembayaran "
-                    + "from pengembalian join denda on pengembalian.kode_pengembalian = denda.kode_pengembalian join anggota on anggota.NISN = denda.NISN;");
+                    + "from pengembalian join denda on pengembalian.kode_pengembalian = denda.kode_pengembalian join anggota on anggota.NISN = denda.NISN "
+                    + "where denda.status_denda = 'Belum Lunas';");
             rs = pst.executeQuery();
             while (rs.next()) {
                 model.addRow(new Object[]{rs.getString(1), rs.getInt(2), rs.getString(3), rs.getInt(4)});
@@ -115,6 +131,7 @@ public class Denda extends javax.swing.JPanel {
         hapus_denda = new javax.swing.JButton();
 
         jDialog1.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        jDialog1.setLocationByPlatform(true);
         jDialog1.setUndecorated(true);
 
         denda_popup.setBackground(new java.awt.Color(204, 204, 204));
@@ -140,6 +157,12 @@ public class Denda extends javax.swing.JPanel {
                 .addComponent(jLabel2)
                 .addGap(0, 6, Short.MAX_VALUE))
         );
+
+        denda_total.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                denda_totalKeyReleased(evt);
+            }
+        });
 
         denda_status.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Belum Lunas", "Lunas" }));
 
@@ -252,19 +275,35 @@ public class Denda extends javax.swing.JPanel {
             .addComponent(denda_popup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
+        jDialog1.getAccessibleContext().setAccessibleParent(null);
+
         setBackground(new java.awt.Color(204, 204, 204));
+        addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                formAncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setToolTipText("");
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel1.setText("LIST DATA Denda");
+        jLabel1.setText("LIST DATA DENDA");
 
         search.setToolTipText("");
         search.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchActionPerformed(evt);
+            }
+        });
+        search.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                searchKeyReleased(evt);
             }
         });
 
@@ -411,13 +450,14 @@ public class Denda extends javax.swing.JPanel {
             denda_nama.setText(NAMA);
             denda_status.setSelectedItem(STATUS);
             denda_jumlah.setText(JUMLAH);
-            denda_total.setText(TOTAL);
+            denda_total.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, TOTAL);
             denda_nama.enable(false);
 
             jDialog1.setVisible(true);
         } catch (Exception e) {
             System.out.println("edit denda" + e);
             JOptionPane.showMessageDialog(denda_popup, "Pilih Dahulu Data Yang Akan Di Ubah");
+            jDialog1.setVisible(false);
         }
     }//GEN-LAST:event_edit_dendaActionPerformed
 
@@ -429,7 +469,7 @@ public class Denda extends javax.swing.JPanel {
                     JOptionPane.QUESTION_MESSAGE);
             if (result == JOptionPane.YES_OPTION) {
                 try {
-                    pst = con.prepareStatement("delete from denda where nama='" + nama + "'");
+                    pst = con.prepareStatement("delete from denda  where NISN = (SELECT NISN FROM anggota WHERE nama = '" + nama + "');");
                     pst.execute();
                     loadTabel();
                 } catch (Exception e) {
@@ -468,17 +508,51 @@ public class Denda extends javax.swing.JPanel {
                     JOptionPane.QUESTION_MESSAGE);
             if (result == JOptionPane.YES_OPTION) {
                 try {
-                    pst = con.prepareStatement("update denda set status_denda ='" + denda_status.getSelectedItem() + "',"
-                            + " jumlah_denda =" + denda_jumlah.getText() + ", total_pembayaran=" + denda_total.getText());
+                    pst = con.prepareStatement("update denda set total_pembayaran= " + denda_total.getText()
+                            + " where NISN = (SELECT NISN FROM anggota WHERE nama = '" + nama + "');");
                     pst.execute();
+                    update();
+                    try {
+                        pst = con.prepareStatement("update denda set status_denda = 'Lunas' where jumlah_denda = 0");
+                        pst.execute();
+                    } catch (Exception e) {
+                        System.out.println("Lunas" + e);
+                    }
                     loadTabel();
                 } catch (Exception e) {
+                    System.out.println(e);
                 }
                 nama = null;
                 jDialog1.dispose();
             }
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void searchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchKeyReleased
+        // TODO add your handling code here:
+        String key = search.getText().trim();
+        try {
+            pst = con.prepareStatement("select * from denda where nama like '&" + key + "&'");
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_searchKeyReleased
+
+    private void formAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_formAncestorAdded
+        try {
+            // TODO add your handling code here:
+            loadTabel();
+        } catch (SQLException ex) {
+            Logger.getLogger(Denda.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_formAncestorAdded
+
+    private void denda_totalKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_denda_totalKeyReleased
+        // TODO add your handling code here:
+        if ((Character.isAlphabetic(evt.getKeyChar())) || (Character.isWhitespace(evt.getKeyChar()))) {
+            JOptionPane.showMessageDialog(jDialog1, "Hanya Bisa di isi dengan Angka");
+            evt.consume();
+        }
+    }//GEN-LAST:event_denda_totalKeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

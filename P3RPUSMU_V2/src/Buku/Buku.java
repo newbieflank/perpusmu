@@ -670,7 +670,7 @@ public class Buku extends javax.swing.JPanel {
 
                     // Buat pernyataan SQL DELETE
                     String sql = "DELETE FROM buku WHERE No_buku = ?";
-                    PreparedStatement pst = conn.prepareStatement(sql);
+                    PreparedStatement pst = con.prepareStatement(sql);
                     pst.setInt(1, No_buku);
 
                     // Eksekusi pernyataan DELETE
