@@ -26,26 +26,25 @@ public class Dashboard1 extends javax.swing.JPanel {
      * Creates new form Dashboard
      */
     public Dashboard1() {
-   
+
         initComponents();
-        chart.addLegend("Jumlah Peminjaman", Color.decode("#000000"), Color.decode("#000000"));
-        chart.addData(new ModelChart("January", new double[]{50}));
-        chart.addData(new ModelChart("February", new double[]{60}));
-        chart.addData(new ModelChart("March", new double[]{20}));
-        chart.addData(new ModelChart("April", new double[]{48}));
-        chart.addData(new ModelChart("May", new double[]{35}));
-        chart.addData(new ModelChart("June", new double[]{19}));
-        chart.start();
+        init();
+//        chart.addLegend("Jumlah Peminjaman", Color.decode("#000000"), Color.decode("#000000"));
+//        chart.addData(new ModelChart("January", new double[]{50}));
+//        chart.addData(new ModelChart("February", new double[]{60}));
+//        chart.addData(new ModelChart("March", new double[]{20}));
+//        chart.addData(new ModelChart("April", new double[]{48}));
+//        chart.addData(new ModelChart("May", new double[]{35}));
+//        chart.addData(new ModelChart("June", new double[]{19}));
+//        chart.start();
 //        pieChart1.setChartType(PieChart.PeiChartType.DONUT_CHART);
 //        pieChart1.addData(new ModelPieChart("Buku Dipinjam", 50, new Color(255, 0, 0)));
 //        pieChart1.addData(new ModelPieChart("Buku Di Inventory", 20, new Color(0, 0, 255)));
     }
-   /* // Conect database
-    initComponents();
-        init();    
-    }
-    
-    private void init () {
+
+
+
+private void init () {
         chart.addLegend("Jumlah Peminjaman", Color.decode("#000000"), Color.decode("#000000"));
         chart.addLegend("Buku Kembali", Color.black, Color.black);
         chart.addLegend("Buku Dipinjam", Color.black, Color.black);
@@ -77,7 +76,7 @@ public class Dashboard1 extends javax.swing.JPanel {
             r.close();
             p.close();
          return lists;
-}*/
+} 
 
     
     
