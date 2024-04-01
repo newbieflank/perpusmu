@@ -53,20 +53,18 @@ public class ptransaksi extends javax.swing.JPanel {
         model.addColumn("status siswa");
         model.addColumn("Judul");
         model.addColumn("Kategori");
-        model.addColumn("Tanggal Pinjam");
         model.addColumn("Tanggal Kembali");
         model.addColumn("Status pengembalian");
         model.addColumn("Kondisi Buku");
-        model.addColumn("Jumlah Buku");
-        model.addColumn("Buku Dipinjam");
+        model.addColumn("Jumlah Kembali");
         
         try {
-            String sql = "SELECT pengembalian.kode_pengembalian, anggota.nama, anggota.angkatan, anggota.status, buku.judul_buku, buku.kategori, detail_peminjaman.tanggal_peminjaman, detail_peminjaman.tanggal_kembali, detail_pengembalian.status_pengembalian, detail_pengembalian.kondisi_buku, detail_peminjaman.jumlah_peminjaman, detail_pengembalian.jumlah_pengembalian FROM anggota JOIN peminjaman ON peminjaman.NISN = anggota.NISN JOIN detail_peminjaman ON detail_peminjaman.kode_peminjaman = peminjaman.kode_peminjaman JOIN buku ON detail_peminjaman.No_buku = buku.No_buku JOIN detail_pengembalian ON detail_pengembalian.NISN = anggota.NISN AND detail_pengembalian.No_buku = buku.No_buku JOIN pengembalian on detail_pengembalian.kode_pengembalian = pengembalian.kode_pengembalian"; 
+            String sql = "SELECT pengembalian.kode_pengembalian , anggota.nama , anggota.angkatan , anggota.status , buku.judul_buku , buku.kategori , detail_pengembalian.tanggal , detail_pengembalian.status_pengembalian,detail_pengembalian.kondisi_buku,detail_pengembalian.jumlah_pengembalian FROM detail_pengembalian JOIN pengembalian ON pengembalian.kode_pengembalian = detail_pengembalian.kode_pengembalian JOIN anggota ON anggota.NISN = detail_pengembalian.NISN JOIN buku ON buku.No_buku = detail_pengembalian.No_buku;"; 
             java.sql.Connection conn = (Connection) conek.configDB();
             java.sql.Statement stm = conn.createStatement();
             java.sql.ResultSet res = stm.executeQuery(sql);
             while (res.next()) {
-                model.addRow(new Object[]{res.getString(1), res.getString(2), res.getInt(3), res.getString(4),res.getString(5),res.getString(6),res.getString(7),res.getString(8),res.getString(9),res.getString(10),res.getString(11),res.getString(12)});
+                model.addRow(new Object[]{res.getString(1), res.getString(2), res.getInt(3), res.getString(4),res.getString(5),res.getString(6),res.getString(7),res.getString(8),res.getString(9),res.getString(10)});
             }
             jTable1.setModel(model);
         } catch (Exception e) {
@@ -95,20 +93,20 @@ public class ptransaksi extends javax.swing.JPanel {
         jTable1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Kode Pengembalian", "Nama", "angkatan", "Status Siswa", "Judul", "Kategori ", "Tanggal Peminjaman", "Tanggal Kembali", "Status Pengembalian", "Kondisi Buku", "Jumlah Buku", "Buku Dipinjam"
+                "Kode Pengembalian", "Nama", "angkatan", "Status Siswa", "Judul", "Kategori ", "Tanggal kembali", "Status Pengembalian", "Kondisi Buku", "Jumlah kembali"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Object.class, java.lang.Object.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -121,6 +119,7 @@ public class ptransaksi extends javax.swing.JPanel {
         });
         jTable1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jTable1.setGridColor(new java.awt.Color(255, 255, 255));
+        jTable1.setShowGrid(false);
         jTable1.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(jTable1);
         if (jTable1.getColumnModel().getColumnCount() > 0) {
@@ -134,8 +133,6 @@ public class ptransaksi extends javax.swing.JPanel {
             jTable1.getColumnModel().getColumn(7).setResizable(false);
             jTable1.getColumnModel().getColumn(8).setResizable(false);
             jTable1.getColumnModel().getColumn(9).setResizable(false);
-            jTable1.getColumnModel().getColumn(10).setResizable(false);
-            jTable1.getColumnModel().getColumn(11).setResizable(false);
         }
 
         txtcari.addActionListener(new java.awt.event.ActionListener() {
@@ -255,7 +252,7 @@ public class ptransaksi extends javax.swing.JPanel {
 
     private void txtcariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtcariKeyReleased
    String keyword = txtcari.getText().trim();
-     String sql = "SELECT pengembalian.kode_pengembalian, anggota.nama, anggota.angkatan, anggota.status, buku.judul_buku, buku.kategori, detail_peminjaman.tanggal_peminjaman, detail_peminjaman.tanggal_kembali, detail_pengembalian.status_pengembalian, detail_pengembalian.kondisi_buku, detail_peminjaman.jumlah_peminjaman, detail_pengembalian.jumlah_pengembalian FROM anggota JOIN peminjaman ON peminjaman.NISN = anggota.NISN JOIN detail_peminjaman ON detail_peminjaman.kode_peminjaman = peminjaman.kode_peminjaman JOIN buku ON detail_peminjaman.No_buku = buku.No_buku JOIN detail_pengembalian ON detail_pengembalian.NISN = anggota.NISN AND detail_pengembalian.No_buku = buku.No_buku JOIN pengembalian on detail_pengembalian.kode_pengembalian = pengembalian.kode_pengembalian WHERE nama LIKE '%" +keyword + "%' OR angkatan LIKE '%" +keyword + "%' OR status LIKE '%" +keyword + "%' OR judul_buku LIKE '%" +keyword + "%'";
+     String sql = "SELECT pengembalian.kode_pengembalian , anggota.nama , anggota.angkatan , anggota.status , buku.judul_buku , buku.kategori , detail_pengembalian.tanggal , detail_pengembalian.status_pengembalian,detail_pengembalian.kondisi_buku,detail_pengembalian.jumlah_pengembalian FROM detail_pengembalian JOIN pengembalian ON pengembalian.kode_pengembalian = detail_pengembalian.kode_pengembalian JOIN anggota ON anggota.NISN = detail_pengembalian.NISN JOIN buku ON buku.No_buku = detail_pengembalian.No_buku WHERE nama LIKE '%" +keyword + "%' OR angkatan LIKE '%" +keyword + "%' OR status LIKE '%" +keyword + "%' OR judul_buku LIKE '%" +keyword + "%'";
         try {
                java.sql.Connection conn = (java.sql.Connection) conek.configDB();
             java.sql.PreparedStatement pst = conn.prepareStatement(sql);
@@ -267,13 +264,11 @@ public class ptransaksi extends javax.swing.JPanel {
             filteredModel.addColumn("Status Siswa ");
             filteredModel.addColumn("judul ");
             filteredModel.addColumn("kategori");
-            filteredModel.addColumn("tanggal pinjam");
             filteredModel.addColumn("tanggal kembali");
             filteredModel.addColumn("status pengembalian");
             filteredModel.addColumn("kondisi Buku");
-            filteredModel.addColumn("jumlah Buku");
-            filteredModel.addColumn("Buku Dipinjam");
-              
+            filteredModel.addColumn("jumlah kembali");
+        
        
              while (rs.next()) {
                 filteredModel.addRow(new Object[]{
@@ -283,11 +278,9 @@ public class ptransaksi extends javax.swing.JPanel {
                     rs.getString("status"),
                     rs.getString("judul_buku"),
                     rs.getString("Kategori"),
-                    rs.getString("tanggal_peminjaman"),
-                    rs.getString("Tanggal_Kembali"),
+                    rs.getString("tanggal"),
                     rs.getString("Status_pengembalian"),
                     rs.getString("Kondisi_Buku"),
-                    rs.getString("jumlah_peminjaman"),
                     rs.getString("jumlah_pengembalian"),
 
                 });
@@ -344,7 +337,7 @@ String tanggalakhir = String.valueOf(tgl2.format(jDate1.getDate()));
 System.out.println(tanggalawal + tanggalakhir);
 try {
     int No = 1;
-   String sql ="SELECT pengembalian.kode_pengembalian, anggota.nama, anggota.angkatan, anggota.status, buku.judul_buku, buku.kategori, detail_peminjaman.tanggal_peminjaman, detail_peminjaman.tanggal_kembali, detail_pengembalian.status_pengembalian, detail_pengembalian.kondisi_buku, detail_peminjaman.jumlah_peminjaman, detail_pengembalian.jumlah_pengembalian FROM anggota JOIN peminjaman ON peminjaman.NISN = anggota.NISN JOIN detail_peminjaman ON detail_peminjaman.kode_peminjaman = peminjaman.kode_peminjaman JOIN buku ON detail_peminjaman.No_buku = buku.No_buku JOIN detail_pengembalian ON detail_pengembalian.NISN = anggota.NISN AND detail_pengembalian.No_buku = buku.No_buku JOIN pengembalian on detail_pengembalian.kode_pengembalian = pengembalian.kode_pengembalian WHERE  tanggal_peminjaman BETWEEN '"+tanggalawal+"' AND '"+tanggalakhir+"';";
+   String sql ="SELECT pengembalian.kode_pengembalian , anggota.nama , anggota.angkatan , anggota.status , buku.judul_buku , buku.kategori , detail_pengembalian.tanggal , detail_pengembalian.status_pengembalian,detail_pengembalian.kondisi_buku,detail_pengembalian.jumlah_pengembalian FROM detail_pengembalian JOIN pengembalian ON pengembalian.kode_pengembalian = detail_pengembalian.kode_pengembalian JOIN anggota ON anggota.NISN = detail_pengembalian.NISN JOIN buku ON buku.No_buku = detail_pengembalian.No_buku WHERE  tanggal BETWEEN '"+tanggalawal+"' AND '"+tanggalakhir+"';";
    java.sql.Connection conn = (Connection) conek.configDB();
     // Create a Statement
     java.sql.Statement stm = conn.createStatement();
@@ -355,7 +348,7 @@ try {
     while (res.next()) {
        
        table.addRow(new Object[]{res.getString(1), res.getString(2), res.getInt(3), res.getString(4),res.getString(5),res.getString(6),
-           res.getString(7),res.getString(8),res.getString(9),res.getString(10),res.getString(11),res.getString(12)});
+           res.getString(7),res.getString(8),res.getString(9),res.getString(10)});
 }
 } catch (Exception e) {
     Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, e);

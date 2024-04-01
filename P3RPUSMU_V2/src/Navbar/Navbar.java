@@ -406,7 +406,7 @@ public class Navbar extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-
+                //    System.setProperty("sun.java2d.dpiaware", "false");
                     new Navbar().setVisible(true);
                 } catch (SQLException ex) {
                     Logger.getLogger(Navbar.class.getName()).log(Level.SEVERE, null, ex);
