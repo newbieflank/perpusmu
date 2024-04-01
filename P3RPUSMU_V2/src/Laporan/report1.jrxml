@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ee3f81f2-862e-478a-9b6e-77ed1758e6ad">
-	<property name="ireport.zoom" value="1.4641000000000017"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.zoom" value="1.9487171000000028"/>
+	<property name="ireport.x" value="36"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="tgl1" class="java.util.Date">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -10,11 +10,11 @@
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[SELECT peminjaman.kode_peminjaman, anggota.nama, anggota.angkatan, anggota.status, buku.judul_buku, buku.kategori, detail_peminjaman.tanggal_peminjaman, detail_peminjaman.tanggal_kembali, detail_pengembalian.status_pengembalian, detail_pengembalian.kondisi_buku, detail_peminjaman.jumlah_peminjaman, detail_pengembalian.jumlah_pengembalian FROM anggota JOIN peminjaman ON peminjaman.NISN = anggota.NISN JOIN detail_peminjaman ON detail_peminjaman.kode_peminjaman = peminjaman.kode_peminjaman JOIN buku ON detail_peminjaman.No_buku = buku.No_buku LEFT JOIN detail_pengembalian ON detail_pengembalian.NISN = anggota.NISN AND detail_pengembalian.No_buku = buku.No_buku
+		<![CDATA[SELECT pengembalian.kode_pengembalian, anggota.nama, anggota.angkatan, anggota.status, buku.judul_buku, buku.kategori, detail_peminjaman.tanggal_peminjaman, detail_peminjaman.tanggal_kembali, detail_pengembalian.status_pengembalian, detail_pengembalian.kondisi_buku, detail_peminjaman.jumlah_peminjaman, detail_pengembalian.jumlah_pengembalian FROM anggota JOIN peminjaman ON peminjaman.NISN = anggota.NISN JOIN detail_peminjaman ON detail_peminjaman.kode_peminjaman = peminjaman.kode_peminjaman JOIN buku ON detail_peminjaman.No_buku = buku.No_buku JOIN detail_pengembalian ON detail_pengembalian.NISN = anggota.NISN AND detail_pengembalian.No_buku = buku.No_buku JOIN pengembalian on detail_pengembalian.kode_pengembalian = pengembalian.kode_pengembalian
 WHERE 
     detail_peminjaman.tanggal_peminjaman BETWEEN $P{tgl1} AND $P{tgl2} AND detail_peminjaman.tanggal_kembali BETWEEN $P{tgl1} AND $P{tgl2};]]>
 	</queryString>
-	<field name="kode_peminjaman" class="java.lang.Integer">
+	<field name="kode_pengembalian" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="nama" class="java.lang.String">
@@ -54,7 +54,15 @@ WHERE
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="79" splitType="Stretch"/>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="227" y="22" width="251" height="39" uuid="e63a5042-f5f0-4eb6-9338-ac5e2d363b24"/>
+				<textElement>
+					<font size="24"/>
+				</textElement>
+				<text><![CDATA[SMK MANBAUL ULUM]]></text>
+			</staticText>
+		</band>
 	</title>
 	<pageHeader>
 		<band height="35" splitType="Stretch"/>
@@ -97,11 +105,6 @@ WHERE
 			<rectangle>
 				<reportElement x="0" y="0" width="46" height="34" uuid="6b28eb08-def0-4e2a-abcc-dcf0c620a350"/>
 			</rectangle>
-			<staticText>
-				<reportElement x="1" y="0" width="45" height="34" uuid="37245abb-0b41-4b59-9faa-f4ba9a54b9ee"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Kode]]></text>
-			</staticText>
 			<staticText>
 				<reportElement x="46" y="0" width="72" height="34" uuid="090a604a-45ec-43ad-802f-9aa1b4662fa8"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
@@ -157,6 +160,11 @@ WHERE
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Buku Dipinjam]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="46" height="34" uuid="a6fb40e2-1cf3-45dd-b759-aa93f2c4020d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Kode]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
@@ -197,11 +205,6 @@ WHERE
 			<rectangle>
 				<reportElement x="0" y="0" width="46" height="20" uuid="b2405933-321e-4507-8e28-a00e64ec3c17"/>
 			</rectangle>
-			<textField>
-				<reportElement x="1" y="0" width="45" height="20" uuid="bd9b8a89-036e-4673-b093-c13b1c657fae"/>
-				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA[$F{kode_peminjaman}]]></textFieldExpression>
-			</textField>
 			<textField>
 				<reportElement x="46" y="0" width="72" height="20" uuid="91419dc2-7eda-41ac-bcb3-388ff8156078"/>
 				<textElement textAlignment="Center"/>
@@ -256,6 +259,13 @@ WHERE
 				<reportElement x="747" y="0" width="55" height="20" uuid="29d16296-b215-4a4d-bc2a-21319f2a4d82"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{jumlah_pengembalian}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="46" height="20" uuid="c80bf63b-ab5f-4d3d-b83f-f0ff99b5f22d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{kode_pengembalian}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

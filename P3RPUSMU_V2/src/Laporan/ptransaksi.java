@@ -33,16 +33,21 @@ public class ptransaksi extends javax.swing.JPanel {
         jTable1.getTableHeader().setForeground(Color.white);
     }
    private void load_table() throws SQLException {
+       jTable1.clearSelection();
+        jTable1.getTableHeader().setReorderingAllowed(false);
+        jTable1.getTableHeader().setResizingAllowed(false);
       DefaultTableModel model = new DefaultTableModel() {
+          
             @Override
             public boolean isCellEditable(int row, int column) {
-                //all cells false
+            
                 return false;
+           
         }
 };
        
         
-        model.addColumn("Kode Peminjaman");
+        model.addColumn("Kode Pengembalian");
         model.addColumn("Nama");
         model.addColumn("angkatan");
         model.addColumn("status siswa");
@@ -56,12 +61,12 @@ public class ptransaksi extends javax.swing.JPanel {
         model.addColumn("Buku Dipinjam");
         
         try {
-            String sql = "SELECT peminjaman.kode_peminjaman, anggota.nama, anggota.angkatan, anggota.status, buku.judul_buku, buku.kategori, detail_peminjaman.tanggal_peminjaman, detail_peminjaman.tanggal_kembali, detail_pengembalian.status_pengembalian, detail_pengembalian.kondisi_buku, detail_peminjaman.jumlah_peminjaman, detail_pengembalian.jumlah_pengembalian FROM anggota JOIN peminjaman ON peminjaman.NISN = anggota.NISN JOIN detail_peminjaman ON detail_peminjaman.kode_peminjaman = peminjaman.kode_peminjaman JOIN buku ON detail_peminjaman.No_buku = buku.No_buku LEFT JOIN detail_pengembalian ON detail_pengembalian.NISN = anggota.NISN AND detail_pengembalian.No_buku = buku.No_buku "; 
+            String sql = "SELECT pengembalian.kode_pengembalian, anggota.nama, anggota.angkatan, anggota.status, buku.judul_buku, buku.kategori, detail_peminjaman.tanggal_peminjaman, detail_peminjaman.tanggal_kembali, detail_pengembalian.status_pengembalian, detail_pengembalian.kondisi_buku, detail_peminjaman.jumlah_peminjaman, detail_pengembalian.jumlah_pengembalian FROM anggota JOIN peminjaman ON peminjaman.NISN = anggota.NISN JOIN detail_peminjaman ON detail_peminjaman.kode_peminjaman = peminjaman.kode_peminjaman JOIN buku ON detail_peminjaman.No_buku = buku.No_buku JOIN detail_pengembalian ON detail_pengembalian.NISN = anggota.NISN AND detail_pengembalian.No_buku = buku.No_buku JOIN pengembalian on detail_pengembalian.kode_pengembalian = pengembalian.kode_pengembalian"; 
             java.sql.Connection conn = (Connection) conek.configDB();
             java.sql.Statement stm = conn.createStatement();
             java.sql.ResultSet res = stm.executeQuery(sql);
             while (res.next()) {
-                model.addRow(new Object[]{res.getString(1), res.getString(2), res.getInt(3), res.getString(4),res.getString(5),res.getString(6),res.getString(7),res.getString(8),res.getString(9),res.getString(10),res.getString(11),res.getString(11),res.getString(12)});
+                model.addRow(new Object[]{res.getString(1), res.getString(2), res.getInt(3), res.getString(4),res.getString(5),res.getString(6),res.getString(7),res.getString(8),res.getString(9),res.getString(10),res.getString(11),res.getString(12)});
             }
             jTable1.setModel(model);
         } catch (Exception e) {
@@ -82,9 +87,12 @@ public class ptransaksi extends javax.swing.JPanel {
         jDate1 = new com.toedter.calendar.JDateChooser();
         jButton3 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
+        jTable1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null, null, null, null, null},
@@ -93,7 +101,7 @@ public class ptransaksi extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Kode Peminjaman", "Nama", "angkatan", "Status Siswa", "Judul", "Kategori ", "Tanggal Peminjaman", "Tanggal Kembali", "Status Pengembalian", "Kondisi Buku", "Jumlah Buku", "Buku Dipinjam"
+                "Kode Pengembalian", "Nama", "angkatan", "Status Siswa", "Judul", "Kategori ", "Tanggal Peminjaman", "Tanggal Kembali", "Status Pengembalian", "Kondisi Buku", "Jumlah Buku", "Buku Dipinjam"
             }
         ) {
             Class[] types = new Class [] {
@@ -111,9 +119,24 @@ public class ptransaksi extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        jTable1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jTable1.setGridColor(new java.awt.Color(255, 255, 255));
         jTable1.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(jTable1);
+        if (jTable1.getColumnModel().getColumnCount() > 0) {
+            jTable1.getColumnModel().getColumn(0).setResizable(false);
+            jTable1.getColumnModel().getColumn(1).setResizable(false);
+            jTable1.getColumnModel().getColumn(2).setResizable(false);
+            jTable1.getColumnModel().getColumn(3).setResizable(false);
+            jTable1.getColumnModel().getColumn(4).setResizable(false);
+            jTable1.getColumnModel().getColumn(5).setResizable(false);
+            jTable1.getColumnModel().getColumn(6).setResizable(false);
+            jTable1.getColumnModel().getColumn(7).setResizable(false);
+            jTable1.getColumnModel().getColumn(8).setResizable(false);
+            jTable1.getColumnModel().getColumn(9).setResizable(false);
+            jTable1.getColumnModel().getColumn(10).setResizable(false);
+            jTable1.getColumnModel().getColumn(11).setResizable(false);
+        }
 
         txtcari.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -128,7 +151,7 @@ public class ptransaksi extends javax.swing.JPanel {
 
         jToggleButton1.setBackground(new java.awt.Color(51, 153, 0));
         jToggleButton1.setForeground(new java.awt.Color(153, 204, 0));
-        jToggleButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/printer-88 2_1.png"))); // NOI18N
+        jToggleButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/printer-88 2.png"))); // NOI18N
         jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jToggleButton1ActionPerformed(evt);
@@ -147,6 +170,10 @@ public class ptransaksi extends javax.swing.JPanel {
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel2.setText("LAPORAN TRANSAKSI");
 
+        jLabel1.setText("Tanggal Awal");
+
+        jLabel3.setText("Tanggal Akhir");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -154,23 +181,26 @@ public class ptransaksi extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1362, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1599, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(jDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(35, 35, 35)
-                                .addComponent(jDate1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(19, 19, 19))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtcari, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel2))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addComponent(jButton3)
-                        .addGap(18, 18, 18)
-                        .addComponent(jToggleButton1)))
+                            .addComponent(txtcari, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jDate, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(46, 46, 46)
+                                .addComponent(jDate1, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(19, 19, 19)
+                                .addComponent(jButton3)
+                                .addGap(18, 18, 18)
+                                .addComponent(jToggleButton1))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(101, 101, 101)
+                                .addComponent(jLabel3)
+                                .addGap(190, 190, 190)))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -183,7 +213,11 @@ public class ptransaksi extends javax.swing.JPanel {
                         .addGap(12, 12, 12)
                         .addComponent(txtcari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(70, 70, 70)
+                        .addGap(41, 41, 41)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel3))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jDate1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -221,13 +255,13 @@ public class ptransaksi extends javax.swing.JPanel {
 
     private void txtcariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtcariKeyReleased
    String keyword = txtcari.getText().trim();
-     String sql = "SELECT peminjaman.kode_peminjaman, anggota.nama, anggota.angkatan, anggota.status, buku.judul_buku, buku.kategori, detail_peminjaman.tanggal_peminjaman, detail_peminjaman.tanggal_kembali, detail_pengembalian.status_pengembalian, detail_pengembalian.kondisi_buku, detail_peminjaman.jumlah_peminjaman, detail_pengembalian.jumlah_pengembalian FROM anggota JOIN peminjaman ON peminjaman.NISN = anggota.NISN JOIN detail_peminjaman ON detail_peminjaman.kode_peminjaman = peminjaman.kode_peminjaman JOIN buku ON detail_peminjaman.No_buku = buku.No_buku LEFT JOIN detail_pengembalian ON detail_pengembalian.NISN = anggota.NISN AND detail_pengembalian.No_buku = buku.No_buku WHERE nama LIKE '%" +keyword + "%' OR angkatan LIKE '%" +keyword + "%' OR status LIKE '%" +keyword + "%' OR judul_buku LIKE '%" +keyword + "%'";
+     String sql = "SELECT pengembalian.kode_pengembalian, anggota.nama, anggota.angkatan, anggota.status, buku.judul_buku, buku.kategori, detail_peminjaman.tanggal_peminjaman, detail_peminjaman.tanggal_kembali, detail_pengembalian.status_pengembalian, detail_pengembalian.kondisi_buku, detail_peminjaman.jumlah_peminjaman, detail_pengembalian.jumlah_pengembalian FROM anggota JOIN peminjaman ON peminjaman.NISN = anggota.NISN JOIN detail_peminjaman ON detail_peminjaman.kode_peminjaman = peminjaman.kode_peminjaman JOIN buku ON detail_peminjaman.No_buku = buku.No_buku JOIN detail_pengembalian ON detail_pengembalian.NISN = anggota.NISN AND detail_pengembalian.No_buku = buku.No_buku JOIN pengembalian on detail_pengembalian.kode_pengembalian = pengembalian.kode_pengembalian WHERE nama LIKE '%" +keyword + "%' OR angkatan LIKE '%" +keyword + "%' OR status LIKE '%" +keyword + "%' OR judul_buku LIKE '%" +keyword + "%'";
         try {
                java.sql.Connection conn = (java.sql.Connection) conek.configDB();
             java.sql.PreparedStatement pst = conn.prepareStatement(sql);
             java.sql.ResultSet rs = pst.executeQuery();
             DefaultTableModel filteredModel = new DefaultTableModel();
-            filteredModel.addColumn("kode Peminjaman");
+            filteredModel.addColumn("kode Pengembalian");
             filteredModel.addColumn("Nama");
             filteredModel.addColumn("angkatan");
             filteredModel.addColumn("Status Siswa ");
@@ -243,7 +277,7 @@ public class ptransaksi extends javax.swing.JPanel {
        
              while (rs.next()) {
                 filteredModel.addRow(new Object[]{
-                    rs.getString("Kode_Peminjaman"),
+                    rs.getString("Kode_Pengembalian"),
                     rs.getString("Nama"),
                     rs.getInt("angkatan"),
                     rs.getString("status"),
@@ -270,19 +304,32 @@ public class ptransaksi extends javax.swing.JPanel {
     }//GEN-LAST:event_txtcariKeyReleased
 
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
-    try {
-            String reportPath = "src/peminjaman/report1.jasper";
-            Connection conn= conek.configDB();
+          // TODO add your handling code here:
+     int dialogResult = JOptionPane.showConfirmDialog(null, "Apakah Anda sudah atur tanggal?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
 
-            HashMap<String, Object> parameters = new HashMap<>();
-            parameters.put("tgl1", jDate.getDate());
-            parameters.put("tgl2", jDate1.getDate());
-            JasperPrint print = JasperFillManager.fillReport(reportPath, parameters, conn);
-            JasperViewer viewer = new JasperViewer(print, false);
-            viewer.setVisible(true);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error diplaying report: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
+if (dialogResult == JOptionPane.YES_OPTION) {
+   
+    try {
+        this.disable();
+        
+        String reportPath = "src/Laporan/report1.jasper";
+        Connection conn = conek.configDB();
+
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("tgl1", jDate.getDate());
+        parameters.put("tgl2", jDate1.getDate());
+        JasperPrint print = JasperFillManager.fillReport(reportPath, parameters, conn);
+        JasperViewer viewer = new JasperViewer(print, false);
+        viewer.setVisible(true);
+
+        conn.close(); // Menutup koneksi setelah selesai menggunakan
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error displaying report: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
+} else if (dialogResult == JOptionPane.NO_OPTION) {
+    JOptionPane.showMessageDialog(null, "Anda harus atur tanggal dahulu.", "Info", JOptionPane.INFORMATION_MESSAGE);
+}
 
     }//GEN-LAST:event_jToggleButton1ActionPerformed
 
@@ -297,7 +344,7 @@ String tanggalakhir = String.valueOf(tgl2.format(jDate1.getDate()));
 System.out.println(tanggalawal + tanggalakhir);
 try {
     int No = 1;
-   String sql ="SELECT peminjaman.kode_peminjaman, anggota.nama, anggota.angkatan, anggota.status, buku.judul_buku, buku.kategori, detail_peminjaman.tanggal_peminjaman, detail_peminjaman.tanggal_kembali, detail_pengembalian.status_pengembalian, detail_pengembalian.kondisi_buku, detail_peminjaman.jumlah_peminjaman, detail_pengembalian.jumlah_pengembalian FROM anggota JOIN peminjaman ON peminjaman.NISN = anggota.NISN JOIN detail_peminjaman ON detail_peminjaman.kode_peminjaman = peminjaman.kode_peminjaman JOIN buku ON detail_peminjaman.No_buku = buku.No_buku LEFT JOIN detail_pengembalian ON detail_pengembalian.NISN = anggota.NISN AND detail_pengembalian.No_buku = buku.No_buku WHERE  tanggal_peminjaman BETWEEN '"+tanggalawal+"' AND '"+tanggalakhir+"';";
+   String sql ="SELECT pengembalian.kode_pengembalian, anggota.nama, anggota.angkatan, anggota.status, buku.judul_buku, buku.kategori, detail_peminjaman.tanggal_peminjaman, detail_peminjaman.tanggal_kembali, detail_pengembalian.status_pengembalian, detail_pengembalian.kondisi_buku, detail_peminjaman.jumlah_peminjaman, detail_pengembalian.jumlah_pengembalian FROM anggota JOIN peminjaman ON peminjaman.NISN = anggota.NISN JOIN detail_peminjaman ON detail_peminjaman.kode_peminjaman = peminjaman.kode_peminjaman JOIN buku ON detail_peminjaman.No_buku = buku.No_buku JOIN detail_pengembalian ON detail_pengembalian.NISN = anggota.NISN AND detail_pengembalian.No_buku = buku.No_buku JOIN pengembalian on detail_pengembalian.kode_pengembalian = pengembalian.kode_pengembalian WHERE  tanggal_peminjaman BETWEEN '"+tanggalawal+"' AND '"+tanggalakhir+"';";
    java.sql.Connection conn = (Connection) conek.configDB();
     // Create a Statement
     java.sql.Statement stm = conn.createStatement();
@@ -307,8 +354,8 @@ try {
     table.setRowCount(0);
     while (res.next()) {
        
-       table.addRow(new Object[]{res.getString(1), res.getString(2), res.getString(3), res.getString(4),res.getString(5),res.getString(6),
-           res.getString(7),res.getString(8),res.getString(9),res.getString(10)});
+       table.addRow(new Object[]{res.getString(1), res.getString(2), res.getInt(3), res.getString(4),res.getString(5),res.getString(6),
+           res.getString(7),res.getString(8),res.getString(9),res.getString(10),res.getString(11),res.getString(12)});
 }
 } catch (Exception e) {
     Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, e);
@@ -320,7 +367,9 @@ try {
     private javax.swing.JButton jButton3;
     private com.toedter.calendar.JDateChooser jDate;
     private com.toedter.calendar.JDateChooser jDate1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
