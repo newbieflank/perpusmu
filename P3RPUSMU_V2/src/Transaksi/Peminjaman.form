@@ -237,6 +237,9 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jPanel10MouseClicked"/>
+          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
           </AuxValues>
@@ -359,7 +362,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="SansSerif" size="14" style="1"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="NISN"/>
+                <Property name="text" type="java.lang.String" value="Nama Anggota"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel67">
@@ -399,7 +402,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="SansSerif" size="14" style="1"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Nama Anggota"/>
+                <Property name="text" type="java.lang.String" value="NISN"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel72">

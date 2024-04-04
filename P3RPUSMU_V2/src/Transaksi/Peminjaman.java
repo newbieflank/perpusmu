@@ -109,8 +109,8 @@ public class Peminjaman extends javax.swing.JPanel {
 
     private void load_table1() {
         DefaultTableModel model = new DefaultTableModel();
-        model.addColumn("NISN");
         model.addColumn("Nama");
+        model.addColumn("NISN");
 
         try {
             String sql = "select * from anggota";
@@ -439,21 +439,26 @@ public class Peminjaman extends javax.swing.JPanel {
             public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
                 formAncestorAdded(evt);
             }
-            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
-            }
             public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
             }
         });
 
         jPanel11.setPreferredSize(new java.awt.Dimension(1399, 472));
 
         jPanel10.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel10.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jPanel10MouseClicked(evt);
+            }
+        });
 
         jLabel65.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         jLabel65.setText("Kode Peminjaman");
 
         jLabel66.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
-        jLabel66.setText("NISN");
+        jLabel66.setText("Nama Anggota");
 
         jLabel67.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         jLabel67.setText("Kode Buku");
@@ -468,7 +473,7 @@ public class Peminjaman extends javax.swing.JPanel {
         jLabel70.setText("Tanggal Kembali");
 
         jLabel71.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
-        jLabel71.setText("Nama Anggota");
+        jLabel71.setText("NISN");
 
         jLabel72.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         jLabel72.setText("Petugas");
@@ -807,7 +812,6 @@ public class Peminjaman extends javax.swing.JPanel {
         String sql = "SELECT * FROM anggota WHERE nisn LIKE '%" + keyword + "%' OR nama LIKE '%" + keyword + "%'";
 
         try {
-//            java.sql.Connection con = (java.sql.Connection) Config.configDB();
             java.sql.PreparedStatement pst = con.prepareStatement(sql);
             java.sql.ResultSet rs = pst.executeQuery();
 
@@ -834,11 +838,11 @@ public class Peminjaman extends javax.swing.JPanel {
     private void tabel_anggotaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabel_anggotaMouseClicked
         int index = tabel_anggota.getSelectedRow();
         TableModel model = tabel_anggota.getModel();
-        String nisn = model.getValueAt(index, 0).toString();
         String nama = model.getValueAt(index, 1).toString();
+        String nisn = model.getValueAt(index, 0).toString();
 
-        txt_nisn.setText(nisn);
-        txt_anggota.setText(nama);
+        txt_nisn.setText(nama);
+        txt_anggota.setText(nisn);
         menu.setVisible(false);
     }//GEN-LAST:event_tabel_anggotaMouseClicked
 
@@ -1083,6 +1087,10 @@ public class Peminjaman extends javax.swing.JPanel {
     private void formAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_formAncestorAdded
 
     }//GEN-LAST:event_formAncestorAdded
+
+    private void jPanel10MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel10MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jPanel10MouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
