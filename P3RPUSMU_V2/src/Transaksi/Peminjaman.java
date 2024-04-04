@@ -901,7 +901,7 @@ public class Peminjaman extends javax.swing.JPanel {
         DefaultTableModel model = (DefaultTableModel) tabel_peminjaman.getModel();
 // Mendapatkan teks dari field-field yang relevan
         String kodepeminjaman = txt_kode_peminjaman.getText();
-        String nama = txt_anggota.getText();
+        String nama = txt_nisn.getText();
         String judulbuku = txt_judul_buku.getText();
         String totalpeminjaman = txt_jumlah_pinjam.getText();
         String username = txt_petugas.getText();
