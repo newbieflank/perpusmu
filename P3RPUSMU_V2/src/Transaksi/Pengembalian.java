@@ -38,7 +38,10 @@ public class Pengembalian extends javax.swing.JPanel {
     private Connection con;
     private PreparedStatement pst, pst1;
     private ResultSet rs;
-
+    private int nilaiSpinnerBaikSebelumnya = 0;
+    private int nilaiSpinnerRusakSebelumnya = 0;
+    private int nilaiSpinnerHilangSebelumnya = 0;
+    
     public Pengembalian() throws SQLException {
         con = koneksi.Koneksi();
         initComponents();
@@ -48,8 +51,16 @@ public class Pengembalian extends javax.swing.JPanel {
         id_autoincrement();
         loadtable2();
         txt_denda_total.setText("0");
-        txt_denda_telat.setVisible(false);
-        txt_denda_kondisi.setVisible(false);
+        baik.setText("0");
+        rusak.setText("0");
+        hilang.setText("0");
+        baik.setVisible(false);
+        rusak.setVisible(false);
+        hilang.setVisible(false);
+        kondisi_rusak.setVisible(false);
+        kondisi_hilang.setVisible(false);
+        telat_rusak.setVisible(false);
+        telat_hilang.setVisible(false);
 
         tabel_return.getTableHeader().setBackground(new Color(63, 148, 105));
         tabel_return.getTableHeader().setForeground(Color.white);
@@ -285,36 +296,65 @@ public class Pengembalian extends javax.swing.JPanel {
         model.addRow(row);
     }
 
-    private void masuktabelreturn() {
-        DefaultTableModel model = (DefaultTableModel) tabel_return.getModel();
-        // Mendapatkan teks dari field-field yang relevan
-        String kodepeminjaman = txt_kode_peminjaman.getText();
-        String nama = txt_nama.getText();
-        String username = txt_petugas.getText();
-        int totalpeminjaman = (int) spinner_kembali.getValue();
-        String statuskembali = "Kembali"; // Mengatur status menjadi "Kembali" untuk semua data
+private void masuktabelreturn() {
+    DefaultTableModel model = (DefaultTableModel) tabel_return.getModel();
+    // Mendapatkan teks dari field-field yang relevan
+    String kodepeminjaman = txt_kode_peminjaman.getText();
+    String nama = txt_nama.getText();
+    String username = txt_petugas.getText();
+    // Mendapatkan nilai dari semua spinners
+int nilaiSpinnerBaik = (int) spinner_baik.getValue();
+int nilaiSpinnerRusak = (int) spinner_rusak.getValue();
 
-        // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
-        Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
-        Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
+// Menghitung total pinjaman
+int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
 
-        // Mendapatkan waktukembali berdasarkan perbandingan tanggal
-        String waktukembali;
-        if (tanggalKembaliAkhir.after(tanggalKembaliAwal)) {
-            waktukembali = "Telat";
+    String statuskembali = "Kembali"; // Mengatur status menjadi "Kembali" untuk semua data
+
+    // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
+    Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
+    Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
+
+// Mendapatkan status waktu kembali berdasarkan perbandingan tanggal
+    String waktupengembalian;
+    if (tanggalKembaliAwal != null && tanggalKembaliAkhir != null) {
+        // Mengubah tanggal menjadi string hanya dengan format tanggal (tanpa jam)
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String tanggalAwal = sdf.format(tanggalKembaliAwal);
+        String tanggalAkhir = sdf.format(tanggalKembaliAkhir);
+
+        if (tanggalAwal.equals(tanggalAkhir)) {
+            waktupengembalian = "Tepat Waktu";
+        } else if (tanggalKembaliAkhir.after(tanggalKembaliAwal)) {
+            waktupengembalian = "Telat";
         } else {
-            waktukembali = "Tepat Waktu";
+            waktupengembalian = "Tepat Waktu";
         }
-
-        String kodebuku = txt_kode_buku.getText();
-        String judulbuku = txt_judul_buku.getText();
-        String kondisikembali = (String) kondisi_buku.getSelectedItem();
-        String denda = txt_denda_total.getText();
-
-        // Tambahkan baris baru ke dalam tabel
-        Object[] row = {kodepeminjaman, nama, username, totalpeminjaman, statuskembali, waktukembali, kodebuku, judulbuku, kondisikembali, denda};
-        model.addRow(row);
+    } else {
+        waktupengembalian = "Tidak Diketahui";
     }
+
+
+    String kodebuku = txt_kode_buku.getText();
+    String judulbuku = txt_judul_buku.getText();
+    String kondisikembali;
+
+    // Mengganti kondisikembali sesuai dengan nilai spinner_baik, spinner_rusak, atau spinner_hilang
+    if (spinner_baik.isEnabled()) {
+        kondisikembali = "Baik";
+    } else if (spinner_rusak.isEnabled()) {
+        kondisikembali = "Rusak";
+    } else {
+        kondisikembali = "Hilang";
+    }
+
+    String denda = txt_denda_total.getText();
+
+    // Tambahkan baris baru ke dalam tabel
+    Object[] row = {kodepeminjaman, nama, username, totalPeminjaman, statuskembali, waktupengembalian, kodebuku, judulbuku, kondisikembali, denda};
+    model.addRow(row);
+}
+
 
     private void tambahStokBuku(Connection con, int jumlahPengembalian, String kodeBuku) throws SQLException {
         String sql = "UPDATE buku SET jumlah_stock = jumlah_stock + ? WHERE No_buku = (SELECT No_buku FROM buku WHERE judul_buku = ?)";
@@ -341,7 +381,38 @@ public class Pengembalian extends javax.swing.JPanel {
             }
         }
     }
+    
+   private void updateTotalDenda() {
+    // Mendapatkan nilai dari JTextField baik, rusak, dan hilang
+    int dendaBaik = Integer.parseInt(baik.getText());
+    int dendaRusak = Integer.parseInt(rusak.getText());
+    int dendaHilang = Integer.parseInt(hilang.getText());
 
+    // Menjumlahkan total denda dari JTextField baik, rusak, dan hilang
+    int totalDendaTextField = dendaBaik + dendaRusak + dendaHilang;
+
+    // Mendapatkan nilai dari JTextField kondisi_rusak dan telat_rusak
+    int dendaKondisi = 0;
+    int dendaTelat = 0;
+    try {
+        dendaKondisi = kondisi_rusak.getText().isEmpty() ? 0 : Integer.parseInt(kondisi_rusak.getText());
+        dendaTelat = telat_rusak.getText().isEmpty() ? 0 : Integer.parseInt(telat_rusak.getText());
+    } catch (NumberFormatException e) {
+        e.printStackTrace();
+    }
+
+    // Menjumlahkan total denda dari JTextField kondisi_rusak dan telat_rusak
+    int totalDendaKondisiTelat = dendaKondisi + dendaTelat;
+
+    // Menentukan total denda akhir dengan mengambil nilai maksimum dari total denda dari kedua sumber
+    int totalDenda = Math.max(totalDendaTextField, totalDendaKondisiTelat);
+
+    // Mengatur nilai JTextField txt_denda_total dengan total denda
+    txt_denda_total.setText(Integer.toString(totalDenda));
+}
+
+
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -374,16 +445,23 @@ public class Pengembalian extends javax.swing.JPanel {
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         txt_denda_total = new javax.swing.JTextField();
-        jLabel15 = new javax.swing.JLabel();
-        spinner_kembali = new javax.swing.JSpinner();
         spinner_pinjam = new javax.swing.JSpinner();
         tanggal_pinjam = new com.toedter.calendar.JDateChooser();
         tanggal_kembali_awal = new com.toedter.calendar.JDateChooser();
         jLabel17 = new javax.swing.JLabel();
         tanggal_kembali_akhir = new com.toedter.calendar.JDateChooser();
-        kondisi_buku = new javax.swing.JComboBox<>();
-        txt_denda_telat = new javax.swing.JTextField();
-        txt_denda_kondisi = new javax.swing.JTextField();
+        jLabel16 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        spinner_baik = new javax.swing.JSpinner();
+        spinner_rusak = new javax.swing.JSpinner();
+        spinner_hilang = new javax.swing.JSpinner();
+        baik = new javax.swing.JTextField();
+        rusak = new javax.swing.JTextField();
+        hilang = new javax.swing.JTextField();
+        kondisi_rusak = new javax.swing.JTextField();
+        kondisi_hilang = new javax.swing.JTextField();
+        telat_rusak = new javax.swing.JTextField();
+        telat_hilang = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jLabel20 = new javax.swing.JLabel();
@@ -473,7 +551,7 @@ public class Pengembalian extends javax.swing.JPanel {
         txt_kode_pengembalian.setEnabled(false);
 
         jLabel12.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
-        jLabel12.setText("Kondisi");
+        jLabel12.setText("Kondisi Baik");
 
         jLabel13.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         jLabel13.setText("Kode Pengembalian");
@@ -498,30 +576,9 @@ public class Pengembalian extends javax.swing.JPanel {
             }
         });
 
-        jLabel15.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
-        jLabel15.setText("Total Kembali");
-
-        spinner_kembali.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
-        spinner_kembali.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
-        spinner_kembali.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        spinner_kembali.setPreferredSize(new java.awt.Dimension(37, 25));
-        spinner_kembali.addAncestorListener(new javax.swing.event.AncestorListener() {
-            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
-                spinner_kembaliAncestorAdded(evt);
-            }
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
-            }
-            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
-            }
-        });
-        spinner_kembali.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                spinner_kembaliStateChanged(evt);
-            }
-        });
-
         spinner_pinjam.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         spinner_pinjam.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+        spinner_pinjam.setEnabled(false);
         spinner_pinjam.setPreferredSize(new java.awt.Dimension(37, 25));
         spinner_pinjam.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -558,17 +615,63 @@ public class Pengembalian extends javax.swing.JPanel {
             }
         });
 
-        kondisi_buku.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        kondisi_buku.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Baik", "Rusak", "Hilang" }));
-        kondisi_buku.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                kondisi_bukuItemStateChanged(evt);
+        jLabel16.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jLabel16.setText("Kondisi Rusak");
+
+        jLabel18.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jLabel18.setText("Kondisi Hilang");
+
+        spinner_baik.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        spinner_baik.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+        spinner_baik.setPreferredSize(new java.awt.Dimension(37, 25));
+        spinner_baik.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                spinner_baikAncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
+        spinner_baik.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                spinner_baikStateChanged(evt);
             }
         });
 
-        txt_denda_kondisi.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_denda_kondisiActionPerformed(evt);
+        spinner_rusak.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        spinner_rusak.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+        spinner_rusak.setPreferredSize(new java.awt.Dimension(37, 25));
+        spinner_rusak.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                spinner_rusakAncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
+        spinner_rusak.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                spinner_rusakStateChanged(evt);
+            }
+        });
+
+        spinner_hilang.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        spinner_hilang.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+        spinner_hilang.setPreferredSize(new java.awt.Dimension(37, 25));
+        spinner_hilang.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                spinner_hilangAncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
+        spinner_hilang.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                spinner_hilangStateChanged(evt);
             }
         });
 
@@ -576,158 +679,172 @@ public class Pengembalian extends javax.swing.JPanel {
         pengembalian.setLayout(pengembalianLayout);
         pengembalianLayout.setHorizontalGroup(
             pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pengembalianLayout.createSequentialGroup()
+            .addGroup(pengembalianLayout.createSequentialGroup()
                 .addGap(25, 25, 25)
                 .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pengembalianLayout.createSequentialGroup()
-                            .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(txt_kode_peminjaman, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel1))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel6)
-                                .addComponent(txt_nama, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGroup(pengembalianLayout.createSequentialGroup()
-                            .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pengembalianLayout.createSequentialGroup()
-                                    .addComponent(spinner_pinjam, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(spinner_kembali, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pengembalianLayout.createSequentialGroup()
-                                    .addComponent(jLabel5)
-                                    .addGap(162, 162, 162)
-                                    .addComponent(jLabel15))
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pengembalianLayout.createSequentialGroup()
-                                    .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel7)
-                                        .addComponent(tanggal_kembali_awal, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(pengembalianLayout.createSequentialGroup()
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(jLabel17))
-                                        .addGroup(pengembalianLayout.createSequentialGroup()
-                                            .addGap(63, 63, 63)
-                                            .addComponent(tanggal_kembali_akhir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                                    .addGap(4, 4, 4))
-                                .addComponent(jLabel12)
-                                .addComponent(kondisi_buku, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGap(158, 158, 158)
-                            .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel14)
-                                .addComponent(jLabel9)
-                                .addComponent(txt_kode_buku, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel10)
-                                .addComponent(txt_judul_buku, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txt_denda_total, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGroup(pengembalianLayout.createSequentialGroup()
-                            .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel4)
-                                .addComponent(tanggal_pinjam, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(pengembalianLayout.createSequentialGroup()
-                                    .addGap(158, 158, 158)
-                                    .addComponent(jLabel8)
-                                    .addGap(0, 0, Short.MAX_VALUE))
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pengembalianLayout.createSequentialGroup()
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(txt_petugas, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                     .addGroup(pengembalianLayout.createSequentialGroup()
-                        .addGap(252, 252, 252)
-                        .addComponent(txt_denda_telat, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(217, 217, 217)
-                        .addComponent(txt_denda_kondisi, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pengembalianLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pengembalianLayout.createSequentialGroup()
-                        .addComponent(jLabel13)
-                        .addGap(405, 405, 405))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pengembalianLayout.createSequentialGroup()
-                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pengembalianLayout.createSequentialGroup()
+                                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel5)
+                                    .addComponent(spinner_pinjam, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel12)
+                                    .addComponent(jLabel16)
+                                    .addComponent(jLabel18))
+                                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(pengembalianLayout.createSequentialGroup()
+                                        .addGap(63, 63, 63)
+                                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(spinner_baik, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                .addComponent(tanggal_kembali_akhir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addComponent(tanggal_kembali_awal, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
+                                                .addComponent(jLabel17, javax.swing.GroupLayout.Alignment.LEADING))
+                                            .addComponent(spinner_rusak, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(spinner_hilang, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(pengembalianLayout.createSequentialGroup()
+                                        .addGap(18, 18, 18)
+                                        .addComponent(hilang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pengembalianLayout.createSequentialGroup()
+                                .addComponent(baik, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(27, 27, 27)
+                                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(pengembalianLayout.createSequentialGroup()
+                                        .addComponent(telat_rusak, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(telat_hilang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(btn_tambah, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(pengembalianLayout.createSequentialGroup()
+                                        .addComponent(rusak, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addGroup(pengembalianLayout.createSequentialGroup()
+                                        .addComponent(kondisi_rusak, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(kondisi_hilang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE)))))
+                        .addGap(158, 158, 158)
+                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel14)
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel10)
+                            .addComponent(txt_denda_total, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel13)
+                            .addComponent(txt_kode_pengembalian, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(txt_nama, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txt_kode_buku, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txt_judul_buku, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(10, Short.MAX_VALUE))
+                    .addGroup(pengembalianLayout.createSequentialGroup()
+                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(pengembalianLayout.createSequentialGroup()
-                                .addComponent(btn_tambah, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jButton1))
-                            .addComponent(txt_kode_pengembalian, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(295, 295, 295))))
+                                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txt_kode_peminjaman, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel1))
+                                .addGap(169, 169, 169)
+                                .addComponent(jLabel6))
+                            .addGroup(pengembalianLayout.createSequentialGroup()
+                                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel4)
+                                    .addComponent(tanggal_pinjam, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(376, 376, 376)
+                                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel8)
+                                    .addComponent(txt_petugas, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pengembalianLayout.createSequentialGroup()
+                .addContainerGap(605, Short.MAX_VALUE)
+                .addComponent(jButton1)
+                .addGap(295, 295, 295))
         );
         pengembalianLayout.setVerticalGroup(
             pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pengembalianLayout.createSequentialGroup()
-                .addGap(29, 29, 29)
-                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(txt_nama, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txt_kode_peminjaman, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(22, 22, 22)
                 .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pengembalianLayout.createSequentialGroup()
+                        .addGap(29, 29, 29)
+                        .addComponent(jLabel1))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pengembalianLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel6)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_kode_peminjaman, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txt_nama, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(pengembalianLayout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel7))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(tanggal_pinjam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(tanggal_kembali_awal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel17)
+                            .addComponent(jLabel5)))
+                    .addGroup(pengembalianLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jLabel8)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_petugas, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(22, 22, 22)
-                        .addComponent(jLabel9)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                    .addGroup(pengembalianLayout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(tanggal_pinjam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(25, 25, 25)
-                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel17))
-                        .addGap(11, 11, 11)))
+                        .addGap(24, 24, 24)
+                        .addComponent(jLabel9)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(spinner_pinjam, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(pengembalianLayout.createSequentialGroup()
-                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txt_kode_buku, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(tanggal_kembali_awal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(pengembalianLayout.createSequentialGroup()
-                                    .addGap(28, 28, 28)
-                                    .addComponent(jLabel15))
-                                .addGroup(pengembalianLayout.createSequentialGroup()
-                                    .addGap(22, 22, 22)
-                                    .addComponent(jLabel10)))
-                            .addGroup(pengembalianLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel5)
-                                .addGap(4, 4, 4)))
-                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(spinner_pinjam, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(spinner_kembali, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(txt_judul_buku, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(34, 34, 34)
+                            .addComponent(tanggal_kembali_akhir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(25, 25, 25)
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel12)
-                            .addComponent(jLabel14)))
-                    .addGroup(pengembalianLayout.createSequentialGroup()
-                        .addComponent(tanggal_kembali_akhir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(162, 162, 162)))
+                            .addComponent(txt_judul_buku, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(spinner_baik, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel12))))
+                .addGap(39, 39, 39)
+                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel14)
+                    .addComponent(spinner_rusak, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel16))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_denda_total, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txt_denda_total, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(kondisi_buku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(spinner_hilang, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel18))
+                .addGap(8, 8, 8)
                 .addComponent(jLabel13)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_kode_pengembalian, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(baik, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rusak, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(hilang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(txt_kode_pengembalian, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
                 .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btn_tambah, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(43, 43, 43)
-                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txt_denda_kondisi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txt_denda_telat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(59, 59, 59))
+                    .addComponent(kondisi_rusak, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(kondisi_hilang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pengembalianLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btn_tambah, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(73, 73, 73))
+                    .addGroup(pengembalianLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(telat_rusak, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(telat_hilang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
@@ -1001,8 +1118,9 @@ public class Pengembalian extends javax.swing.JPanel {
         // Mengatur tanggal_kembali_akhir dengan tanggal sekarang
         Date currentDate = new Date(); // Mendapatkan tanggal saat ini
         tanggal_kembali_akhir.setDate(currentDate);
-        spinner_kembali.setValue(0);
-        kondisi_buku.setSelectedItem("Baik");
+        spinner_baik.setValue(0);
+        spinner_rusak.setValue(0);
+        spinner_hilang.setValue(0);
 
         txt_kode_peminjaman.setText(kodepeminjaman);
         try {
@@ -1046,8 +1164,22 @@ public class Pengembalian extends javax.swing.JPanel {
             kondisiBukuStatus = "Kembali";
         }
 
-        String kondisibuku = (String) kondisi_buku.getSelectedItem();
-        int jumlahkembali = (int) spinner_kembali.getValue();
+        String kondisikembali;
+
+    // Mengganti kondisikembali sesuai dengan nilai spinner_baik, spinner_rusak, atau spinner_hilang
+    if (spinner_baik.isEnabled()) {
+        kondisikembali = "Baik";
+    } else if (spinner_rusak.isEnabled()) {
+        kondisikembali = "Rusak";
+    } else {
+        kondisikembali = "Hilang";
+    }
+        // Mendapatkan nilai dari semua spinners
+        int nilaiSpinnerBaik = (int) spinner_baik.getValue();
+        int nilaiSpinnerRusak = (int) spinner_rusak.getValue();
+
+// Menghitung total pinjaman
+        int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
         String kodebuku1 = txt_judul_buku.getText();
         String denda = txt_denda_total.getText();
         String nama = txt_nama.getText();
@@ -1090,8 +1222,15 @@ public class Pengembalian extends javax.swing.JPanel {
 
                 // Mendapatkan status waktu kembali berdasarkan perbandingan tanggal
                 String waktupengembalian;
-                if (tanggalKembaliAkhir != null && tanggalKembaliAwal != null) {
-                    if (tanggalKembaliAkhir.after(tanggalKembaliAwal)) {
+                if (tanggalKembaliAwal != null && tanggalKembaliAkhir != null) {
+                    // Mengubah tanggal menjadi string hanya dengan format tanggal (tanpa jam)
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    String tanggalAwal = sdf.format(tanggalKembaliAwal);
+                    String tanggalAkhir = sdf.format(tanggalKembaliAkhir);
+
+                    if (tanggalAwal.equals(tanggalAkhir)) {
+                        waktupengembalian = "Tepat Waktu";
+                    } else if (tanggalKembaliAkhir.after(tanggalKembaliAwal)) {
                         waktupengembalian = "Telat";
                     } else {
                         waktupengembalian = "Tepat Waktu";
@@ -1100,13 +1239,15 @@ public class Pengembalian extends javax.swing.JPanel {
                     waktupengembalian = "Tidak Diketahui";
                 }
 
+
+
                 pstInsertDetailPengembalian.setString(1, kodepengembalian);
                 pstInsertDetailPengembalian.setString(2, statusDetailPengembalian);
                 pstInsertDetailPengembalian.setString(3, waktupengembalian);
-                pstInsertDetailPengembalian.setString(4, kondisibuku);
+                pstInsertDetailPengembalian.setString(4, kondisikembali);
                 java.sql.Date tanggalPinjamSQL = new java.sql.Date(tanggal_pinjam.getDate().getTime());
                 pstInsertDetailPengembalian.setDate(5, tanggalPinjamSQL);
-                pstInsertDetailPengembalian.setInt(6, jumlahkembali);
+                pstInsertDetailPengembalian.setInt(6, totalPeminjaman);
                 pstInsertDetailPengembalian.setString(7, kodebuku1);
                 pstInsertDetailPengembalian.setString(8, denda);
                 pstInsertDetailPengembalian.setString(9, nama);
@@ -1167,11 +1308,17 @@ public class Pengembalian extends javax.swing.JPanel {
             } catch (Exception e) {
                 System.out.println("sat" + e);
             }
-            // Tambahkan stok buku
-            if (!kondisi_buku.getSelectedItem().equals("Hilang")) {
-                tambahStokBuku(con, jumlahkembali, kodebuku1);
+            // Mendapatkan nilai dari spinner_hilang
+int nilaiSpinnerHilang1 = (int) spinner_hilang.getValue();
 
-            }
+// Menghitung total buku yang dikembalikan (baik dan rusak)
+int totalBukuKembali = nilaiSpinnerBaik + nilaiSpinnerRusak;
+
+// Menambahkan stok buku dengan jumlah buku yang dikembalikan tanpa memperhatikan buku yang hilang
+tambahStokBuku(con, totalBukuKembali, kodebuku);
+
+
+
 
             // Selesai transaksi
             con.commit();
@@ -1188,11 +1335,10 @@ public class Pengembalian extends javax.swing.JPanel {
     }//GEN-LAST:event_btn_tambahActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        spinner_kembali.setValue(0);
+        spinner_baik.setValue(0);
+        spinner_rusak.setValue(0);
+        spinner_hilang.setValue(0);
         txt_denda_total.setText("0");
-        kondisi_buku.setSelectedItem("Baik");
-        txt_denda_telat.setText("0");
-        txt_denda_kondisi.setText("0");
 
         jDialog1.dispose();
         load_table();
@@ -1201,62 +1347,6 @@ public class Pengembalian extends javax.swing.JPanel {
     private void txt_judul_bukuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_judul_bukuActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_judul_bukuActionPerformed
-
-    private void spinner_kembaliStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spinner_kembaliStateChanged
-        Object kmbl = spinner_kembali.getValue();
-        Object pnjm = spinner_pinjam.getValue();
-        String str = String.valueOf(kmbl);
-        int jmlh_pnjm = Integer.parseInt(String.valueOf(pnjm));
-        int jmlh_Kem = Integer.parseInt(str);
-        txt_denda_kondisi.setText("0");
-        System.out.println(jmlh_Kem);
-        if (jmlh_Kem <= 0) {
-            txt_denda_telat.setText("0");
-        } else {
-            if (tanggal_kembali_akhir.getDate() != null) {
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                String format_kembali = format.format(tanggal_kembali_akhir.getDate());
-                String format_pinjam = format.format(tanggal_kembali_awal.getDate());
-
-                System.out.println(format_pinjam);
-                System.out.println(format_kembali);
-                try {
-                    pst = con.prepareStatement("SELECT datediff('" + format_kembali + "', '" + format_pinjam + "')");
-                    rs = pst.executeQuery();
-                    rs.next();
-                    int selisih = rs.getInt(1);
-                    if (selisih >= 0) {
-                        int total_denda = selisih * 1000;
-                        int total_keseluruhan = jmlh_Kem * total_denda;
-                        txt_denda_telat.setText(Integer.toString(total_keseluruhan));
-                        // Menangani langsung jika kondisi "Baik"
-                        kondisi_buku.getSelectedItem().toString().equals("Baik");
-                        // Mengambil nilai dari txt_denda_telat
-                        int denda_telat = Integer.parseInt(txt_denda_telat.getText());
-
-                        // Menetapkan nilai denda langsung ke txt_denda_total
-                        txt_denda_total.setText(String.valueOf(denda_telat));
-                    } else {
-                        JOptionPane.showMessageDialog(pengembalian, "Pastikan ada memasukkan tanggal pengembalian yang benar");
-                        spinner_kembali.setValue(jmlh_Kem - 1);
-                    }
-
-                } catch (Exception e) {
-                    System.out.println("dateDenda" + e);
-                }
-            } else if (jmlh_Kem >= jmlh_pnjm) {
-                JOptionPane.showMessageDialog(pengembalian, "Jumlah Pengembalian tidak boleh lebih dari buku yang di pinjam");
-                spinner_kembali.setValue(jmlh_Kem - 1);
-            } else {
-                JOptionPane.showMessageDialog(pengembalian, "Harap Isi Tanggal Kembali Terlebih Dahulu");
-                spinner_kembali.setValue(0);
-            }
-        }
-
-        // Recalculate the value of jmlh_pnjm based on the values of spinner_pinjam and spinner_kembali
-        jmlh_pnjm = Integer.parseInt(spinner_pinjam.getValue().toString()) - 1;
-        spinner_pinjam.setValue(jmlh_pnjm);
-    }//GEN-LAST:event_spinner_kembaliStateChanged
 
     private void formAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_formAncestorAdded
         load_table();
@@ -1386,54 +1476,9 @@ public class Pengembalian extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_txt_search1KeyReleased
 
-    private void spinner_kembaliAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_spinner_kembaliAncestorAdded
-
-    }//GEN-LAST:event_spinner_kembaliAncestorAdded
-
-    private void kondisi_bukuItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_kondisi_bukuItemStateChanged
-        String kondisi = kondisi_buku.getSelectedItem().toString();
-        String judul_buku = txt_judul_buku.getText();
-        String kode_buku = txt_kode_buku.getText();
-        int denda = 0;
-
-        if (!txt_denda_kondisi.getText().isEmpty()) {
-            denda = Integer.parseInt(txt_denda_kondisi.getText());
-        }
-
-        int harga_buku = getHargaBuku(judul_buku);
-        System.out.println(harga_buku);
-
-        if (kondisi.equals("Baik")) {
-            denda = 0;
-        } else if (kondisi.equals("Rusak")) {
-            denda = harga_buku / 2;
-        } else if (kondisi.equals("Hilang")) {
-            denda = harga_buku;
-        }
-
-        txt_denda_kondisi.setText(String.valueOf(denda));
-
-        // TODO add your handling code here:
-        // Mengambil nilai dari txt_denda_telat dan txt_denda_kondisi
-        int denda_telat = Integer.parseInt(txt_denda_telat.getText());
-        int denda_kondisi = Integer.parseInt(txt_denda_kondisi.getText());
-
-        // Menjumlahkan nilai dari txt_denda_telat dengan txt_denda_kondisi
-        int total_denda = denda_telat + denda_kondisi;
-        System.out.println(total_denda);
-
-        // Menetapkan nilai total denda ke txt_denda_total
-        txt_denda_total.setText(String.valueOf(total_denda));
-
-    }//GEN-LAST:event_kondisi_bukuItemStateChanged
-
     private void txt_denda_totalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_denda_totalActionPerformed
-
+ 
     }//GEN-LAST:event_txt_denda_totalActionPerformed
-
-    private void txt_denda_kondisiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_denda_kondisiActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_denda_kondisiActionPerformed
 
     private void txt_denda_totalAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_txt_denda_totalAncestorAdded
 
@@ -1443,6 +1488,167 @@ public class Pengembalian extends javax.swing.JPanel {
 
     }//GEN-LAST:event_spinner_pinjamStateChanged
 
+    private void spinner_baikStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spinner_baikStateChanged
+        // TODO add your handling code here:  
+        // Mendapatkan nilai spinner_baik yang baru
+    int nilaiSpinnerBaikBaru = (int) spinner_baik.getValue();
+
+    // Menghitung perubahan nilai spinner_baik
+    int perubahanNilai = nilaiSpinnerBaikBaru - nilaiSpinnerBaikSebelumnya;
+
+    // Mendapatkan nilai spinner_pinjam
+    int nilaiSpinnerPinjam = (int) spinner_pinjam.getValue();
+
+    // Menyesuaikan nilai spinner_pinjam berdasarkan perubahan nilai spinner_baik
+    spinner_pinjam.setValue(nilaiSpinnerPinjam - perubahanNilai);
+
+    // Memperbarui nilai spinner_baik yang lama
+    nilaiSpinnerBaikSebelumnya = nilaiSpinnerBaikBaru;
+
+    // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
+    Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
+    Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
+
+    // Menghitung status waktu pengembalian
+    String waktupengembalian = "Tepat Waktu"; // Default: tepat waktu
+
+    // Jika tanggal_kembali_akhir sebelum atau sama dengan tanggal_kembali_awal
+     if (tanggalKembaliAwal != null && tanggalKembaliAkhir != null) {
+                    // Mengubah tanggal menjadi string hanya dengan format tanggal (tanpa jam)
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    String tanggalAwal = sdf.format(tanggalKembaliAwal);
+                    String tanggalAkhir = sdf.format(tanggalKembaliAkhir);
+        // Tidak terlambat, nilai txt_baik diisi dengan 0
+        baik.setText("0");
+    } else {
+        // Jika terlambat, nilai txt_baik diisi dengan nilai spinner_baik dikali 1000
+        baik.setText(String.valueOf(nilaiSpinnerBaikBaru * 1000));
+    }
+     updateTotalDenda();
+    }//GEN-LAST:event_spinner_baikStateChanged
+
+    private void spinner_rusakStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spinner_rusakStateChanged
+        // TODO add your handling code here:
+       // Mendapatkan nilai spinner_rusak yang baru
+    int nilaiSpinnerRusakBaru = (int) spinner_rusak.getValue();
+
+    // Menghitung perubahan nilai spinner_rusak
+    int perubahanNilai = nilaiSpinnerRusakBaru - nilaiSpinnerRusakSebelumnya;
+
+    // Mendapatkan nilai spinner_pinjam
+    int nilaiSpinnerPinjam = (int) spinner_pinjam.getValue();
+
+    // Menyesuaikan nilai spinner_pinjam berdasarkan perubahan nilai spinner_rusak
+    spinner_pinjam.setValue(nilaiSpinnerPinjam - perubahanNilai);
+
+    // Memperbarui nilai spinner_rusak yang lama
+    nilaiSpinnerRusakSebelumnya = nilaiSpinnerRusakBaru;
+
+    // Mendapatkan judul buku
+    String judulBuku = txt_judul_buku.getText();
+
+    // Mendapatkan harga buku dari metode getHargaBuku
+    int hargaBuku = getHargaBuku(judulBuku);
+
+    // Menghitung total denda
+    int totalDenda = (int) (0.5 * nilaiSpinnerRusakBaru * hargaBuku);
+    
+    // Mengatur nilai txt_denda dengan total denda
+    kondisi_rusak.setText(Integer.toString(totalDenda));
+    
+    
+    // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
+    Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
+    Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
+
+    // Menghitung status waktu pengembalian
+    String waktupengembalian = "Tepat Waktu"; // Default: tepat waktu
+
+    // Jika tanggal_kembali_akhir sebelum atau sama dengan tanggal_kembali_awal
+     if (tanggalKembaliAwal != null && tanggalKembaliAkhir != null) {
+                    // Mengubah tanggal menjadi string hanya dengan format tanggal (tanpa jam)
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    String tanggalAwal = sdf.format(tanggalKembaliAwal);
+                    String tanggalAkhir = sdf.format(tanggalKembaliAkhir);
+         // Tidak terlambat, nilai txt_rusak diisi dengan kondisi_rusak
+        rusak.setText(kondisi_rusak.getText());
+    } else {
+        // Jika terlambat, nilai txt_rusak diisi dengan jumlah kondisi_rusak dan telat_rusak
+        int dendaTelat = Integer.parseInt(telat_rusak.getText());
+        int dendaKondisi = Integer.parseInt(kondisi_rusak.getText());
+        int totalDendaRusak = dendaTelat + dendaKondisi;
+        rusak.setText(String.valueOf(totalDendaRusak));
+    }
+     updateTotalDenda();
+    }//GEN-LAST:event_spinner_rusakStateChanged
+
+    private void spinner_hilangStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spinner_hilangStateChanged
+        // TODO add your handling code here:
+       // Mendapatkan nilai spinner_hilang yang baru
+    int nilaiSpinnerHilangBaru = (int) spinner_hilang.getValue();
+
+    // Menghitung perubahan nilai spinner_hilang
+    int perubahanNilai = nilaiSpinnerHilangBaru - nilaiSpinnerHilangSebelumnya;
+
+    // Mendapatkan nilai spinner_pinjam
+    int nilaiSpinnerPinjam = (int) spinner_pinjam.getValue();
+
+    // Menyesuaikan nilai spinner_pinjam berdasarkan perubahan nilai spinner_hilang
+    spinner_pinjam.setValue(nilaiSpinnerPinjam - perubahanNilai);
+
+    // Memperbarui nilai spinner_hilang yang lama
+    nilaiSpinnerHilangSebelumnya = nilaiSpinnerHilangBaru;
+
+    // Mendapatkan judul buku
+    String judulBuku = txt_judul_buku.getText();
+
+    // Mendapatkan harga buku dari metode getHargaBuku
+    int hargaBuku = getHargaBuku(judulBuku);
+
+    // Menghitung total denda (harga buku dikali jumlah buku yang hilang)
+    int totalDenda = nilaiSpinnerHilangBaru * hargaBuku;
+
+    // Mengatur nilai txt_denda dengan total denda
+    kondisi_hilang.setText(Integer.toString(totalDenda));
+    
+    // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
+    Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
+    Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
+
+    // Menghitung status waktu pengembalian
+    String waktupengembalian = "Tepat Waktu"; // Default: tepat waktu
+
+    // Jika tanggal_kembali_akhir sebelum atau sama dengan tanggal_kembali_awal
+     if (tanggalKembaliAwal != null && tanggalKembaliAkhir != null) {
+                    // Mengubah tanggal menjadi string hanya dengan format tanggal (tanpa jam)
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    String tanggalAwal = sdf.format(tanggalKembaliAwal);
+                    String tanggalAkhir = sdf.format(tanggalKembaliAkhir);
+        // Tidak terlambat, nilai txt_rusak diisi dengan 0
+        // Tidak terlambat, nilai txt_rusak diisi dengan kondisi_rusak
+        hilang.setText(kondisi_hilang.getText());
+    } else {
+        // Jika terlambat, nilai txt_rusak diisi dengan jumlah kondisi_rusak dan telat_rusak
+        int dendaTelat = Integer.parseInt(telat_hilang.getText());
+        int dendaKondisi = Integer.parseInt(kondisi_hilang.getText());
+        int totalDendaRusak = dendaTelat + dendaKondisi;
+        hilang.setText(String.valueOf(totalDendaRusak));
+    }
+     updateTotalDenda();
+    }//GEN-LAST:event_spinner_hilangStateChanged
+
+    private void spinner_baikAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_spinner_baikAncestorAdded
+        // TODO add your handling code here:
+    }//GEN-LAST:event_spinner_baikAncestorAdded
+
+    private void spinner_rusakAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_spinner_rusakAncestorAdded
+        // TODO add your handling code here:
+    }//GEN-LAST:event_spinner_rusakAncestorAdded
+
+    private void spinner_hilangAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_spinner_hilangAncestorAdded
+        // TODO add your handling code here:
+    }//GEN-LAST:event_spinner_hilangAncestorAdded
+
     DefaultTableModel model = new DefaultTableModel() {
         public boolean isCellEditable(int row, int column) {
             return false;
@@ -1450,7 +1656,9 @@ public class Pengembalian extends javax.swing.JPanel {
     };
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField baik;
     private javax.swing.JButton btn_tambah;
+    private javax.swing.JTextField hilang;
     private javax.swing.JButton jButton1;
     private javax.swing.JDialog jDialog1;
     private javax.swing.JLabel jLabel1;
@@ -1458,8 +1666,9 @@ public class Pengembalian extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
@@ -1478,17 +1687,21 @@ public class Pengembalian extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JComboBox<String> kondisi_buku;
+    private javax.swing.JTextField kondisi_hilang;
+    private javax.swing.JTextField kondisi_rusak;
     private javax.swing.JPanel pengembalian;
-    private javax.swing.JSpinner spinner_kembali;
+    private javax.swing.JTextField rusak;
+    public javax.swing.JSpinner spinner_baik;
+    public javax.swing.JSpinner spinner_hilang;
     public javax.swing.JSpinner spinner_pinjam;
+    public javax.swing.JSpinner spinner_rusak;
     private javax.swing.JTable tabel_pending;
     private javax.swing.JTable tabel_return;
     private com.toedter.calendar.JDateChooser tanggal_kembali_akhir;
     public com.toedter.calendar.JDateChooser tanggal_kembali_awal;
     public com.toedter.calendar.JDateChooser tanggal_pinjam;
-    private javax.swing.JTextField txt_denda_kondisi;
-    private javax.swing.JTextField txt_denda_telat;
+    private javax.swing.JTextField telat_hilang;
+    private javax.swing.JTextField telat_rusak;
     public javax.swing.JTextField txt_denda_total;
     public javax.swing.JTextField txt_judul_buku;
     public javax.swing.JTextField txt_kode_buku;
