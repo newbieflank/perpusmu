@@ -20,6 +20,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
@@ -964,7 +966,7 @@ public class Peminjaman extends javax.swing.JPanel {
     }//GEN-LAST:event_tabel_peminjamanMouseClicked
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        DefaultTableModel model = (DefaultTableModel) tabel_peminjaman.getModel();
+           DefaultTableModel model = (DefaultTableModel) tabel_peminjaman.getModel();
 
         if (model.getRowCount() == 0) {
             JOptionPane.showMessageDialog(this, "Tabel kosong");
@@ -1030,15 +1032,28 @@ public class Peminjaman extends javax.swing.JPanel {
                 }
 
                 conn.commit(); // Commit transaksi
+                } catch (SQLException e) {
+                try {
+                    // Tangani kesalahan dengan membatalkan transaksi jika terjadi kesalahan
+                    con.rollback();
+                } catch (SQLException ex) {
+                    Logger.getLogger(Peminjaman.class.getName()).log(Level.SEVERE, null, ex);
+                }
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+    } finally {
+                try {
+                    // Pastikan untuk mengatur ulang otomatis commit ke true setelah transaksi selesai atau gagal
+                    con.setAutoCommit(true);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Peminjaman.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 JOptionPane.showMessageDialog(this, "Peminjaman berhasil disimpan!");
                 kosong();
                 refresh();
                 clear3();
-            } catch (Exception e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
-            }
-        }
+          
+            }}
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton21ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton21ActionPerformed

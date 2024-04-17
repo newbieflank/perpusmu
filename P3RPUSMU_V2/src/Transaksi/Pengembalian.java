@@ -1322,15 +1322,28 @@ tambahStokBuku(con, totalBukuKembali, kodebuku);
 
             // Selesai transaksi
             con.commit();
+            } catch (SQLException e) {
+        // Tangani kesalahan dengan membatalkan transaksi jika terjadi kesalahan
+        try {
+            con.rollback();
+        } catch (SQLException rollbackException) {
+            rollbackException.printStackTrace();
+        }
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Gagal: " + e.getMessage());
+    } finally {
+        // Pastikan untuk mengatur ulang otomatis commit ke true setelah transaksi selesai atau gagal
+        try {
+            con.setAutoCommit(true);
+        } catch (SQLException autoCommitException) {
+            autoCommitException.printStackTrace();
+        }
             JOptionPane.showMessageDialog(null, "Update berhasil");
             masuktabelreturn();
             id_autoincrement();
             jDialog1.dispose();
             load_table();
             txt_denda_total.setText("0");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Gagal: " + e.getMessage());
         }
     }//GEN-LAST:event_btn_tambahActionPerformed
 
