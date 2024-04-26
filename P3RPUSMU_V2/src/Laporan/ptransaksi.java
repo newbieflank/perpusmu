@@ -25,7 +25,11 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.view.JasperViewer;
 public class ptransaksi extends javax.swing.JPanel {
+        private Connection con;
+    private PreparedStatement pst, pst1;
+    private ResultSet rs;
     public ptransaksi() throws SQLException {
+         con = koneksi.Koneksi();
         initComponents();
         load_table();
        jTable1.getTableHeader().setBackground(new Color(63,148,105));
@@ -57,20 +61,49 @@ public class ptransaksi extends javax.swing.JPanel {
         model.addColumn("Status pengembalian");
         model.addColumn("Kondisi Buku");
         model.addColumn("Jumlah Kembali");
-        
+   
         try {
-            String sql = "SELECT pengembalian.kode_pengembalian , anggota.nama , anggota.angkatan , anggota.status , buku.judul_buku , buku.kategori , detail_pengembalian.tanggal , detail_pengembalian.status_pengembalian,detail_pengembalian.kondisi_buku,detail_pengembalian.jumlah_pengembalian FROM detail_pengembalian JOIN pengembalian ON pengembalian.kode_pengembalian = detail_pengembalian.kode_pengembalian JOIN anggota ON anggota.NISN = detail_pengembalian.NISN JOIN buku ON buku.No_buku = detail_pengembalian.No_buku;"; 
-            java.sql.Connection conn = (Connection) conek.configDB();
-            java.sql.Statement stm = conn.createStatement();
-            java.sql.ResultSet res = stm.executeQuery(sql);
-            while (res.next()) {
-                model.addRow(new Object[]{res.getString(1), res.getString(2), res.getInt(3), res.getString(4),res.getString(5),res.getString(6),res.getString(7),res.getString(8),res.getString(9),res.getString(10)});
+          pst = con.prepareStatement ("SELECT pengembalian.kode_pengembalian , anggota.nama , anggota.angkatan , anggota.status , buku.judul_buku , buku.kategori , detail_pengembalian.tanggal , detail_pengembalian.status_pengembalian,detail_pengembalian.kondisi_buku,detail_pengembalian.jumlah_pengembalian FROM detail_pengembalian JOIN pengembalian ON pengembalian.kode_pengembalian = detail_pengembalian.kode_pengembalian JOIN anggota ON anggota.NISN = detail_pengembalian.NISN JOIN buku ON buku.No_buku = detail_pengembalian.No_buku"); 
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                model.addRow(new Object[]{rs.getString(1), rs.getString(2), rs.getInt(3), rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(7),rs.getString(8),rs.getString(9),rs.getString(10)});
             }
             jTable1.setModel(model);
         } catch (Exception e) {
         }
    }
-    
+        private void searchList() throws SQLException {    
+            jTable1.clearSelection();
+         DefaultTableModel model = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        model.addColumn("Kode Pengembalian");
+        model.addColumn("Nama");
+        model.addColumn("angkatan");
+        model.addColumn("status siswa");
+        model.addColumn("Judul");
+        model.addColumn("Kategori");
+        model.addColumn("Tanggal Kembali");
+        model.addColumn("Status pengembalian");
+        model.addColumn("Kondisi Buku");
+        model.addColumn("Jumlah Kembali");
+        try {
+          pst = con.prepareStatement ("SELECT pengembalian.kode_pengembalian , anggota.nama , anggota.angkatan , anggota.status , buku.judul_buku , buku.kategori , detail_pengembalian.tanggal , detail_pengembalian.status_pengembalian,detail_pengembalian.kondisi_buku,detail_pengembalian.jumlah_pengembalian FROM detail_pengembalian JOIN pengembalian ON pengembalian.kode_pengembalian = detail_pengembalian.kode_pengembalian JOIN anggota ON anggota.NISN = detail_pengembalian.NISN JOIN buku ON buku.No_buku = detail_pengembalian.No_buku where nama Like '%" + txtcari.getText() + "%' or status Like '%" + txtcari.getText() + "%' "
+                    + "or judul_buku Like '%" + txtcari.getText() + "%'"); 
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                model.addRow(new Object[]{rs.getString(1), rs.getString(2), rs.getInt(3), rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(7),rs.getString(8),rs.getString(9),rs.getString(10)});
+            }
+            jTable1.setModel(model);
+        } catch (Exception e) {
+             System.out.println("searchTable" + e);
+        }
+     
+
+   }
        
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -89,6 +122,15 @@ public class ptransaksi extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                jPanel1AncestorAdded(evt);
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
 
         jTable1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -119,7 +161,6 @@ public class ptransaksi extends javax.swing.JPanel {
         });
         jTable1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jTable1.setGridColor(new java.awt.Color(255, 255, 255));
-        jTable1.setShowGrid(false);
         jTable1.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(jTable1);
         if (jTable1.getColumnModel().getColumnCount() > 0) {
@@ -181,8 +222,8 @@ public class ptransaksi extends javax.swing.JPanel {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1599, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtcari, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
+                            .addComponent(jLabel2)
+                            .addComponent(txtcari, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -208,7 +249,7 @@ public class ptransaksi extends javax.swing.JPanel {
                         .addContainerGap()
                         .addComponent(jLabel2)
                         .addGap(12, 12, 12)
-                        .addComponent(txtcari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtcari, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(41, 41, 41)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -251,49 +292,12 @@ public class ptransaksi extends javax.swing.JPanel {
     }//GEN-LAST:event_txtcariActionPerformed
 
     private void txtcariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtcariKeyReleased
-   String keyword = txtcari.getText().trim();
-     String sql = "SELECT pengembalian.kode_pengembalian , anggota.nama , anggota.angkatan , anggota.status , buku.judul_buku , buku.kategori , detail_pengembalian.tanggal , detail_pengembalian.status_pengembalian,detail_pengembalian.kondisi_buku,detail_pengembalian.jumlah_pengembalian FROM detail_pengembalian JOIN pengembalian ON pengembalian.kode_pengembalian = detail_pengembalian.kode_pengembalian JOIN anggota ON anggota.NISN = detail_pengembalian.NISN JOIN buku ON buku.No_buku = detail_pengembalian.No_buku WHERE nama LIKE '%" +keyword + "%' OR angkatan LIKE '%" +keyword + "%' OR status LIKE '%" +keyword + "%' OR judul_buku LIKE '%" +keyword + "%'";
+
+             String key = txtcari.getText().trim();
         try {
-               java.sql.Connection conn = (java.sql.Connection) conek.configDB();
-            java.sql.PreparedStatement pst = conn.prepareStatement(sql);
-            java.sql.ResultSet rs = pst.executeQuery();
-            DefaultTableModel filteredModel = new DefaultTableModel();
-            filteredModel.addColumn("kode Pengembalian");
-            filteredModel.addColumn("Nama");
-            filteredModel.addColumn("angkatan");
-            filteredModel.addColumn("Status Siswa ");
-            filteredModel.addColumn("judul ");
-            filteredModel.addColumn("kategori");
-            filteredModel.addColumn("tanggal kembali");
-            filteredModel.addColumn("status pengembalian");
-            filteredModel.addColumn("kondisi Buku");
-            filteredModel.addColumn("jumlah kembali");
-        
-       
-             while (rs.next()) {
-                filteredModel.addRow(new Object[]{
-                    rs.getString("Kode_Pengembalian"),
-                    rs.getString("Nama"),
-                    rs.getInt("angkatan"),
-                    rs.getString("status"),
-                    rs.getString("judul_buku"),
-                    rs.getString("Kategori"),
-                    rs.getString("tanggal"),
-                    rs.getString("Status_pengembalian"),
-                    rs.getString("Kondisi_Buku"),
-                    rs.getString("jumlah_pengembalian"),
-
-                });
-            }
-
-            // Set the filtered model to the JTable
-            jTable1.setModel(filteredModel);
-
+            searchList();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, e.getMessage());
         }
-       
-        
     }//GEN-LAST:event_txtcariKeyReleased
 
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
@@ -306,7 +310,7 @@ if (dialogResult == JOptionPane.YES_OPTION) {
         this.disable();
         
         String reportPath = "src/Laporan/report1.jasper";
-        Connection conn = conek.configDB();
+        Connection conn = koneksi.Koneksi();
 
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("tgl1", jDate.getDate());
@@ -338,7 +342,7 @@ System.out.println(tanggalawal + tanggalakhir);
 try {
     int No = 1;
    String sql ="SELECT pengembalian.kode_pengembalian , anggota.nama , anggota.angkatan , anggota.status , buku.judul_buku , buku.kategori , detail_pengembalian.tanggal , detail_pengembalian.status_pengembalian,detail_pengembalian.kondisi_buku,detail_pengembalian.jumlah_pengembalian FROM detail_pengembalian JOIN pengembalian ON pengembalian.kode_pengembalian = detail_pengembalian.kode_pengembalian JOIN anggota ON anggota.NISN = detail_pengembalian.NISN JOIN buku ON buku.No_buku = detail_pengembalian.No_buku WHERE  tanggal BETWEEN '"+tanggalawal+"' AND '"+tanggalakhir+"';";
-   java.sql.Connection conn = (Connection) conek.configDB();
+   java.sql.Connection conn = (Connection) koneksi.Koneksi();
     // Create a Statement
     java.sql.Statement stm = conn.createStatement();
    
@@ -354,6 +358,15 @@ try {
     Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, e);
 }
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jPanel1AncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_jPanel1AncestorAdded
+          try {
+            // TODO add your handling code here:
+            load_table();
+        } catch (SQLException ex) {
+            Logger.getLogger(ptransaksi.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jPanel1AncestorAdded
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

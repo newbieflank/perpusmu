@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8a07879b-21c6-4a5a-ab0e-dc304190cba3">
-	<property name="ireport.zoom" value="1.4641000000000013"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.zoom" value="1.771561000000002"/>
+	<property name="ireport.x" value="111"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="tgl1" class="java.util.Date">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -28,11 +28,37 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="79" splitType="Stretch"/>
+		<band height="82" splitType="Stretch">
+			<rectangle>
+				<reportElement x="74" y="1" width="399" height="81" uuid="0393b9a1-e6d8-4ba4-8b21-147c440679a0"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="173" y="4" width="300" height="32" uuid="c738cd3d-150a-4590-8ab6-622f534c5653"/>
+				<textElement>
+					<font size="23" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SMK MANBAUL ULUM]]></text>
+			</staticText>
+			<image>
+				<reportElement x="81" y="11" width="89" height="63" uuid="80cf1873-2d99-457b-9087-b38d88fccf2f"/>
+				<imageExpression><![CDATA["C:\\Users\\User\\Downloads\\LOGO SMK MU 22 1.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="152" y="30" width="321" height="22" uuid="1e8546ef-b61b-4b3f-ba06-0af1acbb63de"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[JL. Raya Situbondo - Wonosari, Tangsil Wetan, 68282, Kapunduk]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="174" y="44" width="250" height="38" uuid="f636ed27-aa76-45b0-adcd-074e3b521cad"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Wonosari, Kec. Bondowoso, Kabupaten Bondowoso Provinsi Jawa Timur]]></text>
+			</staticText>
+		</band>
 	</title>
-	<pageHeader>
-		<band height="35" splitType="Stretch"/>
-	</pageHeader>
 	<columnHeader>
 		<band height="20" splitType="Stretch">
 			<rectangle>
@@ -108,9 +134,6 @@
 	<columnFooter>
 		<band height="45" splitType="Stretch"/>
 	</columnFooter>
-	<pageFooter>
-		<band height="54" splitType="Stretch"/>
-	</pageFooter>
 	<summary>
 		<band height="42" splitType="Stretch"/>
 	</summary>
