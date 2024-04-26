@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="360" pageHeight="576" columnWidth="320" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="410a9bbc-fd62-4be4-a261-a2e0d3e1cab7">
+	<property name="ireport.zoom" value="1.6105100000000014"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="288"/>
+	<queryString>
+		<![CDATA[SELECT pengembalian.kode_peminjaman, anggota.NISN, anggota.nama, detail_pengembalian.tanggal, users.username, buku.kode_buku, buku.judul_buku, detail_pengembalian.jumlah_pengembalian FROM pengembalian JOIN detail_pengembalian ON detail_pengembalian.kode_pengembalian = pengembalian.kode_pengembalian JOIN anggota ON anggota.NISN = detail_pengembalian.NISN JOIN buku ON buku.No_buku = detail_pengembalian.No_buku JOIN users ON users.ID_users = pengembalian.ID_users  WHERE kode_peminjaman= "24041915"]]>
+	</queryString>
+	<field name="kode_peminjaman" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="NISN" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nama" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tanggal" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="username" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="kode_buku" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="judul_buku" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="jumlah_pengembalian" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="84" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="56" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="320" height="56" uuid="ab9eb645-ac59-4b8f-afe5-cba882c082bb"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="10" y="0" width="54" height="17" uuid="0ae29162-7a86-41f6-8f80-ed16c6e63afc"/>
+				<text><![CDATA[Kode Pengembalian]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="39" width="54" height="17" uuid="9350ce5e-e065-4a67-aa3f-1976e05c5d6c"/>
+				<text><![CDATA[nama]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="81" y="0" width="71" height="17" uuid="a2ab1031-0531-41bf-b181-f32f86950e9e"/>
+				<textFieldExpression><![CDATA[$F{kode_peminjaman}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="81" y="39" width="71" height="17" uuid="91f72500-f419-4e87-b49d-e581f7ed8708"/>
+				<textFieldExpression><![CDATA[$F{nama}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="19" width="54" height="17" uuid="95a6eeb6-c997-45e6-a84a-6d759d5ae085"/>
+				<text><![CDATA[NISN]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="81" y="19" width="71" height="17" uuid="7e874cdc-74ce-4eb8-833b-5afc32efac46"/>
+				<textFieldExpression><![CDATA[$F{NISN}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="139" splitType="Stretch">
+			<textField>
+				<reportElement x="9" y="28" width="54" height="17" uuid="9bca89c0-0f30-40bd-b7d2-cbc1dc4505a5"/>
+				<textFieldExpression><![CDATA[$F{tanggal}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="0" width="72" height="28" uuid="e6c513a8-a627-4d0f-ad78-6891e1dd2ffb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Tanggal Dikembalikan]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="69" y="28" width="54" height="17" uuid="0f795798-ce59-40a8-9ed8-3fe3a819ad29"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{username}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="67" y="1" width="54" height="27" uuid="889c1f29-c39d-4efb-b184-d2a579c323cd"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Nama petugas]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="132" y="28" width="65" height="17" uuid="597d7c9c-95d9-439d-8eda-e4771a93d82c"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{kode_buku}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="132" y="1" width="54" height="27" uuid="8566889c-e4be-4634-afc7-e03c9485c220"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Kode Buku]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="196" y="28" width="65" height="17" uuid="99320d98-fd55-480d-9619-121894248c3e"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{judul_buku}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="196" y="1" width="54" height="27" uuid="056c0a7f-01f2-4e8e-9085-1f5b2892fa65"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Judul Buku]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="261" y="28" width="54" height="17" uuid="9c28b55c-9208-46ce-aa39-4acfb91c9d70"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{jumlah_pengembalian}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="261" y="1" width="54" height="27" uuid="efa01323-e0f9-4728-bd7f-393479e035e0"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Jumlah Buku]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch">
+			<componentElement>
+				<reportElement x="81" y="0" width="157" height="50" uuid="befddcbc-530e-48fe-b394-d39676a75746"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39 (Extended)" drawText="false" checksumRequired="false">
+					<jr:codeExpression><![CDATA[$F{kode_peminjaman}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<textField>
+				<reportElement x="115" y="33" width="82" height="17" uuid="33992e7f-863c-4455-a43a-6121ecf51915"/>
+				<textFieldExpression><![CDATA[$F{kode_peminjaman}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

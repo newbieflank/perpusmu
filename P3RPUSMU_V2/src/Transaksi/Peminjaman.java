@@ -14,12 +14,14 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -27,6 +29,16 @@ import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRResultSetDataSource;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JRDesignQuery;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
@@ -438,10 +450,10 @@ public class Peminjaman extends javax.swing.JPanel {
         menu3.setFocusable(false);
 
         addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
             public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
                 formAncestorAdded(evt);
-            }
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
             }
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
             }
@@ -603,7 +615,7 @@ public class Peminjaman extends javax.swing.JPanel {
                             .addComponent(txt_anggota, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel72)
                             .addComponent(txt_petugas, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 234, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 219, Short.MAX_VALUE)
                         .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txt_kode_buku, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txt_judul_buku, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -728,7 +740,7 @@ public class Peminjaman extends javax.swing.JPanel {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1344, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jButton5)))
@@ -738,7 +750,7 @@ public class Peminjaman extends javax.swing.JPanel {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton5)
                 .addContainerGap())
@@ -966,7 +978,7 @@ public class Peminjaman extends javax.swing.JPanel {
     }//GEN-LAST:event_tabel_peminjamanMouseClicked
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-           DefaultTableModel model = (DefaultTableModel) tabel_peminjaman.getModel();
+        DefaultTableModel model = (DefaultTableModel) tabel_peminjaman.getModel();
 
         if (model.getRowCount() == 0) {
             JOptionPane.showMessageDialog(this, "Tabel kosong");
@@ -1017,6 +1029,32 @@ public class Peminjaman extends javax.swing.JPanel {
                                     pstDetailPeminjaman.setString(6, kodeBuku);
                                     pstDetailPeminjaman.executeUpdate();
                                 }
+                                  try {
+                                    Statement statement = koneksi.Koneksi().createStatement();
+                                    String res = "SELECT pengembalian.kode_peminjaman, anggota.NISN, anggota.nama, detail_pengembalian.tanggal, users.username, buku.kode_buku, buku.judul_buku, detail_pengembalian.jumlah_pengembalian FROM pengembalian JOIN detail_pengembalian ON detail_pengembalian.kode_pengembalian = pengembalian.kode_pengembalian JOIN anggota ON anggota.NISN = detail_pengembalian.NISN JOIN buku ON buku.No_buku = detail_pengembalian.No_buku JOIN users ON users.ID_users = pengembalian.ID_users WHERE kode_peminjaman = '" + txt_kode_peminjaman.getText() + "';";    
+                                    // Define the directory path for the report
+                                    String dirr = "src/Transaksi/";
+
+                                    // Load the JasperDesign from the JRXML file
+                                    JasperDesign design = JRXmlLoader.load(dirr + "report1s.jrxml");
+                                    JRDesignQuery newquery = new JRDesignQuery();
+                                    newquery.setText(res);
+                                    design.setQuery(newquery);
+                                    // Compile the JasperReport
+                                    JasperReport jr = JasperCompileManager.compileReport(design);
+
+                                    // Create a JRResultSetDataSource to provide data to the report
+//                                    JRResultSetDataSource rsDataSource = new JRResultSetDataSource(res);
+
+                                    // Fill the JasperPrint with data from the result set
+                                    JasperPrint jp = JasperFillManager.fillReport(jr, new HashMap<>(), con);
+                                    JasperViewer viewer = new JasperViewer(jp,false);
+                                    viewer.setVisible(true);
+
+                                } catch (Exception e) {
+                                    System.out.print(e);
+                                }
+//    JOptionPane.showMessageDialog(this,
                             } else {
                                 // Jika stok tidak mencukupi, batalkan transaksi dan tampilkan pesan notifikasi
                                 conn.rollback();
@@ -1032,28 +1070,31 @@ public class Peminjaman extends javax.swing.JPanel {
                 }
 
                 conn.commit(); // Commit transaksi
-                } catch (SQLException e) {
+            } catch (SQLException e) {
                 try {
                     // Tangani kesalahan dengan membatalkan transaksi jika terjadi kesalahan
                     con.rollback();
                 } catch (SQLException ex) {
                     Logger.getLogger(Peminjaman.class.getName()).log(Level.SEVERE, null, ex);
                 }
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
-    } finally {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+            } finally {
                 try {
                     // Pastikan untuk mengatur ulang otomatis commit ke true setelah transaksi selesai atau gagal
                     con.setAutoCommit(true);
                 } catch (SQLException ex) {
                     Logger.getLogger(Peminjaman.class.getName()).log(Level.SEVERE, null, ex);
                 }
+              
                 JOptionPane.showMessageDialog(this, "Peminjaman berhasil disimpan!");
+
                 kosong();
                 refresh();
                 clear3();
-          
-            }}
+            }
+        }
+
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton21ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton21ActionPerformed

@@ -268,7 +268,7 @@
                                   <Component id="jLabel72" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="txt_petugas" alignment="0" min="-2" pref="290" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="234" max="32767" attributes="0"/>
+                              <EmptySpace pref="219" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="txt_kode_buku" alignment="1" min="-2" pref="290" max="-2" attributes="0"/>
                                   <Component id="txt_judul_buku" alignment="1" min="-2" pref="290" max="-2" attributes="0"/>
@@ -558,7 +558,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jScrollPane1" alignment="0" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" alignment="0" pref="1344" max="32767" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                               <Component id="jButton5" min="-2" max="-2" attributes="0"/>
@@ -572,7 +572,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="137" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="101" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jButton5" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
