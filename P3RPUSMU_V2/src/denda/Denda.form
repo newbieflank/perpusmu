@@ -153,6 +153,9 @@
               </SubComponents>
             </Container>
             <Component class="javax.swing.JTextField" name="denda_jumlah">
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="denda_jumlahActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JTextField" name="denda_nama">
             </Component>

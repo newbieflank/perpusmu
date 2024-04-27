@@ -64,11 +64,26 @@ public class Denda extends javax.swing.JPanel {
     }
 
     private void update() {
+        int denda = Integer.parseInt(denda_total.getText());
         try {
-            pst = con.prepareStatement("UPDATE denda set jumlah_denda = jumlah_denda - total_pembayaran, total_pembayaran = 0;");
+            pst = con.prepareStatement("UPDATE denda set jumlah_denda = jumlah_denda - "+ denda +";");
             pst.execute();
+            try {
+                
+            } catch (Exception e) {
+            }
+            denda_total.setText(null);
         } catch (Exception e) {
             System.out.println("update" + e);
+        }
+    }
+    
+    private void update2() {
+        try {
+            pst = con.prepareStatement("Update denda set status_denda = 'Belum Lunas' where jumlah_denda != 0");
+            pst.execute();
+        } catch (Exception e) {
+            System.out.println("Dta Update2");
         }
     }
 
@@ -86,12 +101,14 @@ public class Denda extends javax.swing.JPanel {
         model.addColumn("Total Pembayaran");
 
         try {
+            update2();
             pst = con.prepareStatement("SELECT anggota.nama , denda.jumlah_denda, denda.status_denda, denda.total_pembayaran "
-                    + "from pengembalian join denda on pengembalian.kode_pengembalian = denda.kode_pengembalian join anggota on anggota.NISN = denda.NISN "
+                    + "from pengembalian join denda on pengembalian.kode_pengembalian = denda.kode_pengembalian join"
+                    + " anggota on anggota.NISN = denda.NISN "
                     + "where denda.status_denda = 'Belum Lunas';");
             rs = pst.executeQuery();
             while (rs.next()) {
-                model.addRow(new Object[]{rs.getString(1), rs.getInt(2), rs.getString(3), rs.getInt(4)});
+                model.addRow(new Object[]{rs.getString(1), rs.getInt(2), rs.getString(3), 0});
             }
             tabel.setModel(model);
         } catch (Exception e) {
@@ -157,6 +174,12 @@ public class Denda extends javax.swing.JPanel {
                 .addComponent(jLabel2)
                 .addGap(0, 6, Short.MAX_VALUE))
         );
+
+        denda_jumlah.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                denda_jumlahActionPerformed(evt);
+            }
+        });
 
         denda_total.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -438,19 +461,19 @@ public class Denda extends javax.swing.JPanel {
         // TODO add your handling code here:
         try {
             pst = con.prepareStatement("SELECT anggota.nama , denda.jumlah_denda, denda.status_denda, denda.total_pembayaran "
-                    + "from pengembalian join denda on pengembalian.kode_pengembalian = denda.kode_pengembalian join anggota on anggota.NISN = denda.NISN "
+                    + "from pengembalian join denda on pengembalian.kode_pengembalian = denda.kode_pengembalian join anggota"
+                    + " on anggota.NISN = denda.NISN "
                     + "where nama ='" + nama + "'");
             rs = pst.executeQuery();
             rs.next();
             String NAMA = rs.getString(1);
             String JUMLAH = Integer.toString(rs.getInt(2));
             String STATUS = rs.getString(3);
-            String TOTAL = Integer.toString(rs.getInt(4));
 
             denda_nama.setText(NAMA);
             denda_status.setSelectedItem(STATUS);
             denda_jumlah.setText(JUMLAH);
-            denda_total.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, TOTAL);
+            denda_total.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "0");
             denda_nama.enable(false);
 
             jDialog1.setVisible(true);
@@ -469,7 +492,8 @@ public class Denda extends javax.swing.JPanel {
                     JOptionPane.QUESTION_MESSAGE);
             if (result == JOptionPane.YES_OPTION) {
                 try {
-                    pst = con.prepareStatement("delete from denda  where NISN = (SELECT NISN FROM anggota WHERE nama = '" + nama + "');");
+                    pst = con.prepareStatement("delete from denda  where"
+                            + " NISN = (SELECT NISN FROM anggota WHERE nama = '" + nama + "');");
                     pst.execute();
                     loadTabel();
                 } catch (Exception e) {
@@ -500,6 +524,7 @@ public class Denda extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        int denda= Integer.parseInt(denda_jumlah.getText());
         if (denda_total.getText().equals("") || denda_jumlah.getText().equals("")) {
             JOptionPane.showMessageDialog(jDialog1, "Isi Semua Data Yang ada");
         } else {
@@ -508,19 +533,37 @@ public class Denda extends javax.swing.JPanel {
                     JOptionPane.QUESTION_MESSAGE);
             if (result == JOptionPane.YES_OPTION) {
                 try {
-                    pst = con.prepareStatement("update denda set total_pembayaran= " + denda_total.getText()
-                            + " where NISN = (SELECT NISN FROM anggota WHERE nama = '" + nama + "');");
-                    pst.execute();
-                    update();
-                    try {
-                        pst = con.prepareStatement("update denda set status_denda = 'Lunas' where jumlah_denda = 0");
-                        pst.execute();
-                    } catch (Exception e) {
-                        System.out.println("Lunas" + e);
+                    int Bayar = Integer.parseInt(denda_total.getText());
+                    int bayar_awal;
+                    pst = con.prepareStatement("select total_pembayaran from denda where NISN = (select NISN from anggota where"
+                            + " nama = '" + nama + "');");
+                    rs = pst.executeQuery();
+                    rs.next();
+                    bayar_awal = rs.getInt(1);
+                    int total_bayar = bayar_awal + Bayar;
+                   
+                    if (Bayar > denda) {
+                        JOptionPane.showMessageDialog(jDialog1, "Pastikan Harga yang di bayarkan sesusai dengan jumlah denda");
+                    } else {
+                        try {
+                            pst = con.prepareStatement("update denda set total_pembayaran= " + total_bayar
+                                    + " where NISN = (SELECT NISN FROM anggota WHERE nama = '" + nama + "');");
+                            pst.execute();
+                            update();
+                            try {
+                                pst = con.prepareStatement("update denda set status_denda = "
+                                        + "'Lunas' where jumlah_denda = 0 or jumlah_denda < 0");
+                                pst.execute();
+                            } catch (Exception e) {
+                                System.out.println("Lunas" + e);
+                            }
+                            loadTabel();
+                        } catch (Exception e) {
+                            System.out.println("2" + e);
+                        }
                     }
-                    loadTabel();
                 } catch (Exception e) {
-                    System.out.println(e);
+                    System.out.println("1" + e);
                 }
                 nama = null;
                 jDialog1.dispose();
@@ -553,6 +596,10 @@ public class Denda extends javax.swing.JPanel {
             evt.consume();
         }
     }//GEN-LAST:event_denda_totalKeyReleased
+
+    private void denda_jumlahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_denda_jumlahActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_denda_jumlahActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
