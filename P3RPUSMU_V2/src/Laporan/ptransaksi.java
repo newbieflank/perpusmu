@@ -63,7 +63,7 @@ public class ptransaksi extends javax.swing.JPanel {
         model.addColumn("Jumlah Kembali");
    
         try {
-          pst = con.prepareStatement ("SELECT pengembalian.kode_pengembalian , anggota.nama , anggota.angkatan , anggota.status , buku.judul_buku , buku.kategori , detail_pengembalian.tanggal , detail_pengembalian.status_pengembalian,detail_pengembalian.kondisi_buku,detail_pengembalian.jumlah_pengembalian FROM detail_pengembalian JOIN pengembalian ON pengembalian.kode_pengembalian = detail_pengembalian.kode_pengembalian JOIN anggota ON anggota.NISN = detail_pengembalian.NISN JOIN buku ON buku.No_buku = detail_pengembalian.No_buku"); 
+          pst = con.prepareStatement ("SELECT pengembalian.kode_pengembalian , anggota.nama , anggota.angkatan , anggota.status , buku.judul_buku , buku.kategori , detail_pengembalian.tanggal , detail_pengembalian.status_pengembalian,detail_pengembalian.kondisi_buku,detail_pengembalian.jumlah_pengembalian FROM detail_pengembalian JOIN pengembalian ON pengembalian.kode_pengembalian = detail_pengembalian.kode_pengembalian JOIN anggota ON anggota.NISN = detail_pengembalian.NISN JOIN buku ON buku.No_buku = detail_pengembalian.No_buku where detail_pengembalian.tanggal = current_date"); 
             rs = pst.executeQuery();
             while (rs.next()) {
                 model.addRow(new Object[]{rs.getString(1), rs.getString(2), rs.getInt(3), rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(7),rs.getString(8),rs.getString(9),rs.getString(10)});

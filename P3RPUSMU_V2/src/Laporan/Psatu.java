@@ -7,20 +7,35 @@ package Laporan;
 
 
 import java.awt.CardLayout;
+import java.awt.CardLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.SQLException;
+
 public class Psatu extends javax.swing.JPanel {
 
     private CardLayout card;
+    
     public Psatu() throws SQLException {
-         initComponents();
+        initComponents();
+        
         card = new CardLayout();
         jlaporan.setLayout(card);
         jlaporan.add(new ptransaksi(), "ptransaksi");
         jlaporan.add(new pdenda(), "pdenda");
         
         card.show(jlaporan, "ptransaksi");
-       
-    }
+        
+        // Menambahkan ActionListener untuk tombol
+        jButton1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Mengubah layout ketika tombol ditekan
+                card.next(jlaporan);
+            }
+        });
+    } 
+
 
     /**
      * This method is called from within the constructor to initialize the form.

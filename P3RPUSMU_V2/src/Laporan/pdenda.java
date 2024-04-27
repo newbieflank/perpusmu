@@ -55,7 +55,7 @@ public class pdenda extends javax.swing.JPanel {
         model.addColumn("Total Dembayaran");
 
         try {
-             pst = con.prepareStatement ( "SELECT anggota.nama, denda.jumlah_denda, denda.status_denda, denda.total_pembayaran, detail_pengembalian.tanggal FROM denda JOIN anggota ON anggota.NISN = denda.NISN JOIN detail_pengembalian ON detail_pengembalian.kode_pengembalian = denda.kode_pengembalian;");
+             pst = con.prepareStatement ( "SELECT anggota.nama, denda.jumlah_denda, denda.status_denda, denda.total_pembayaran, detail_pengembalian.tanggal FROM denda JOIN anggota ON anggota.NISN = denda.NISN JOIN detail_pengembalian ON detail_pengembalian.kode_pengembalian = denda.kode_pengembalian  where detail_pengembalian.tanggal = current_date");
            rs = pst.executeQuery();
             while (rs.next()) {
                 model.addRow(new Object[]{rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4)});
