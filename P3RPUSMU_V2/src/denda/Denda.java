@@ -475,6 +475,8 @@ public class Denda extends javax.swing.JPanel {
             denda_jumlah.setText(JUMLAH);
             denda_total.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "0");
             denda_nama.enable(false);
+            denda_status.enable(false);
+            denda_jumlah.enable(false);
 
             jDialog1.setVisible(true);
         } catch (Exception e) {
