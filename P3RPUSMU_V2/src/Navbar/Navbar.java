@@ -7,6 +7,7 @@ package Navbar;
 import Admin.Admin;
 import Anggota.Anggota;
 import Buku.Buku;
+import Buku.BukuMain;
 import dashboard.Dashboard1;
 import Login.users;
 import Laporan.Psatu;
@@ -51,7 +52,7 @@ public class Navbar extends javax.swing.JFrame {
         main.setLayout(card);
 
         main.add(new Anggota(), "anggota");
-        main.add(new Buku(), "buku");
+        main.add(new BukuMain(), "buku");
         main.add(new Denda(), "denda");
         main.add(new Admin(), "admin");
         main.add(new Psatu(), "laporan");
