@@ -109,7 +109,7 @@ public class history extends javax.swing.JPanel {
 
         // Menampilkan data di tabel history
         table1();
-    }
+    
     // ... (lanjutkan dengan method lain yang dibutuhkan)
 }
 
@@ -238,7 +238,6 @@ public class history extends javax.swing.JPanel {
 
     private void btncetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btncetakActionPerformed
 
-
     }//GEN-LAST:event_btncetakActionPerformed
 
 
@@ -250,5 +249,5 @@ public class history extends javax.swing.JPanel {
     private javax.swing.JTable table1;
     private javax.swing.JTextField txtcari;
     // End of variables declaration//GEN-END:variables
-
+}
 
