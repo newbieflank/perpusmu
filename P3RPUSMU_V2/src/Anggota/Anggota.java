@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import Navbar.koneksi;
+import com.mysql.cj.jdbc.result.ResultSetMetaData;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -37,7 +38,7 @@ public class Anggota extends javax.swing.JPanel {
     private Connection con;
     private PreparedStatement pst, pst1;
     private ResultSet rs;
-    private String nisn;
+    private String nisn, kelamin;
 
     public Anggota() throws SQLException {
         con = koneksi.Koneksi();
@@ -47,8 +48,8 @@ public class Anggota extends javax.swing.JPanel {
         jPanel1.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         popup.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         popup2.putClientProperty(FlatClientProperties.STYLE, "arc:20");
+        f_gender.putClientProperty(FlatClientProperties.STYLE, "arc:20");
         search.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Cari Anggota");
-        dial_jenis.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Pilih Jenis Kelamin");
 
         UIManager.put("Button.arc", 15);
         search.putClientProperty("JComponent.roundRect", true);
@@ -75,24 +76,86 @@ public class Anggota extends javax.swing.JPanel {
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
-
         };
-        model.addColumn("NISN");
-        model.addColumn("Nama");
-        model.addColumn("Jurusan");
-        model.addColumn("Jenis Kelamin");
-        model.addColumn("Angkatan");
-        model.addColumn("Status");
 
         try {
             pst = con.prepareStatement("select * from anggota");
             rs = pst.executeQuery();
-            while (rs.next()) {
-                model.addRow(new Object[]{rs.getString(1), rs.getString(2), rs.getString(4), rs.getString(3), rs.getInt(5), rs.getString(6)});
+            ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
+            int columnCount = rsmd.getColumnCount();
+            for (int i = 1; i <= columnCount; i++) {
+                model.addColumn(rsmd.getColumnName(i));
             }
-            tabel.setModel(model);
+
+            // Add rows to the DefaultTableModel
+            while (rs.next()) {
+                Object[] rowData = new Object[columnCount];
+                for (int i = 1; i <= columnCount; i++) {
+                    rowData[i - 1] = rs.getObject(i);
+                }
+                model.addRow(rowData);
+                tabel.setModel(model);
+            }
         } catch (Exception e) {
-            System.out.println("loadTable" + e);
+            System.out.println("loadTable = " + e);
+        }
+    }
+
+    private void loadTable2() {
+        tabel.clearSelection();
+        tabel.getTableHeader().setReorderingAllowed(false);
+        tabel.getTableHeader().setResizingAllowed(false);
+        DefaultTableModel model = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        if (kelamin.equals("Semua")) {
+            try {
+                pst = con.prepareStatement("select * from anggota");
+                rs = pst.executeQuery();
+                ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
+                int columnCount = rsmd.getColumnCount();
+                for (int i = 1; i <= columnCount; i++) {
+                    model.addColumn(rsmd.getColumnName(i));
+                }
+
+                // Add rows to the DefaultTableModel
+                while (rs.next()) {
+                    Object[] rowData = new Object[columnCount];
+                    for (int i = 1; i <= columnCount; i++) {
+                        rowData[i - 1] = rs.getObject(i);
+                    }
+                    model.addRow(rowData);
+                    tabel.setModel(model);
+                }
+            } catch (Exception e) {
+                System.out.println("loadTable = " + e);
+            }
+        } else {
+            try {
+                pst = con.prepareStatement("select * from anggota where jenis_kelamin='" + kelamin + "'");
+                rs = pst.executeQuery();
+                ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
+                int columnCount = rsmd.getColumnCount();
+                for (int i = 1; i <= columnCount; i++) {
+                    model.addColumn(rsmd.getColumnName(i));
+                }
+
+                // Add rows to the DefaultTableModel
+                while (rs.next()) {
+                    Object[] rowData = new Object[columnCount];
+                    for (int i = 1; i <= columnCount; i++) {
+                        rowData[i - 1] = rs.getObject(i);
+                    }
+                    model.addRow(rowData);
+                    tabel.setModel(model);
+                }
+            } catch (Exception e) {
+                System.out.println("loadTable = " + e);
+            }
         }
     }
 
@@ -104,23 +167,36 @@ public class Anggota extends javax.swing.JPanel {
                 return false;
             }
         };
-        model.addColumn("NISN");
-        model.addColumn("Nama");
-        model.addColumn("Jurusan");
-        model.addColumn("Jenis Kelamin");
-        model.addColumn("Angkatan");
-        model.addColumn("Status");
+        String cari = search.getText();
+        if (!cari.equals(" ")) {
+            try {
+                pst = con.prepareStatement("select * from anggota where nama Like '%" + search.getText() + "%' or NISN Like '%" + search.getText() + "%' "
+                        + "or jurusan Like '%" + search.getText() + "%'");
+                rs = pst.executeQuery();
+                ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
+                int columnCount = rsmd.getColumnCount();
+                for (int i = 1; i <= columnCount; i++) {
+                    model.addColumn(rsmd.getColumnName(i));
+                }
 
-        try {
-            pst = con.prepareStatement("select * from anggota where nama Like '%" + search.getText() + "%' or NISN Like '%" + search.getText() + "%' "
-                    + "or jurusan Like '%" + search.getText() + "%'");
-            rs = pst.executeQuery();
-            while (rs.next()) {
-                model.addRow(new Object[]{rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getString(6)});
+                // Add rows to the DefaultTableModel
+                while (rs.next()) {
+                    Object[] rowData = new Object[columnCount];
+                    for (int i = 1; i <= columnCount; i++) {
+                        rowData[i - 1] = rs.getObject(i);
+                    }
+                    model.addRow(rowData);
+                    tabel.setModel(model);
+                }
+            } catch (Exception e) {
+                System.out.println("data cari" + e);
             }
-            tabel.setModel(model);
-        } catch (Exception e) {
-            System.out.println("searchTable" + e);
+        } else {
+            try {
+                loadTabel();
+            } catch (Exception e) {
+                System.out.println(e);
+            }
         }
     }
 
@@ -159,6 +235,7 @@ public class Anggota extends javax.swing.JPanel {
         addButton = new javax.swing.JButton();
         editButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
+        f_gender = new javax.swing.JComboBox<>();
 
         jDialog1.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         jDialog1.setBackground(new java.awt.Color(255, 255, 255));
@@ -482,44 +559,53 @@ public class Anggota extends javax.swing.JPanel {
             }
         });
 
+        f_gender.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Semua", "Laki-Laki", "Perempuan" }));
+        f_gender.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                f_genderItemStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(40, 40, 40)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(f_gender, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(editButton, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(2, 2, 2)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1000, Short.MAX_VALUE)))
-                        .addGap(8, 8, 8))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1313, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(40, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jLabel1)
-                .addGap(10, 10, 10)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(editButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(f_gender, javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(search, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)))
                 .addGap(9, 9, 9)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 507, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -764,6 +850,16 @@ public class Anggota extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_dial_nisnKeyTyped
 
+    private void f_genderItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_f_genderItemStateChanged
+        // TODO add your handling code here:
+        kelamin = (String) (f_gender.getSelectedItem());
+        try {
+            loadTable2();
+        } catch (Exception e) {
+            System.out.println("Gender event" + e);
+        }
+    }//GEN-LAST:event_f_genderItemStateChanged
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
@@ -777,6 +873,7 @@ public class Anggota extends javax.swing.JPanel {
     private javax.swing.JButton dial_simpan;
     private javax.swing.JComboBox<String> dial_status;
     private javax.swing.JButton editButton;
+    private javax.swing.JComboBox<String> f_gender;
     private javax.swing.JDialog jDialog1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
