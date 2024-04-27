@@ -5,21 +5,22 @@
  */
 package Buku;
 
-
+import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.CardLayout;
 import java.sql.SQLException;
+
 public class BukuMain extends javax.swing.JPanel {
 
     private CardLayout card;
-    
+
     public BukuMain() throws SQLException {
         initComponents();
         card = new CardLayout();
+        jPanel2.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         jPanel2.setLayout(card);
         jPanel2.add(new Buku(), "buku");
         jPanel2.add(new history(), "history");
-        
-        
+
         card.show(jPanel2, "buku");
     }
 
@@ -96,12 +97,12 @@ public class BukuMain extends javax.swing.JPanel {
 
     private void btnhistoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnhistoryActionPerformed
         card.show(jPanel2, "history");
-   
+
     }//GEN-LAST:event_btnhistoryActionPerformed
 
     private void btnbukuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnbukuActionPerformed
-     
-   card.show(jPanel2, "buku");
+
+        card.show(jPanel2, "buku");
     }//GEN-LAST:event_btnbukuActionPerformed
 
 
