@@ -31,7 +31,7 @@ public class history extends javax.swing.JPanel {
         loadTabel();
         jPanel1.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         txtcari.putClientProperty(FlatClientProperties.STYLE, "arc:30");
-          
+
         tabel.getTableHeader().setBackground(new Color(63, 148, 105));
         tabel.getTableHeader().setForeground(Color.white);
         tabel.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -53,7 +53,7 @@ public class history extends javax.swing.JPanel {
                     + "history.id_buku \n"
                     + "FROM history \n"
                     + "JOIN buku ON history.id_buku = buku.No_buku \n"
-                    + "LEFT JOIN detail_pengembalian ON buku.No_buku = detail_pengembalian.No_buku AND buku.kondisi_buku = 'hilang';");
+                    + "LEFT JOIN detail_pengembalian ON buku.No_buku = detail_pengembalian.No_buku");
             rs = pst.executeQuery();
             ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
             int columnCount = rsmd.getColumnCount();
@@ -87,6 +87,50 @@ public class history extends javax.swing.JPanel {
             System.out.println("addbuku" + e);
         }
         loadTabel();
+    }
+
+    private void cari(String key) {
+        tabel.clearSelection();
+        tabel.getTableHeader().setReorderingAllowed(false);
+        tabel.getTableHeader().setResizingAllowed(false);
+        DefaultTableModel model = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        if (key.equals(" ")) {
+            loadTabel();
+        } else {
+            try {
+                pst = con.prepareStatement("SELECT history.id_history, history.tgl_masuk, history.peristiwa, history.keterangan, \n"
+                        + "buku.kode_buku, buku.judul_buku, buku.kategori, buku.kondisi_buku, buku.harga, detail_pengembalian.tanggal, \n"
+                        + "history.id_buku \n"
+                        + "FROM history \n"
+                        + "JOIN buku ON history.id_buku = buku.No_buku \n"
+                        + "LEFT JOIN detail_pengembalian ON buku.No_buku = detail_pengembalian.No_buku"
+                        + "where buku.judul_buku Like %'" + key + "'%");
+                rs = pst.executeQuery();
+                ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
+                int columnCount = rsmd.getColumnCount();
+                for (int i = 1; i <= columnCount; i++) {
+                    model.addColumn(rsmd.getColumnName(i));
+                }
+
+                // Add rows to the DefaultTableModel
+                while (rs.next()) {
+                    Object[] rowData = new Object[columnCount];
+                    for (int i = 1; i <= columnCount; i++) {
+                        rowData[i - 1] = rs.getObject(i);
+                    }
+                    model.addRow(rowData);
+                    tabel.setModel(model);
+                }
+            } catch (Exception e) {
+                System.out.println("cari" + e);
+            }
+        }
     }
 
     /**
@@ -134,11 +178,6 @@ public class history extends javax.swing.JPanel {
         tabel.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(tabel);
 
-        txtcari.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtcariActionPerformed(evt);
-            }
-        });
         txtcari.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtcariKeyReleased(evt);
@@ -208,12 +247,13 @@ public class history extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtcariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtcariActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtcariActionPerformed
-
     private void txtcariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtcariKeyReleased
-
+        String key = txtcari.getText();
+        try {
+            cari(key);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_txtcariKeyReleased
 
     private void btncetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btncetakActionPerformed
