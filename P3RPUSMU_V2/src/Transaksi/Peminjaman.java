@@ -9,6 +9,7 @@ import Login.Config;
 import Navbar.koneksi;
 import java.awt.Color;
 import java.awt.im.InputContext;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -22,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -32,11 +34,13 @@ import javax.swing.table.TableModel;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JRDesignQuery;
 import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.view.JasperViewer;
 
@@ -68,7 +72,16 @@ public class Peminjaman extends javax.swing.JPanel {
 
         tabel_peminjaman.getTableHeader().setBackground(new Color(63, 148, 105));
         tabel_peminjaman.getTableHeader().setForeground(Color.white);
+        panel_print1.setSize(570, 514);
 
+    }
+    
+    private void Jdialog () {
+        panel_print1.setLocationRelativeTo(null);
+        panel_print1.setBackground(Color.white);
+        panel_print1.getRootPane().setOpaque(false);
+        panel_print1.getContentPane().setBackground(new Color(0, 0, 0, 0));
+        panel_print1.setBackground(new Color(0, 0, 0, 0));
     }
 
     private void loadtable() throws SQLException {
@@ -325,6 +338,11 @@ public class Peminjaman extends javax.swing.JPanel {
         jScrollPane4 = new javax.swing.JScrollPane();
         tabel_users = new javax.swing.JTable();
         menu3 = new javax.swing.JPopupMenu();
+        panel_print1 = new javax.swing.JDialog();
+        panel_print2 = new javax.swing.JPanel();
+        testing = new javax.swing.JTextField();
+        jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
         jPanel11 = new javax.swing.JPanel();
         jPanel10 = new javax.swing.JPanel();
         jLabel65 = new javax.swing.JLabel();
@@ -449,11 +467,63 @@ public class Peminjaman extends javax.swing.JPanel {
 
         menu3.setFocusable(false);
 
-        addAncestorListener(new javax.swing.event.AncestorListener() {
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+        testing.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                testingActionPerformed(evt);
             }
+        });
+
+        jButton3.setText("Cancel");
+
+        jButton4.setText("Print");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panel_print2Layout = new javax.swing.GroupLayout(panel_print2);
+        panel_print2.setLayout(panel_print2Layout);
+        panel_print2Layout.setHorizontalGroup(
+            panel_print2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_print2Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addGroup(panel_print2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(testing)
+                    .addGroup(panel_print2Layout.createSequentialGroup()
+                        .addComponent(jButton3)
+                        .addGap(71, 71, 71)
+                        .addComponent(jButton4)))
+                .addContainerGap(32, Short.MAX_VALUE))
+        );
+        panel_print2Layout.setVerticalGroup(
+            panel_print2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_print2Layout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addComponent(testing, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panel_print2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton3)
+                    .addComponent(jButton4))
+                .addContainerGap(29, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout panel_print1Layout = new javax.swing.GroupLayout(panel_print1.getContentPane());
+        panel_print1.getContentPane().setLayout(panel_print1Layout);
+        panel_print1Layout.setHorizontalGroup(
+            panel_print1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(panel_print2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+        panel_print1Layout.setVerticalGroup(
+            panel_print1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(panel_print2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        addAncestorListener(new javax.swing.event.AncestorListener() {
             public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
                 formAncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
             }
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
             }
@@ -912,23 +982,41 @@ public class Peminjaman extends javax.swing.JPanel {
     }//GEN-LAST:event_txt_kode_bukuMouseClicked
 
     private void jButton20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton20ActionPerformed
-        DefaultTableModel model = (DefaultTableModel) tabel_peminjaman.getModel();
-// Mendapatkan teks dari field-field yang relevan
-        String kodepeminjaman = txt_kode_peminjaman.getText();
-        String nama = txt_nisn.getText();
-        String judulbuku = txt_judul_buku.getText();
-        String totalpeminjaman = txt_jumlah_pinjam.getText();
-        String username = txt_petugas.getText();
+    DefaultTableModel model = (DefaultTableModel) tabel_peminjaman.getModel();
+    // Mendapatkan teks dari field-field yang relevan
+    String kodepeminjaman = txt_kode_peminjaman.getText();
+    String nama = txt_nisn.getText();
+    String judulbuku = txt_judul_buku.getText();
+    String totalpeminjaman = txt_jumlah_pinjam.getText();
+    String username = txt_petugas.getText();
 
-// Mendapatkan tanggal_pinjam dan tanggal_kembali
-        Date tanggalpinjam = tanggal_pinjam.getDate();
-        Date tanggalkembali = tanggal_kembali.getDate();
+    // Mendapatkan tanggal_pinjam dan tanggal_kembali
+    Date tanggalpinjam = tanggal_pinjam.getDate();
+    Date tanggalkembali = tanggal_kembali.getDate();
 
-// Memeriksa jika ada field yang kosong
-        if (kodepeminjaman.isEmpty() || nama.isEmpty() || judulbuku.isEmpty() || totalpeminjaman.isEmpty() || username.isEmpty() || tanggalpinjam == null || tanggalkembali == null) {
-            // Tampilkan pesan bahwa semua field harus diisi
-            JOptionPane.showMessageDialog(null, "Semua field harus diisi!", "Peringatan", JOptionPane.WARNING_MESSAGE);
-        } else if (tanggalkembali.before(tanggalpinjam)) {
+    // Memeriksa jika ada field yang kosong
+    if (kodepeminjaman.isEmpty() || nama.isEmpty() || judulbuku.isEmpty() || totalpeminjaman.isEmpty() || username.isEmpty() || tanggalpinjam == null || tanggalkembali == null) {
+        // Tampilkan pesan bahwa semua field harus diisi
+        JOptionPane.showMessageDialog(null, "Semua field harus diisi!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+    } else {
+        // Buat objek Calendar untuk tanggal pinjam dan tanggal kembali
+        Calendar calTanggalPinjam = Calendar.getInstance();
+        Calendar calTanggalKembali = Calendar.getInstance();
+        calTanggalPinjam.setTime(tanggalpinjam);
+        calTanggalKembali.setTime(tanggalkembali);
+
+        // Atur jam, menit, detik menjadi 0 untuk kedua objek Calendar
+        calTanggalPinjam.set(Calendar.HOUR_OF_DAY, 0);
+        calTanggalPinjam.set(Calendar.MINUTE, 0);
+        calTanggalPinjam.set(Calendar.SECOND, 0);
+        calTanggalPinjam.set(Calendar.MILLISECOND, 0);
+        calTanggalKembali.set(Calendar.HOUR_OF_DAY, 0);
+        calTanggalKembali.set(Calendar.MINUTE, 0);
+        calTanggalKembali.set(Calendar.SECOND, 0);
+        calTanggalKembali.set(Calendar.MILLISECOND, 0);
+
+        // Memeriksa apakah tanggal kembali sebelum tanggal pinjam
+        if (calTanggalKembali.before(calTanggalPinjam)) {
             // Tampilkan notifikasi bahwa tanggal pengembalian tidak boleh mundur dari tanggal pinjam
             JOptionPane.showMessageDialog(null, "Tanggal pengembalian tidak boleh mundur dari tanggal pinjam!", "Peringatan", JOptionPane.WARNING_MESSAGE);
         } else {
@@ -942,6 +1030,7 @@ public class Peminjaman extends javax.swing.JPanel {
             model.addRow(row);
             clear();
         }
+    }
     }//GEN-LAST:event_jButton20ActionPerformed
 
     private void tabel_peminjamanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabel_peminjamanMouseClicked
@@ -978,123 +1067,104 @@ public class Peminjaman extends javax.swing.JPanel {
     }//GEN-LAST:event_tabel_peminjamanMouseClicked
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        DefaultTableModel model = (DefaultTableModel) tabel_peminjaman.getModel();
+         DefaultTableModel model = (DefaultTableModel) tabel_peminjaman.getModel();
 
-        if (model.getRowCount() == 0) {
-            JOptionPane.showMessageDialog(this, "Tabel kosong");
-        } else {
-            try (Connection conn = Config.configDB()) {
-                conn.setAutoCommit(false); // Mulai transaksi
+    if (model.getRowCount() == 0) {
+        JOptionPane.showMessageDialog(this, "Tabel kosong");
+    } else {
+        try (Connection conn = Config.configDB()) {
+            conn.setAutoCommit(false); // Mulai transaksi
 
-                // Proses baris pertama untuk tabel peminjaman
-                int barisPertama = 0;
-                String kodePeminjamanPertama = model.getValueAt(barisPertama, 0).toString();
-                String nisnPertama = model.getValueAt(barisPertama, 3).toString();
-                String idPetugasPertama = model.getValueAt(barisPertama, 6).toString();
+            // Proses baris pertama untuk tabel peminjaman
+            int barisPertama = 0;
+            String kodePeminjamanPertama = model.getValueAt(barisPertama, 0).toString();
+            String nisnPertama = model.getValueAt(barisPertama, 3).toString();
+            String idPetugasPertama = model.getValueAt(barisPertama, 6).toString();
 
-                try {
-                    if (!isKodePeminjamanExists(kodePeminjamanPertama)) {
-                        // Insert into tabel peminjaman
-                        String sqlPeminjaman = "INSERT INTO peminjaman (kode_peminjaman, NISN, ID_users) VALUES (?, (SELECT NISN FROM anggota WHERE nama = ?), (SELECT ID_users FROM users WHERE username = ?))";
-                        try (PreparedStatement pstPeminjaman = conn.prepareStatement(sqlPeminjaman)) {
-                            pstPeminjaman.setString(1, kodePeminjamanPertama);
-                            pstPeminjaman.setString(2, nisnPertama);
-                            pstPeminjaman.setString(3, idPetugasPertama);
-                            pstPeminjaman.executeUpdate();
-                        }
-
-                        // Proses sisa baris untuk tabel detail_peminjaman
-                        for (int i = 0; i < model.getRowCount(); i++) {
-                            String kodePeminjaman = model.getValueAt(i, 0).toString();
-                            String totalPeminjamanStr = model.getValueAt(i, 5).toString();
-                            String tanggalpinjam = model.getValueAt(i, 1).toString();
-                            String tanggalkembali = model.getValueAt(i, 2).toString();
-                            String kodeBuku = model.getValueAt(i, 4).toString();
-
-                            // Pengecekan stok buku
-                            int jumlahPeminjaman = Integer.parseInt(totalPeminjamanStr);
-                            int stokBuku = getStokBuku(conn, kodeBuku);
-                            if (stokBuku >= jumlahPeminjaman) {
-                                // Jika stok mencukupi, kurangi jumlah stok buku
-                                kurangiStokBuku(conn, kodeBuku, jumlahPeminjaman);
-
-                                // Insert ke dalam tabel detail_peminjaman
-                                String detailPeminjamanSql = "INSERT INTO detail_peminjaman (kode_peminjaman, jumlah_peminjaman, status_peminjaman, tanggal_peminjaman, tanggal_kembali, No_buku) VALUES (?, ?, ?, ?, ?, (SELECT No_buku FROM buku WHERE judul_buku = ?))";
-                                try (PreparedStatement pstDetailPeminjaman = conn.prepareStatement(detailPeminjamanSql)) {
-                                    pstDetailPeminjaman.setString(1, kodePeminjaman);
-                                    pstDetailPeminjaman.setInt(2, jumlahPeminjaman);
-                                    pstDetailPeminjaman.setString(3, "dipinjam");
-                                    pstDetailPeminjaman.setString(4, tanggalpinjam);
-                                    pstDetailPeminjaman.setString(5, tanggalkembali);
-                                    pstDetailPeminjaman.setString(6, kodeBuku);
-                                    pstDetailPeminjaman.executeUpdate();
-                                }
-                                  try {
-                                    Statement statement = koneksi.Koneksi().createStatement();
-                                    String res = "SELECT pengembalian.kode_peminjaman, anggota.NISN, anggota.nama, detail_pengembalian.tanggal, users.username, buku.kode_buku, buku.judul_buku, detail_pengembalian.jumlah_pengembalian FROM pengembalian JOIN detail_pengembalian ON detail_pengembalian.kode_pengembalian = pengembalian.kode_pengembalian JOIN anggota ON anggota.NISN = detail_pengembalian.NISN JOIN buku ON buku.No_buku = detail_pengembalian.No_buku JOIN users ON users.ID_users = pengembalian.ID_users WHERE kode_peminjaman = '" + txt_kode_peminjaman.getText() + "';";    
-                                    // Define the directory path for the report
-                                    String dirr = "src/Transaksi/";
-
-                                    // Load the JasperDesign from the JRXML file
-                                    JasperDesign design = JRXmlLoader.load(dirr + "report1s.jrxml");
-                                    JRDesignQuery newquery = new JRDesignQuery();
-                                    newquery.setText(res);
-                                    design.setQuery(newquery);
-                                    // Compile the JasperReport
-                                    JasperReport jr = JasperCompileManager.compileReport(design);
-
-                                    // Create a JRResultSetDataSource to provide data to the report
-//                                    JRResultSetDataSource rsDataSource = new JRResultSetDataSource(res);
-
-                                    // Fill the JasperPrint with data from the result set
-                                    JasperPrint jp = JasperFillManager.fillReport(jr, new HashMap<>(), con);
-                                    JasperViewer viewer = new JasperViewer(jp,false);
-                                    viewer.setVisible(true);
-
-                                } catch (Exception e) {
-                                    System.out.print(e);
-                                }
-//    JOptionPane.showMessageDialog(this,
-                            } else {
-                                // Jika stok tidak mencukupi, batalkan transaksi dan tampilkan pesan notifikasi
-                                conn.rollback();
-                                JOptionPane.showMessageDialog(this, "Error: Stok buku tidak mencukupi untuk peminjaman");
-                                return;
-                            }
-                        }
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Error: Kode Peminjaman sudah ada pada baris " + (barisPertama + 1));
+            try {
+                if (!isKodePeminjamanExists(kodePeminjamanPertama)) {
+                    // Insert into tabel peminjaman
+                    String sqlPeminjaman = "INSERT INTO peminjaman (kode_peminjaman, NISN, ID_users) VALUES (?, (SELECT NISN FROM anggota WHERE nama = ?), (SELECT ID_users FROM users WHERE username = ?))";
+                    try (PreparedStatement pstPeminjaman = conn.prepareStatement(sqlPeminjaman)) {
+                        pstPeminjaman.setString(1, kodePeminjamanPertama);
+                        pstPeminjaman.setString(2, nisnPertama);
+                        pstPeminjaman.setString(3, idPetugasPertama);
+                        pstPeminjaman.executeUpdate();
                     }
-                } catch (NumberFormatException e) {
-                    JOptionPane.showMessageDialog(this, "Error: Format Total Peminjaman tidak valid pada baris " + (barisPertama + 1));
-                }
 
-                conn.commit(); // Commit transaksi
-            } catch (SQLException e) {
-                try {
-                    // Tangani kesalahan dengan membatalkan transaksi jika terjadi kesalahan
-                    con.rollback();
-                } catch (SQLException ex) {
-                    Logger.getLogger(Peminjaman.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
-            } finally {
-                try {
-                    // Pastikan untuk mengatur ulang otomatis commit ke true setelah transaksi selesai atau gagal
-                    con.setAutoCommit(true);
-                } catch (SQLException ex) {
-                    Logger.getLogger(Peminjaman.class.getName()).log(Level.SEVERE, null, ex);
-                }
-              
-                JOptionPane.showMessageDialog(this, "Peminjaman berhasil disimpan!");
+                    // Proses sisa baris untuk tabel detail_peminjaman
+                    boolean stokCukup = true; // Menandakan apakah stok cukup untuk semua baris
+                    for (int i = 0; i < model.getRowCount(); i++) {
+                        String kodePeminjaman = model.getValueAt(i, 0).toString();
+                        String totalPeminjamanStr = model.getValueAt(i, 5).toString();
+                        String tanggalpinjam = model.getValueAt(i, 1).toString();
+                        String tanggalkembali = model.getValueAt(i, 2).toString();
+                        String kodeBuku = model.getValueAt(i, 4).toString();
 
-                kosong();
-                refresh();
-                clear3();
+                        // Pengecekan stok buku
+                        int jumlahPeminjaman = Integer.parseInt(totalPeminjamanStr);
+                        int stokBuku = getStokBuku(conn, kodeBuku);
+                        if (stokBuku >= jumlahPeminjaman) {
+                            // Jika stok mencukupi, kurangi jumlah stok buku
+                            kurangiStokBuku(conn, kodeBuku, jumlahPeminjaman);
+
+                            // Insert ke dalam tabel detail_peminjaman
+                            String detailPeminjamanSql = "INSERT INTO detail_peminjaman (kode_peminjaman, jumlah_peminjaman, status_peminjaman, tanggal_peminjaman, tanggal_kembali, No_buku) VALUES (?, ?, ?, ?, ?, (SELECT No_buku FROM buku WHERE judul_buku = ?))";
+                            try (PreparedStatement pstDetailPeminjaman = conn.prepareStatement(detailPeminjamanSql)) {
+                                pstDetailPeminjaman.setString(1, kodePeminjaman);
+                                pstDetailPeminjaman.setInt(2, jumlahPeminjaman);
+                                pstDetailPeminjaman.setString(3, "dipinjam");
+                                pstDetailPeminjaman.setString(4, tanggalpinjam);
+                                pstDetailPeminjaman.setString(5, tanggalkembali);
+                                pstDetailPeminjaman.setString(6, kodeBuku);
+                                pstDetailPeminjaman.executeUpdate();
+                            }
+                        } else {
+                            // Jika stok tidak mencukupi, batalkan transaksi dan tandai bahwa stok tidak cukup
+                            conn.rollback();
+                            stokCukup = false;
+                            JOptionPane.showMessageDialog(this, "Error: Stok buku tidak mencukupi untuk peminjaman pada baris " + (i + 1));
+                            break; // Keluar dari loop karena stok tidak mencukupi
+                        }
+                    }
+
+                    // Jika stok cukup untuk semua baris, commit transaksi dan tampilkan notifikasi berhasil
+                    if (stokCukup) {
+                        conn.commit(); // Commit transaksi
+                        JOptionPane.showMessageDialog(this, "Peminjaman berhasil disimpan!");
+                        kosong();
+                        refresh();
+                        clear3();
+                       // Tampilkan panel cetak
+                       // panel_print1.setVisible(true);
+                        try {
+                            this.disable();
+
+                            String reportPath = "src/Transaksi/report1s.jasper.";
+                            //Connection conn = koneksi.Koneksi();
+
+                            HashMap<String, Object> parameters = new HashMap<>();
+                            JasperPrint print = JasperFillManager.fillReport(reportPath, parameters, con);
+                            JasperViewer viewer = new JasperViewer(print, false);
+                            viewer.setVisible(true);
+
+                            conn.close(); // Menutup koneksi setelah selesai menggunakan
+
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(this, "Error displaying report: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error: Kode Peminjaman sudah ada pada baris " + (barisPertama + 1));
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Error: Format Total Peminjaman tidak valid pada baris " + (barisPertama + 1));
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
         }
-
+    }  
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton21ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton21ActionPerformed
@@ -1148,10 +1218,21 @@ public class Peminjaman extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_jPanel10MouseClicked
 
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+      
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void testingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testingActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_testingActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton20;
     private javax.swing.JButton jButton21;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel65;
     private javax.swing.JLabel jLabel66;
@@ -1174,6 +1255,8 @@ public class Peminjaman extends javax.swing.JPanel {
     private javax.swing.JPopupMenu menu2;
     private javax.swing.JPopupMenu menu3;
     private javax.swing.JPanel nisn;
+    private javax.swing.JDialog panel_print1;
+    private javax.swing.JPanel panel_print2;
     private javax.swing.JPanel petugas;
     private javax.swing.JTable tabel_anggota;
     private javax.swing.JTable tabel_buku;
@@ -1181,6 +1264,7 @@ public class Peminjaman extends javax.swing.JPanel {
     private javax.swing.JTable tabel_users;
     private com.toedter.calendar.JDateChooser tanggal_kembali;
     private com.toedter.calendar.JDateChooser tanggal_pinjam;
+    private javax.swing.JTextField testing;
     private javax.swing.JTextField txt_anggota;
     private javax.swing.JTextField txt_judul_buku;
     private javax.swing.JTextField txt_jumlah_pinjam;
