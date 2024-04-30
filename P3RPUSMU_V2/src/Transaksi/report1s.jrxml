@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="360" pageHeight="576" columnWidth="320" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="410a9bbc-fd62-4be4-a261-a2e0d3e1cab7">
 	<property name="ireport.zoom" value="1.6105100000000014"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="258"/>
+	<property name="ireport.y" value="306"/>
 	<parameter name="kode" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
@@ -120,20 +120,45 @@ JOIN buku ON buku.No_buku = detail_peminjaman.No_buku]]>
 			</textField>
 			<staticText>
 				<reportElement x="17" y="142" width="100" height="20" uuid="a4a8a0bd-ded3-427d-a2e2-2c864e76e262"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
 				<text><![CDATA[kode_buku]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="117" y="142" width="100" height="20" uuid="20871f84-aacc-43b5-a9c0-eeabd0cb04e6"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
 				<text><![CDATA[judul_buku]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="217" y="142" width="100" height="20" uuid="6650a0b0-4426-429a-aefe-2434088a1151"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
 				<text><![CDATA[jumlah_peminjaman]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="149" y="1" width="100" height="20" uuid="d6649058-24a3-412c-a4b4-317f0c90bb73"/>
+				<text><![CDATA[kode_peminjaman]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="67" splitType="Stretch">
+		<band height="90" splitType="Stretch">
 			<textField>
 				<reportElement x="0" y="0" width="17" height="20" uuid="59552e5a-6bd1-4408-b199-bfb463cc72d0"/>
 				<box>
@@ -143,19 +168,55 @@ JOIN buku ON buku.No_buku = detail_peminjaman.No_buku]]>
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
+				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="17" y="0" width="100" height="20" uuid="7c4d06f1-cc2d-4169-a5cf-6b97b725d49c"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{kode_buku}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="117" y="0" width="100" height="20" uuid="5aedfe8b-38bc-4252-8717-4df1df8aed3b"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{judul_buku}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="217" y="0" width="100" height="20" uuid="fd805be3-0d5f-447b-8b70-ad6e4bf26c42"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{jumlah_peminjaman}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="70" y="35" width="200" height="32" uuid="ff9f367a-464a-4332-9e31-50cc55ae5dbe"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39 (Extended)" drawText="false" checksumRequired="false">
+					<jr:codeExpression><![CDATA[$F{kode_peminjaman}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<textField>
+				<reportElement x="117" y="67" width="100" height="20" uuid="c704992f-ad1e-4092-aa10-ad1ba1bb7a0f"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{kode_peminjaman}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
