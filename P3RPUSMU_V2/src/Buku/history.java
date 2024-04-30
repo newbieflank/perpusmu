@@ -99,12 +99,12 @@ public class history extends javax.swing.JPanel {
             loadTabel();
         } else {
             try {
-                pst = con.prepareStatement("SELECT history.id_history, history.tgl_masuk, history.peristiwa, history.keterangan, \n"
+                pst = con.prepareStatement("SELECT history.id_history, history.tgl_masuk, history.peristiwa, history.keterangan,\n"
                         + "buku.kode_buku, buku.judul_buku, buku.kategori, buku.kondisi_buku, buku.harga, detail_pengembalian.tanggal, \n"
-                        + "history.id_buku \n"
-                        + "FROM history \n"
-                        + "JOIN buku ON history.id_buku = buku.No_buku \n"
-                        + "LEFT JOIN detail_pengembalian ON buku.No_buku = detail_pengembalian.No_buku"
+                        + "history.id_buku\n"
+                        + "FROM history\n"
+                        + "JOIN buku ON history.id_buku = buku.No_buku\n"
+                        + "LEFT JOIN detail_pengembalian ON buku.No_buku = detail_pengembalian.No_buku and detail_pengembalian.kondisi_buku = 'hilang';"
                         + "where buku.judul_buku Like %'" + key + "'%");
                 rs = pst.executeQuery();
                 ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
