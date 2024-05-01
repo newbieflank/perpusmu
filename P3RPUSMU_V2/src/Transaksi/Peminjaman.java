@@ -206,7 +206,6 @@ public class Peminjaman extends javax.swing.JPanel {
         txt_jumlah_pinjam.setText("");
         txt_nisn.setText("");
         txt_anggota.setText("");
-        txt_petugas.setText("");
         tanggal_kembali.setDate(null);
     }
 
