@@ -1337,10 +1337,7 @@ public class Peminjaman extends javax.swing.JPanel {
     }//GEN-LAST:event_txt_nisnMousePressed
 
     private void txt_nisnKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_nisnKeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_F3) {
-            // Jika tombol F3 dan Enter ditekan, pindah fokus ke txt_petugas
-            txt_petugas.requestFocusInWindow();
-        } else if (evt.getKeyCode() == KeyEvent.VK_F4) {
+        if (evt.getKeyCode() == KeyEvent.VK_F4) {
             // Jika tombol F4 ditekan, pindah fokus ke txt_kode_buku
             txt_kode_buku.requestFocusInWindow();
         } else if (evt.getKeyCode() == KeyEvent.VK_F5) {
@@ -1368,9 +1365,6 @@ public class Peminjaman extends javax.swing.JPanel {
         if (evt.getKeyCode() == KeyEvent.VK_F2) {
             // Jika tombol F3 ditekan, pindah fokus ke txt_petugas
             txt_nisn.requestFocusInWindow();
-        } else if (evt.getKeyCode() == KeyEvent.VK_F3) {
-            // Jika tombol F4 ditekan, pindah fokus ke txt_kode_buku
-            txt_petugas.requestFocusInWindow();
         } else if (evt.getKeyCode() == KeyEvent.VK_F5) {
             // Jika tombol F5 ditekan, pindah fokus ke txt_jumlah
             txt_jumlah_pinjam.requestFocusInWindow();
@@ -1378,10 +1372,7 @@ public class Peminjaman extends javax.swing.JPanel {
     }//GEN-LAST:event_txt_kode_bukuKeyPressed
 
     private void txt_jumlah_pinjamKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_jumlah_pinjamKeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_F3) {
-            // Jika tombol F3 ditekan, pindah fokus ke txt_petugas
-            txt_petugas.requestFocusInWindow();
-        } else if (evt.getKeyCode() == KeyEvent.VK_F4) {
+        if (evt.getKeyCode() == KeyEvent.VK_F4) {
             // Jika tombol F4 ditekan, pindah fokus ke txt_kode_buku
             txt_kode_buku.requestFocusInWindow();
         } else if (evt.getKeyCode() == KeyEvent.VK_F2) {
