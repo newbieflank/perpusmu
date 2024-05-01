@@ -2,6 +2,7 @@ package Login;
 
 import Navbar.Navbar;
 import Navbar.koneksi;
+import Transaksi.Peminjaman;
 import java.sql.Connection;
 import Transaksi.Pengembalian;
 import com.formdev.flatlaf.FlatClientProperties;
@@ -22,12 +23,14 @@ public class Login extends javax.swing.JFrame {
     private Connection con;
     private PreparedStatement pst;
     private ResultSet rs;
+    public static String username1;
 
     public Login() {
         con = koneksi.Koneksi();
         initComponents();
         jPanel2.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         hide.setVisible(false);
+        txt_username.requestFocusInWindow();
     }
 
     @SuppressWarnings("unchecked")
@@ -134,6 +137,11 @@ public class Login extends javax.swing.JFrame {
 
         txt_password.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         txt_password.setBorder(null);
+        txt_password.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_passwordKeyPressed(evt);
+            }
+        });
         jPanel5.add(txt_password, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 173, 34));
 
         hide.setBackground(new java.awt.Color(255, 255, 255));
@@ -327,6 +335,7 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_txt_usernameActionPerformed
 
     private void btn_loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_loginActionPerformed
+        username1 = txt_username.getText();
         try {
             String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
             pst = con.prepareStatement(sql);
@@ -407,6 +416,14 @@ public class Login extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void txt_passwordKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_passwordKeyPressed
+        // TODO add your handling code here:
+         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            // Jika tombol Enter ditekan, tekan tombol jButton2
+            btn_login.doClick();
+        }
+    }//GEN-LAST:event_txt_passwordKeyPressed
+
     /**
      * @param args the command line arguments
      */
@@ -454,9 +471,7 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JButton btn_login;
     private javax.swing.JLabel hide;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -465,16 +480,11 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private component.Menu menu1;
     private component.Menu menu2;
     private javax.swing.JLabel show;
     private javax.swing.JPasswordField txt_password;

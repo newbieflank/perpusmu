@@ -6,9 +6,14 @@
 package Transaksi;
 
 import Login.Config;
+import Login.Login;
 import Navbar.koneksi;
+import com.lowagie.text.pdf.Barcode;
 import java.awt.Color;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.im.InputContext;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -20,13 +25,17 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
@@ -43,6 +52,9 @@ import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.view.JasperViewer;
+import net.sourceforge.barbecue.BarcodeFactory;
+import net.sourceforge.barbecue.BarcodeImageHandler;
+import com.toedter.calendar.JDateChooser;
 
 /**
  *
@@ -53,7 +65,7 @@ public class Peminjaman extends javax.swing.JPanel {
     private int nomorUrutanTerakhir = 0;
 
     private Connection con;
-
+    
     /**
      * Creates new form Peminjaman1
      */
@@ -74,9 +86,11 @@ public class Peminjaman extends javax.swing.JPanel {
         tabel_peminjaman.getTableHeader().setForeground(Color.white);
         panel_print1.setSize(570, 514);
 
+        txt_nisn.requestFocusInWindow();
+        txt_petugas.setText(Login.username1);
     }
-    
-    private void Jdialog () {
+
+    private void Jdialog() {
         panel_print1.setLocationRelativeTo(null);
         panel_print1.setBackground(Color.white);
         panel_print1.getRootPane().setOpaque(false);
@@ -365,6 +379,9 @@ public class Peminjaman extends javax.swing.JPanel {
         jButton21 = new javax.swing.JButton();
         tanggal_pinjam = new com.toedter.calendar.JDateChooser();
         tanggal_kembali = new com.toedter.calendar.JDateChooser();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabel_peminjaman = new javax.swing.JTable();
@@ -574,12 +591,20 @@ public class Peminjaman extends javax.swing.JPanel {
         });
 
         txt_nisn.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        txt_nisn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                txt_nisnMousePressed(evt);
+            }
+        });
         txt_nisn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField31jTextField4ActionPerformed(evt);
             }
         });
         txt_nisn.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_nisnKeyPressed(evt);
+            }
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txt_nisnKeyReleased(evt);
             }
@@ -594,12 +619,16 @@ public class Peminjaman extends javax.swing.JPanel {
         });
 
         txt_petugas.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        txt_petugas.setEnabled(false);
         txt_petugas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField33jTextField6ActionPerformed(evt);
             }
         });
         txt_petugas.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_petugasKeyPressed(evt);
+            }
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txt_petugasKeyReleased(evt);
             }
@@ -609,6 +638,11 @@ public class Peminjaman extends javax.swing.JPanel {
         txt_jumlah_pinjam.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField34jTextField7ActionPerformed(evt);
+            }
+        });
+        txt_jumlah_pinjam.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_jumlah_pinjamKeyPressed(evt);
             }
         });
 
@@ -624,6 +658,9 @@ public class Peminjaman extends javax.swing.JPanel {
             }
         });
         txt_kode_buku.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_kode_bukuKeyPressed(evt);
+            }
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txt_kode_bukuKeyReleased(evt);
             }
@@ -661,6 +698,21 @@ public class Peminjaman extends javax.swing.JPanel {
         tanggal_pinjam.setEnabled(false);
 
         tanggal_kembali.setDateFormatString("yyyy-MM-dd");
+        tanggal_kembali.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                tanggal_kembaliAncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
+
+        jLabel1.setText("F2");
+
+        jLabel4.setText("F4");
+
+        jLabel5.setText("F5");
 
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
         jPanel10.setLayout(jPanel10Layout);
@@ -677,15 +729,21 @@ public class Peminjaman extends javax.swing.JPanel {
                             .addComponent(txt_kode_peminjaman)
                             .addComponent(tanggal_pinjam, javax.swing.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
                             .addComponent(tanggal_kembali, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(255, 255, 255)
+                        .addGap(212, 212, 212)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txt_nisn, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel66)
+                            .addComponent(txt_petugas, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txt_nisn, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel71)
                             .addComponent(txt_anggota, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel72)
-                            .addComponent(txt_petugas, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 219, Short.MAX_VALUE)
+                            .addComponent(jLabel72))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel5))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txt_kode_buku, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txt_judul_buku, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -694,7 +752,6 @@ public class Peminjaman extends javax.swing.JPanel {
                             .addComponent(jLabel73)
                             .addComponent(jLabel68)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel10Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jButton21)
                         .addGap(18, 18, 18)
                         .addComponent(jButton20)))
@@ -709,11 +766,13 @@ public class Peminjaman extends javax.swing.JPanel {
                     .addComponent(jLabel66)
                     .addComponent(jLabel67))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(txt_kode_buku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txt_nisn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(txt_kode_peminjaman, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txt_nisn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel1)
+                        .addComponent(jLabel4))
+                    .addComponent(txt_kode_peminjaman))
                 .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel10Layout.createSequentialGroup()
                         .addGap(6, 6, 6)
@@ -723,7 +782,9 @@ public class Peminjaman extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel68)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txt_jumlah_pinjam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txt_jumlah_pinjam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5))
                         .addGap(15, 15, 15)
                         .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButton21)
@@ -810,7 +871,7 @@ public class Peminjaman extends javax.swing.JPanel {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1344, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1371, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jButton5)))
@@ -820,7 +881,7 @@ public class Peminjaman extends javax.swing.JPanel {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton5)
                 .addContainerGap())
@@ -982,55 +1043,55 @@ public class Peminjaman extends javax.swing.JPanel {
     }//GEN-LAST:event_txt_kode_bukuMouseClicked
 
     private void jButton20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton20ActionPerformed
-    DefaultTableModel model = (DefaultTableModel) tabel_peminjaman.getModel();
-    // Mendapatkan teks dari field-field yang relevan
-    String kodepeminjaman = txt_kode_peminjaman.getText();
-    String nama = txt_nisn.getText();
-    String judulbuku = txt_judul_buku.getText();
-    String totalpeminjaman = txt_jumlah_pinjam.getText();
-    String username = txt_petugas.getText();
+        DefaultTableModel model = (DefaultTableModel) tabel_peminjaman.getModel();
+        // Mendapatkan teks dari field-field yang relevan
+        String kodepeminjaman = txt_kode_peminjaman.getText();
+        String nama = txt_nisn.getText();
+        String judulbuku = txt_judul_buku.getText();
+        String totalpeminjaman = txt_jumlah_pinjam.getText();
+        String username = txt_petugas.getText();
 
-    // Mendapatkan tanggal_pinjam dan tanggal_kembali
-    Date tanggalpinjam = tanggal_pinjam.getDate();
-    Date tanggalkembali = tanggal_kembali.getDate();
+        // Mendapatkan tanggal_pinjam dan tanggal_kembali
+        Date tanggalpinjam = tanggal_pinjam.getDate();
+        Date tanggalkembali = tanggal_kembali.getDate();
 
-    // Memeriksa jika ada field yang kosong
-    if (kodepeminjaman.isEmpty() || nama.isEmpty() || judulbuku.isEmpty() || totalpeminjaman.isEmpty() || username.isEmpty() || tanggalpinjam == null || tanggalkembali == null) {
-        // Tampilkan pesan bahwa semua field harus diisi
-        JOptionPane.showMessageDialog(null, "Semua field harus diisi!", "Peringatan", JOptionPane.WARNING_MESSAGE);
-    } else {
-        // Buat objek Calendar untuk tanggal pinjam dan tanggal kembali
-        Calendar calTanggalPinjam = Calendar.getInstance();
-        Calendar calTanggalKembali = Calendar.getInstance();
-        calTanggalPinjam.setTime(tanggalpinjam);
-        calTanggalKembali.setTime(tanggalkembali);
-
-        // Atur jam, menit, detik menjadi 0 untuk kedua objek Calendar
-        calTanggalPinjam.set(Calendar.HOUR_OF_DAY, 0);
-        calTanggalPinjam.set(Calendar.MINUTE, 0);
-        calTanggalPinjam.set(Calendar.SECOND, 0);
-        calTanggalPinjam.set(Calendar.MILLISECOND, 0);
-        calTanggalKembali.set(Calendar.HOUR_OF_DAY, 0);
-        calTanggalKembali.set(Calendar.MINUTE, 0);
-        calTanggalKembali.set(Calendar.SECOND, 0);
-        calTanggalKembali.set(Calendar.MILLISECOND, 0);
-
-        // Memeriksa apakah tanggal kembali sebelum tanggal pinjam
-        if (calTanggalKembali.before(calTanggalPinjam)) {
-            // Tampilkan notifikasi bahwa tanggal pengembalian tidak boleh mundur dari tanggal pinjam
-            JOptionPane.showMessageDialog(null, "Tanggal pengembalian tidak boleh mundur dari tanggal pinjam!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        // Memeriksa jika ada field yang kosong
+        if (kodepeminjaman.isEmpty() || nama.isEmpty() || judulbuku.isEmpty() || totalpeminjaman.isEmpty() || username.isEmpty() || tanggalpinjam == null || tanggalkembali == null) {
+            // Tampilkan pesan bahwa semua field harus diisi
+            JOptionPane.showMessageDialog(null, "Semua field harus diisi!", "Peringatan", JOptionPane.WARNING_MESSAGE);
         } else {
-            // Format tanggal_pinjam dan tanggal_kembali menjadi string
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            String tanggalpinjamFormatted = dateFormat.format(tanggalpinjam);
-            String tanggalkembaliFormatted = dateFormat.format(tanggalkembali);
+            // Buat objek Calendar untuk tanggal pinjam dan tanggal kembali
+            Calendar calTanggalPinjam = Calendar.getInstance();
+            Calendar calTanggalKembali = Calendar.getInstance();
+            calTanggalPinjam.setTime(tanggalpinjam);
+            calTanggalKembali.setTime(tanggalkembali);
 
-            // Tambahkan baris baru ke dalam tabel
-            Object[] row = {kodepeminjaman, tanggalpinjamFormatted, tanggalkembaliFormatted, nama, judulbuku, totalpeminjaman, username};
-            model.addRow(row);
-            clear();
+            // Atur jam, menit, detik menjadi 0 untuk kedua objek Calendar
+            calTanggalPinjam.set(Calendar.HOUR_OF_DAY, 0);
+            calTanggalPinjam.set(Calendar.MINUTE, 0);
+            calTanggalPinjam.set(Calendar.SECOND, 0);
+            calTanggalPinjam.set(Calendar.MILLISECOND, 0);
+            calTanggalKembali.set(Calendar.HOUR_OF_DAY, 0);
+            calTanggalKembali.set(Calendar.MINUTE, 0);
+            calTanggalKembali.set(Calendar.SECOND, 0);
+            calTanggalKembali.set(Calendar.MILLISECOND, 0);
+
+            // Memeriksa apakah tanggal kembali sebelum tanggal pinjam
+            if (calTanggalKembali.before(calTanggalPinjam)) {
+                // Tampilkan notifikasi bahwa tanggal pengembalian tidak boleh mundur dari tanggal pinjam
+                JOptionPane.showMessageDialog(null, "Tanggal pengembalian tidak boleh mundur dari tanggal pinjam!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            } else {
+                // Format tanggal_pinjam dan tanggal_kembali menjadi string
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                String tanggalpinjamFormatted = dateFormat.format(tanggalpinjam);
+                String tanggalkembaliFormatted = dateFormat.format(tanggalkembali);
+
+                // Tambahkan baris baru ke dalam tabel
+                Object[] row = {kodepeminjaman, tanggalpinjamFormatted, tanggalkembaliFormatted, nama, judulbuku, totalpeminjaman, username};
+                model.addRow(row);
+                clear();
+            }
         }
-    }
     }//GEN-LAST:event_jButton20ActionPerformed
 
     private void tabel_peminjamanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabel_peminjamanMouseClicked
@@ -1067,104 +1128,148 @@ public class Peminjaman extends javax.swing.JPanel {
     }//GEN-LAST:event_tabel_peminjamanMouseClicked
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-         DefaultTableModel model = (DefaultTableModel) tabel_peminjaman.getModel();
+        DefaultTableModel model = (DefaultTableModel) tabel_peminjaman.getModel();
 
-    if (model.getRowCount() == 0) {
-        JOptionPane.showMessageDialog(this, "Tabel kosong");
-    } else {
-        try (Connection conn = Config.configDB()) {
-            conn.setAutoCommit(false); // Mulai transaksi
+        if (model.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(this, "Tabel kosong");
+        } else {
+            try (Connection conn = Config.configDB()) {
+                conn.setAutoCommit(false); // Mulai transaksi
 
-            // Proses baris pertama untuk tabel peminjaman
-            int barisPertama = 0;
-            String kodePeminjamanPertama = model.getValueAt(barisPertama, 0).toString();
-            String nisnPertama = model.getValueAt(barisPertama, 3).toString();
-            String idPetugasPertama = model.getValueAt(barisPertama, 6).toString();
+                // Proses baris pertama untuk tabel peminjaman
+                int barisPertama = 0;
+                String kodePeminjamanPertama = model.getValueAt(barisPertama, 0).toString();
+                String nisnPertama = model.getValueAt(barisPertama, 3).toString();
+                String idPetugasPertama = model.getValueAt(barisPertama, 6).toString();
 
-            try {
-                if (!isKodePeminjamanExists(kodePeminjamanPertama)) {
-                    // Insert into tabel peminjaman
-                    String sqlPeminjaman = "INSERT INTO peminjaman (kode_peminjaman, NISN, ID_users) VALUES (?, (SELECT NISN FROM anggota WHERE nama = ?), (SELECT ID_users FROM users WHERE username = ?))";
-                    try (PreparedStatement pstPeminjaman = conn.prepareStatement(sqlPeminjaman)) {
-                        pstPeminjaman.setString(1, kodePeminjamanPertama);
-                        pstPeminjaman.setString(2, nisnPertama);
-                        pstPeminjaman.setString(3, idPetugasPertama);
-                        pstPeminjaman.executeUpdate();
-                    }
+                try {
+                    if (!isKodePeminjamanExists(kodePeminjamanPertama)) {
+                        // Insert into tabel peminjaman
+                        String sqlPeminjaman = "INSERT INTO peminjaman (kode_peminjaman, NISN, ID_users) VALUES (?, (SELECT NISN FROM anggota WHERE nama = ?), (SELECT ID_users FROM users WHERE username = ?))";
+                        try (PreparedStatement pstPeminjaman = conn.prepareStatement(sqlPeminjaman)) {
+                            pstPeminjaman.setString(1, kodePeminjamanPertama);
+                            pstPeminjaman.setString(2, nisnPertama);
+                            pstPeminjaman.setString(3, idPetugasPertama);
+                            pstPeminjaman.executeUpdate();
+                        }
 
-                    // Proses sisa baris untuk tabel detail_peminjaman
-                    boolean stokCukup = true; // Menandakan apakah stok cukup untuk semua baris
-                    for (int i = 0; i < model.getRowCount(); i++) {
-                        String kodePeminjaman = model.getValueAt(i, 0).toString();
-                        String totalPeminjamanStr = model.getValueAt(i, 5).toString();
-                        String tanggalpinjam = model.getValueAt(i, 1).toString();
-                        String tanggalkembali = model.getValueAt(i, 2).toString();
-                        String kodeBuku = model.getValueAt(i, 4).toString();
+                        // Proses sisa baris untuk tabel detail_peminjaman
+                        boolean stokCukup = true; // Menandakan apakah stok cukup untuk semua baris
+                        for (int i = 0; i < model.getRowCount(); i++) {
+                            String kodePeminjaman = model.getValueAt(i, 0).toString();
+                            String totalPeminjamanStr = model.getValueAt(i, 5).toString();
+                            String tanggalpinjam = model.getValueAt(i, 1).toString();
+                            String tanggalkembali = model.getValueAt(i, 2).toString();
+                            String kodeBuku = model.getValueAt(i, 4).toString();
 
-                        // Pengecekan stok buku
-                        int jumlahPeminjaman = Integer.parseInt(totalPeminjamanStr);
-                        int stokBuku = getStokBuku(conn, kodeBuku);
-                        if (stokBuku >= jumlahPeminjaman) {
-                            // Jika stok mencukupi, kurangi jumlah stok buku
-                            kurangiStokBuku(conn, kodeBuku, jumlahPeminjaman);
+                            // Pengecekan stok buku
+                            int jumlahPeminjaman = Integer.parseInt(totalPeminjamanStr);
+                            int stokBuku = getStokBuku(conn, kodeBuku);
+                            if (stokBuku >= jumlahPeminjaman) {
+                                // Jika stok mencukupi, kurangi jumlah stok buku
+                                kurangiStokBuku(conn, kodeBuku, jumlahPeminjaman);
 
-                            // Insert ke dalam tabel detail_peminjaman
-                            String detailPeminjamanSql = "INSERT INTO detail_peminjaman (kode_peminjaman, jumlah_peminjaman, status_peminjaman, tanggal_peminjaman, tanggal_kembali, No_buku) VALUES (?, ?, ?, ?, ?, (SELECT No_buku FROM buku WHERE judul_buku = ?))";
-                            try (PreparedStatement pstDetailPeminjaman = conn.prepareStatement(detailPeminjamanSql)) {
-                                pstDetailPeminjaman.setString(1, kodePeminjaman);
-                                pstDetailPeminjaman.setInt(2, jumlahPeminjaman);
-                                pstDetailPeminjaman.setString(3, "dipinjam");
-                                pstDetailPeminjaman.setString(4, tanggalpinjam);
-                                pstDetailPeminjaman.setString(5, tanggalkembali);
-                                pstDetailPeminjaman.setString(6, kodeBuku);
-                                pstDetailPeminjaman.executeUpdate();
+                                // Insert ke dalam tabel detail_peminjaman
+                                String detailPeminjamanSql = "INSERT INTO detail_peminjaman (kode_peminjaman, jumlah_peminjaman, status_peminjaman, tanggal_peminjaman, tanggal_kembali, No_buku) VALUES (?, ?, ?, ?, ?, (SELECT No_buku FROM buku WHERE judul_buku = ?))";
+                                try (PreparedStatement pstDetailPeminjaman = conn.prepareStatement(detailPeminjamanSql)) {
+                                    pstDetailPeminjaman.setString(1, kodePeminjaman);
+                                    pstDetailPeminjaman.setInt(2, jumlahPeminjaman);
+                                    pstDetailPeminjaman.setString(3, "dipinjam");
+                                    pstDetailPeminjaman.setString(4, tanggalpinjam);
+                                    pstDetailPeminjaman.setString(5, tanggalkembali);
+                                    pstDetailPeminjaman.setString(6, kodeBuku);
+                                    pstDetailPeminjaman.executeUpdate();
+                                }
+                            } else {
+                                // Jika stok tidak mencukupi, batalkan transaksi dan tandai bahwa stok tidak cukup
+                                conn.rollback();
+                                stokCukup = false;
+                                JOptionPane.showMessageDialog(this, "Error: Stok buku tidak mencukupi untuk peminjaman pada baris " + (i + 1));
+                                break; // Keluar dari loop karena stok tidak mencukupi
                             }
-                        } else {
-                            // Jika stok tidak mencukupi, batalkan transaksi dan tandai bahwa stok tidak cukup
-                            conn.rollback();
-                            stokCukup = false;
-                            JOptionPane.showMessageDialog(this, "Error: Stok buku tidak mencukupi untuk peminjaman pada baris " + (i + 1));
-                            break; // Keluar dari loop karena stok tidak mencukupi
                         }
-                    }
 
-                    // Jika stok cukup untuk semua baris, commit transaksi dan tampilkan notifikasi berhasil
-                    if (stokCukup) {
-                        conn.commit(); // Commit transaksi
-                        JOptionPane.showMessageDialog(this, "Peminjaman berhasil disimpan!");
-                        kosong();
-                        refresh();
-                        clear3();
-                       // Tampilkan panel cetak
-                       // panel_print1.setVisible(true);
-                        try {
-                            this.disable();
+                        // Jika stok cukup untuk semua baris, commit transaksi dan tampilkan notifikasi berhasil
+                        if (stokCukup) {
+                            conn.commit(); // Commit transaksi
+                            JOptionPane.showMessageDialog(this, "Peminjaman berhasil disimpan!");
+                            kosong();
+                            refresh();
+                            clear3();
+                            // Tampilkan panel cetak
+                            // panel_print1.setVisible(true);
 
-                            String reportPath = "src/Transaksi/report1s.jasper.";
-                            //Connection conn = koneksi.Koneksi();
+                            try {
+                                this.disable();
 
-                            HashMap<String, Object> parameters = new HashMap<>();
-                            JasperPrint print = JasperFillManager.fillReport(reportPath, parameters, con);
-                            JasperViewer viewer = new JasperViewer(print, false);
-                            viewer.setVisible(true);
+                                String reportPath = "src/Transaksi/report1s.jasper";
+                                // Connection conn = koneksi.Koneksi();
 
-                            conn.close(); // Menutup koneksi setelah selesai menggunakan
+                                HashMap<String, Object> parameters = new HashMap<>();
+                                List<BufferedImage> barcodeImages = new ArrayList<>(); // List untuk menyimpan gambar barcode
 
-                        } catch (Exception e) {
-                            JOptionPane.showMessageDialog(this, "Error displaying report: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                                // Execute your SQL query to fetch data
+                                String sql = "SELECT detail_peminjaman.kode_peminjaman, anggota.NISN, anggota.nama, detail_peminjaman.tanggal_kembali, users.username, buku.kode_buku, buku.judul_buku, detail_peminjaman.jumlah_peminjaman "
+                                        + "FROM peminjaman "
+                                        + "JOIN anggota ON anggota.NISN = peminjaman.NISN "
+                                        + "JOIN detail_peminjaman ON detail_peminjaman.kode_peminjaman = peminjaman.kode_peminjaman "
+                                        + "JOIN users ON users.ID_users = peminjaman.ID_users "
+                                        + "JOIN buku ON buku.No_buku = detail_peminjaman.No_buku";
+
+                                PreparedStatement statement = conn.prepareStatement(sql);
+                                ResultSet resultSet = statement.executeQuery();
+
+                                // Temporary variable to store the last processed kode_peminjaman
+                                String lastKodePeminjaman = "";
+
+                                // Loop through the result set
+                                while (resultSet.next()) {
+                                    // Retrieve the kode_peminjaman
+                                    String kodePeminjaman = resultSet.getString("kode_peminjaman");
+
+                                    // Check if this is a new kode_peminjaman
+                                    if (!kodePeminjaman.equals(lastKodePeminjaman)) {
+                                        // Generate barcode for kode_peminjaman
+                                        net.sourceforge.barbecue.Barcode barcode = BarcodeFactory.createCode128(kodePeminjaman);
+                                        BufferedImage image = BarcodeImageHandler.getImage(barcode);
+
+                                        // Put the barcode image into parameters
+                                        barcodeImages.add(image);
+
+                                        // Store the current kode_peminjaman as the last processed one
+                                        lastKodePeminjaman = kodePeminjaman;
+                                    }
+                                }
+
+                                resultSet.close();
+                                statement.close();
+
+                                // Put the list of barcode images into parameters
+                                parameters.put("barcodeImages", barcodeImages);
+
+                                // Fill the JasperReport with parameters
+                                JasperPrint print = JasperFillManager.fillReport(reportPath, parameters, con);
+                                JasperViewer viewer = new JasperViewer(print, false);
+                                viewer.setVisible(true);
+
+                                conn.close(); // Menutup koneksi setelah selesai menggunakan
+
+                            } catch (Exception e) {
+                                JOptionPane.showMessageDialog(this, "Error displaying report: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                            }
+
                         }
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Error: Kode Peminjaman sudah ada pada baris " + (barisPertama + 1));
                     }
-                } else {
-                    JOptionPane.showMessageDialog(this, "Error: Kode Peminjaman sudah ada pada baris " + (barisPertama + 1));
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this, "Error: Format Total Peminjaman tidak valid pada baris " + (barisPertama + 1));
                 }
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, "Error: Format Total Peminjaman tidak valid pada baris " + (barisPertama + 1));
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
         }
-    }  
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton21ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton21ActionPerformed
@@ -1220,12 +1325,78 @@ public class Peminjaman extends javax.swing.JPanel {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-      
+
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void testingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testingActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_testingActionPerformed
+
+    private void txt_nisnMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_nisnMousePressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_nisnMousePressed
+
+    private void txt_nisnKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_nisnKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_F3) {
+            // Jika tombol F3 dan Enter ditekan, pindah fokus ke txt_petugas
+            txt_petugas.requestFocusInWindow();
+        } else if (evt.getKeyCode() == KeyEvent.VK_F4) {
+            // Jika tombol F4 ditekan, pindah fokus ke txt_kode_buku
+            txt_kode_buku.requestFocusInWindow();
+        } else if (evt.getKeyCode() == KeyEvent.VK_F5) {
+            // Jika tombol F5 ditekan, pindah fokus ke txt_jumlah
+            txt_jumlah_pinjam.requestFocusInWindow();
+        }
+    }//GEN-LAST:event_txt_nisnKeyPressed
+
+    private void txt_petugasKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_petugasKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_F2) {
+            // Jika tombol F3 ditekan, pindah fokus ke txt_petugas
+            txt_nisn.requestFocusInWindow();
+        } else if (evt.getKeyCode() == KeyEvent.VK_F4) {
+            // Jika tombol F4 ditekan, pindah fokus ke txt_kode_buku
+            txt_kode_buku.requestFocusInWindow();
+        } else if (evt.getKeyCode() == KeyEvent.VK_F5) {
+            // Jika tombol F5 ditekan, pindah fokus ke txt_jumlah
+            txt_jumlah_pinjam.requestFocusInWindow();
+        }
+    }//GEN-LAST:event_txt_petugasKeyPressed
+
+    private void txt_kode_bukuKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_kode_bukuKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_F2) {
+            // Jika tombol F3 ditekan, pindah fokus ke txt_petugas
+            txt_nisn.requestFocusInWindow();
+        } else if (evt.getKeyCode() == KeyEvent.VK_F3) {
+            // Jika tombol F4 ditekan, pindah fokus ke txt_kode_buku
+            txt_petugas.requestFocusInWindow();
+        } else if (evt.getKeyCode() == KeyEvent.VK_F5) {
+            // Jika tombol F5 ditekan, pindah fokus ke txt_jumlah
+            txt_jumlah_pinjam.requestFocusInWindow();
+        }
+    }//GEN-LAST:event_txt_kode_bukuKeyPressed
+
+    private void txt_jumlah_pinjamKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_jumlah_pinjamKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_F3) {
+            // Jika tombol F3 ditekan, pindah fokus ke txt_petugas
+            txt_petugas.requestFocusInWindow();
+        } else if (evt.getKeyCode() == KeyEvent.VK_F4) {
+            // Jika tombol F4 ditekan, pindah fokus ke txt_kode_buku
+            txt_kode_buku.requestFocusInWindow();
+        } else if (evt.getKeyCode() == KeyEvent.VK_F2) {
+            // Jika tombol F2 ditekan, pindah fokus ke txt_nisn
+            txt_nisn.requestFocusInWindow();
+        } else if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            // Jika tombol Enter ditekan, tekan tombol jButton2
+            jButton20.doClick();
+        }
+    }//GEN-LAST:event_txt_jumlah_pinjamKeyPressed
+
+    private void tanggal_kembaliAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_tanggal_kembaliAncestorAdded
+        // TODO add your handling code here:
+        txt_nisn.requestFocusInWindow();
+    }//GEN-LAST:event_tanggal_kembaliAncestorAdded
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1234,6 +1405,9 @@ public class Peminjaman extends javax.swing.JPanel {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel65;
     private javax.swing.JLabel jLabel66;
     private javax.swing.JLabel jLabel67;
@@ -1271,7 +1445,7 @@ public class Peminjaman extends javax.swing.JPanel {
     private javax.swing.JTextField txt_kode_buku;
     private javax.swing.JTextField txt_kode_peminjaman;
     private javax.swing.JTextField txt_nisn;
-    private javax.swing.JTextField txt_petugas;
+    private static javax.swing.JTextField txt_petugas;
     // End of variables declaration//GEN-END:variables
 
 }
