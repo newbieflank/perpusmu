@@ -24,6 +24,12 @@ public class history extends javax.swing.JPanel {
     private Connection con;
     private PreparedStatement pst;
     private ResultSet rs;
+    private DefaultTableModel model = new DefaultTableModel() {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
 
     public history() {
         initComponents();
@@ -35,25 +41,20 @@ public class history extends javax.swing.JPanel {
         tabel.getTableHeader().setBackground(new Color(63, 148, 105));
         tabel.getTableHeader().setForeground(Color.white);
         tabel.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
+
     }
 
     private void loadTabel() {
         tabel.clearSelection();
         tabel.getTableHeader().setReorderingAllowed(false);
         tabel.getTableHeader().setResizingAllowed(false);
-        DefaultTableModel model = new DefaultTableModel() {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
         try {
-            pst = con.prepareStatement("SELECT history.id_history, history.tgl_masuk, history.peristiwa, history.keterangan, \n"
+            pst = con.prepareStatement("SELECT history.id_history, history.tgl_masuk, history.peristiwa, history.keterangan,\n"
                     + "buku.kode_buku, buku.judul_buku, buku.kategori, buku.kondisi_buku, buku.harga, detail_pengembalian.tanggal, \n"
-                    + "history.id_buku \n"
-                    + "FROM history \n"
-                    + "JOIN buku ON history.id_buku = buku.No_buku \n"
-                    + "LEFT JOIN detail_pengembalian ON buku.No_buku = detail_pengembalian.No_buku");
+                    + "history.id_buku\n"
+                    + "FROM history\n"
+                    + "JOIN buku ON history.id_buku = buku.No_buku\n"
+                    + "LEFT JOIN detail_pengembalian ON buku.No_buku = detail_pengembalian.No_buku and detail_pengembalian.kondisi_buku = 'hilang';");
             rs = pst.executeQuery();
             ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
             int columnCount = rsmd.getColumnCount();
@@ -93,23 +94,17 @@ public class history extends javax.swing.JPanel {
         tabel.clearSelection();
         tabel.getTableHeader().setReorderingAllowed(false);
         tabel.getTableHeader().setResizingAllowed(false);
-        DefaultTableModel model = new DefaultTableModel() {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
 
         if (key.equals(" ")) {
             loadTabel();
         } else {
             try {
-                pst = con.prepareStatement("SELECT history.id_history, history.tgl_masuk, history.peristiwa, history.keterangan, \n"
+                pst = con.prepareStatement("SELECT history.id_history, history.tgl_masuk, history.peristiwa, history.keterangan,\n"
                         + "buku.kode_buku, buku.judul_buku, buku.kategori, buku.kondisi_buku, buku.harga, detail_pengembalian.tanggal, \n"
-                        + "history.id_buku \n"
-                        + "FROM history \n"
-                        + "JOIN buku ON history.id_buku = buku.No_buku \n"
-                        + "LEFT JOIN detail_pengembalian ON buku.No_buku = detail_pengembalian.No_buku"
+                        + "history.id_buku\n"
+                        + "FROM history\n"
+                        + "JOIN buku ON history.id_buku = buku.No_buku\n"
+                        + "LEFT JOIN detail_pengembalian ON buku.No_buku = detail_pengembalian.No_buku and detail_pengembalian.kondisi_buku = 'hilang';"
                         + "where buku.judul_buku Like %'" + key + "'%");
                 rs = pst.executeQuery();
                 ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
