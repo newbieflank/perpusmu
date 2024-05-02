@@ -61,6 +61,8 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JPanel;
 
 /**
@@ -95,6 +97,7 @@ public class Peminjaman extends javax.swing.JPanel {
 
         txt_nisn.requestFocusInWindow();
         txt_petugas.setText(Login.username1);
+        id_autoincrement2();
     }
 
    private void jDialog1() {
@@ -338,6 +341,78 @@ public class Peminjaman extends javax.swing.JPanel {
         }
     }
 
+     private ComboBoxModel<String> id_autoincrement2() {
+    DefaultComboBoxModel<String> comboBoxModel = (DefaultComboBoxModel<String>) kd_peminjaman.getModel();
+    try {
+        String sqlquery = "SELECT kode_peminjaman FROM peminjaman ORDER BY kode_peminjaman DESC LIMIT 1";
+        PreparedStatement pst = con.prepareStatement(sqlquery);
+        ResultSet rs = pst.executeQuery();
+        String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyMMdd"));
+
+        int newNumber = 1; // Default newNumber
+        if (rs.next()) {
+            String idStr = rs.getString(1);
+            if (idStr != null && idStr.length() == 8) { // Check if idStr is not null and has correct length
+                String lastDateStr = idStr.substring(0, 6); // Extract last date from idStr
+                if (lastDateStr.equals(currentDate)) {
+                    int lastNumber = Integer.parseInt(idStr.substring(6)); // Extract last number from idStr
+                    newNumber = lastNumber + 1; // Increment last number
+                }
+            }
+        }
+
+        String formattedNumber = String.format("%02d", newNumber); // Format new number with leading zeros
+        String newId = currentDate + formattedNumber; // Concatenate current date and formatted number
+        comboBoxModel.addElement(newId); // Add the new ID to the ComboBoxModel
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, e);
+    }
+    return comboBoxModel; // Return the ComboBoxModel after populating it with data
+}
+     
+     public void refresh2() {
+    DefaultTableModel model = (DefaultTableModel) tabel_peminjaman.getModel();
+    while (model.getRowCount() > 0) {
+        model.removeRow(0);
+    }
+
+    try {
+        DefaultComboBoxModel<String> comboBoxModel = (DefaultComboBoxModel<String>) kd_peminjaman.getModel();
+
+        String sqlquery = "SELECT kode_peminjaman FROM peminjaman ORDER BY kode_peminjaman DESC LIMIT 1";
+        PreparedStatement pst = con.prepareStatement(sqlquery);
+        ResultSet rs = pst.executeQuery();
+        String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyMMdd"));
+
+        int newNumber = 1; // Default newNumber
+        if (rs.next()) {
+            String idStr = rs.getString(1);
+            if (idStr != null && idStr.length() == 8) { // Check if idStr is not null and has correct length
+                String lastDateStr = idStr.substring(0, 6); // Extract last date from idStr
+                if (lastDateStr.equals(currentDate)) {
+                    int lastNumber = Integer.parseInt(idStr.substring(6)); // Extract last number from idStr
+                    newNumber = lastNumber + 1; // Increment last number
+                }
+            }
+        }
+
+        String formattedNumber = String.format("%02d", newNumber); // Format new number with leading zeros
+        System.out.println(formattedNumber);
+        String newId = currentDate + formattedNumber; // Concatenate current date and formatted number
+        
+        // Clear the existing items in the combo box model
+        comboBoxModel.removeAllElements();
+        
+        // Add the new ID to the combo box model
+        comboBoxModel.addElement(newId);
+        
+        System.out.println(newId);
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, e);
+    }
+}
+
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -361,9 +436,9 @@ public class Peminjaman extends javax.swing.JPanel {
         menu3 = new javax.swing.JPopupMenu();
         panel_print1 = new javax.swing.JDialog();
         panel_print2 = new javax.swing.JPanel();
-        txt_testing = new javax.swing.JTextField();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
+        kd_peminjaman = new javax.swing.JComboBox<>();
         jPanel11 = new javax.swing.JPanel();
         jPanel10 = new javax.swing.JPanel();
         jLabel65 = new javax.swing.JLabel();
@@ -491,12 +566,6 @@ public class Peminjaman extends javax.swing.JPanel {
 
         menu3.setFocusable(false);
 
-        txt_testing.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_testingActionPerformed(evt);
-            }
-        });
-
         jButton3.setText("Cancel");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -511,6 +580,12 @@ public class Peminjaman extends javax.swing.JPanel {
             }
         });
 
+        kd_peminjaman.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                kd_peminjamanActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panel_print2Layout = new javax.swing.GroupLayout(panel_print2);
         panel_print2.setLayout(panel_print2Layout);
         panel_print2Layout.setHorizontalGroup(
@@ -518,7 +593,7 @@ public class Peminjaman extends javax.swing.JPanel {
             .addGroup(panel_print2Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(panel_print2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txt_testing)
+                    .addComponent(kd_peminjaman, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(panel_print2Layout.createSequentialGroup()
                         .addComponent(jButton3)
                         .addGap(71, 71, 71)
@@ -529,7 +604,7 @@ public class Peminjaman extends javax.swing.JPanel {
             panel_print2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel_print2Layout.createSequentialGroup()
                 .addGap(15, 15, 15)
-                .addComponent(txt_testing, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(kd_peminjaman, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panel_print2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton3)
@@ -1288,21 +1363,18 @@ public class Peminjaman extends javax.swing.JPanel {
         Connection conn = koneksi.Koneksi();
 
         HashMap<String, Object> parameters = new HashMap<>();
-        parameters.put("kode",Integer.parseInt(txt_testing.getText()));
+        parameters.put("kode",Integer.parseInt((String) kd_peminjaman.getSelectedItem()));
         JasperPrint print = JasperFillManager.fillReport(reportPath, parameters, conn);
         JasperViewer viewer = new JasperViewer(print, false);
         viewer.setVisible(true);
 
         conn.close(); // Menutup koneksi setelah selesai menggunakan
         panel_print1.dispose();
+        refresh2();
     } catch (Exception e) {
         JOptionPane.showMessageDialog(this, "Error displaying report: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 }
     }//GEN-LAST:event_jButton4ActionPerformed
-
-    private void txt_testingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_testingActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_testingActionPerformed
 
     private void txt_nisnMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_nisnMousePressed
         // TODO add your handling code here:
@@ -1370,6 +1442,10 @@ public class Peminjaman extends javax.swing.JPanel {
          panel_print1.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void kd_peminjamanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_kd_peminjamanActionPerformed
+
+    }//GEN-LAST:event_kd_peminjamanActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton20;
@@ -1396,6 +1472,7 @@ public class Peminjaman extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JComboBox<String> kd_peminjaman;
     private javax.swing.JPanel kode_buku;
     private javax.swing.JPopupMenu menu;
     private javax.swing.JPopupMenu menu2;
@@ -1417,7 +1494,6 @@ public class Peminjaman extends javax.swing.JPanel {
     private javax.swing.JTextField txt_kode_peminjaman;
     private javax.swing.JTextField txt_nisn;
     private static javax.swing.JTextField txt_petugas;
-    private javax.swing.JTextField txt_testing;
     // End of variables declaration//GEN-END:variables
 
 }

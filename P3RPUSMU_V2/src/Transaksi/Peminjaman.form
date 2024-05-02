@@ -192,8 +192,8 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="txt_testing" alignment="0" max="32767" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
+                          <Component id="kd_peminjaman" max="32767" attributes="0"/>
+                          <Group type="102" attributes="0">
                               <Component id="jButton3" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="71" max="-2" attributes="0"/>
                               <Component id="jButton4" min="-2" max="-2" attributes="0"/>
@@ -207,7 +207,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
-                      <Component id="txt_testing" min="-2" max="-2" attributes="0"/>
+                      <Component id="kd_peminjaman" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jButton3" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -219,11 +219,6 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JTextField" name="txt_testing">
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_testingActionPerformed"/>
-              </Events>
-            </Component>
             <Component class="javax.swing.JButton" name="jButton3">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Cancel"/>
@@ -239,6 +234,19 @@
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton4ActionPerformed"/>
               </Events>
+            </Component>
+            <Component class="javax.swing.JComboBox" name="kd_peminjaman">
+              <Properties>
+                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                  <StringArray count="0"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="kd_peminjamanActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+              </AuxValues>
             </Component>
           </SubComponents>
         </Container>
