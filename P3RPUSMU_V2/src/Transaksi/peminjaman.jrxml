@@ -38,22 +38,19 @@ JOIN buku ON buku.No_buku = detail_peminjaman.No_buku where detail_peminjaman.ko
 	<field name="jumlah_peminjaman" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<background>
-		<band splitType="Stretch"/>
-	</background>
 	<title>
 		<band height="79" splitType="Stretch">
 			<staticText>
-				<reportElement x="192" y="23" width="150" height="22" uuid="a5731b83-ec39-4c53-a9d1-00c90394ba70"/>
+				<reportElement x="144" y="7" width="274" height="33" uuid="a5731b83-ec39-4c53-a9d1-00c90394ba70"/>
 				<textElement textAlignment="Justified">
-					<font size="14" isBold="true"/>
+					<font size="24" isBold="true"/>
 				</textElement>
 				<text><![CDATA[STRUK PEMINJAMAN]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="134" y="45" width="261" height="22" uuid="2e064f47-a47a-436a-ac66-c92846ec5a2d"/>
+				<reportElement x="76" y="40" width="457" height="34" uuid="2e064f47-a47a-436a-ac66-c92846ec5a2d"/>
 				<textElement textAlignment="Justified" verticalAlignment="Middle">
-					<font size="14" isBold="true"/>
+					<font size="24" isBold="true"/>
 				</textElement>
 				<text><![CDATA[PERPUSTAKAAN MAMBAHUL ULUM]]></text>
 			</staticText>
@@ -63,6 +60,9 @@ JOIN buku ON buku.No_buku = detail_peminjaman.No_buku where detail_peminjaman.ko
 		<band height="128" splitType="Stretch">
 			<staticText>
 				<reportElement x="124" y="81" width="100" height="20" uuid="82c0321c-318d-4eaf-b5e8-c0c4b40197c3"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
 				<text><![CDATA[tanggal_kembali]]></text>
 			</staticText>
 			<textField>
@@ -70,54 +70,84 @@ JOIN buku ON buku.No_buku = detail_peminjaman.No_buku where detail_peminjaman.ko
 				<textFieldExpression><![CDATA[$F{kode_peminjaman}]]></textFieldExpression>
 			</textField>
 			<rectangle>
-				<reportElement x="107" y="0" width="318" height="128" uuid="811c61ff-aa6b-4f97-be4e-805fe985644f"/>
+				<reportElement x="0" y="0" width="555" height="121" uuid="811c61ff-aa6b-4f97-be4e-805fe985644f"/>
 			</rectangle>
 			<textField>
-				<reportElement x="253" y="41" width="100" height="20" uuid="d23614bf-688d-4479-8c4a-f3f1b9bf08b3"/>
+				<reportElement x="277" y="32" width="100" height="20" uuid="d23614bf-688d-4479-8c4a-f3f1b9bf08b3"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{nama}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="253" y="101" width="100" height="20" uuid="79a3c5a9-45ab-4122-afc0-58fc4bbe6304"/>
+				<reportElement x="277" y="92" width="100" height="20" uuid="79a3c5a9-45ab-4122-afc0-58fc4bbe6304"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{username}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="124" y="41" width="100" height="20" uuid="2beaa8c2-6044-4b43-8288-a30685a18a39"/>
-				<text><![CDATA[nama]]></text>
+				<reportElement x="148" y="32" width="100" height="20" uuid="2beaa8c2-6044-4b43-8288-a30685a18a39"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nama Anggota]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="124" y="21" width="100" height="20" uuid="740bd20c-7e5d-4036-8dad-a44ceb7dc42e"/>
-				<text><![CDATA[kode_peminjaman]]></text>
+				<reportElement x="148" y="12" width="100" height="20" uuid="740bd20c-7e5d-4036-8dad-a44ceb7dc42e"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Kode Peminjaman]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="253" y="61" width="100" height="20" uuid="4ed3cd8d-f9b6-462e-aa4d-a55301798dbf"/>
+				<reportElement x="277" y="52" width="100" height="20" uuid="4ed3cd8d-f9b6-462e-aa4d-a55301798dbf"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{NISN}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="124" y="61" width="100" height="20" uuid="9884717c-1b7c-4444-b4c6-55e0b9e112b4"/>
+				<reportElement x="148" y="52" width="100" height="20" uuid="9884717c-1b7c-4444-b4c6-55e0b9e112b4"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
 				<text><![CDATA[NISN]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="253" y="81" width="100" height="20" uuid="297b9354-6b94-45c9-8e8a-b7e9f90ebee3"/>
+				<reportElement x="277" y="72" width="100" height="20" uuid="297b9354-6b94-45c9-8e8a-b7e9f90ebee3"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{tanggal_kembali}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="124" y="101" width="100" height="20" uuid="8b59d3c2-adab-436a-8d9b-14021200b9bc"/>
-				<text><![CDATA[username]]></text>
+				<reportElement x="148" y="92" width="100" height="20" uuid="8b59d3c2-adab-436a-8d9b-14021200b9bc"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nama Petugas]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="253" y="21" width="100" height="20" uuid="83c50fc4-a5d5-40ea-b7ab-83f195590b60"/>
+				<reportElement x="277" y="12" width="100" height="20" uuid="83c50fc4-a5d5-40ea-b7ab-83f195590b60"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{kode_peminjaman}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="124" y="81" width="100" height="20" uuid="10a2713e-c88e-468c-8599-233b887c69ad"/>
-				<text><![CDATA[tanggal_kembali]]></text>
+				<reportElement x="148" y="72" width="100" height="20" uuid="10a2713e-c88e-468c-8599-233b887c69ad"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tanggal Buku Kembali]]></text>
 			</staticText>
 		</band>
 	</pageHeader>
 	<columnHeader>
 		<band height="20" splitType="Stretch">
 			<staticText>
-				<reportElement x="107" y="0" width="17" height="20" uuid="6c1eef5d-b760-44df-9f25-baecb6407461"/>
+				<reportElement x="1" y="0" width="29" height="20" uuid="6c1eef5d-b760-44df-9f25-baecb6407461"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -125,11 +155,13 @@ JOIN buku ON buku.No_buku = detail_peminjaman.No_buku where detail_peminjaman.ko
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
 				<text><![CDATA[No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="124" y="0" width="100" height="20" uuid="ebb8ae54-47d9-4122-a309-36b9d9e5db5b"/>
+				<reportElement x="31" y="0" width="130" height="20" uuid="ebb8ae54-47d9-4122-a309-36b9d9e5db5b"/>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
@@ -137,11 +169,13 @@ JOIN buku ON buku.No_buku = detail_peminjaman.No_buku where detail_peminjaman.ko
 					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
-				<textElement textAlignment="Center"/>
-				<text><![CDATA[kode_buku]]></text>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Kode Buku]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="224" y="0" width="100" height="20" uuid="4c643550-4312-45a2-ae64-cc867b22e962"/>
+				<reportElement x="161" y="0" width="235" height="20" uuid="4c643550-4312-45a2-ae64-cc867b22e962"/>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
@@ -149,11 +183,13 @@ JOIN buku ON buku.No_buku = detail_peminjaman.No_buku where detail_peminjaman.ko
 					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
-				<textElement textAlignment="Center"/>
-				<text><![CDATA[judul_buku]]></text>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Judul Buku]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="325" y="0" width="100" height="20" uuid="3c62d157-883e-43de-b673-474b5384c7e7"/>
+				<reportElement x="396" y="0" width="159" height="20" uuid="3c62d157-883e-43de-b673-474b5384c7e7"/>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
@@ -161,15 +197,17 @@ JOIN buku ON buku.No_buku = detail_peminjaman.No_buku where detail_peminjaman.ko
 					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
-				<textElement textAlignment="Center"/>
-				<text><![CDATA[jumlah_peminjaman]]></text>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Jumlah Peminjaman]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="21" splitType="Stretch">
+		<band height="20" splitType="Stretch">
 			<textField>
-				<reportElement x="124" y="0" width="100" height="20" uuid="5e52e73e-4d68-4b0d-9f47-2119306c393f"/>
+				<reportElement x="31" y="0" width="130" height="20" uuid="5e52e73e-4d68-4b0d-9f47-2119306c393f"/>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
@@ -177,11 +215,13 @@ JOIN buku ON buku.No_buku = detail_peminjaman.No_buku where detail_peminjaman.ko
 					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{kode_buku}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="325" y="0" width="100" height="20" uuid="56d47396-7fe9-40d7-b908-9d2737d34d3c"/>
+				<reportElement x="396" y="0" width="160" height="20" uuid="56d47396-7fe9-40d7-b908-9d2737d34d3c"/>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
@@ -189,11 +229,13 @@ JOIN buku ON buku.No_buku = detail_peminjaman.No_buku where detail_peminjaman.ko
 					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{jumlah_peminjaman}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="107" y="0" width="17" height="20" uuid="ff57b64a-ea84-4b4e-a373-b5b2c7b38831"/>
+				<reportElement x="1" y="0" width="29" height="20" uuid="ff57b64a-ea84-4b4e-a373-b5b2c7b38831"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -201,11 +243,13 @@ JOIN buku ON buku.No_buku = detail_peminjaman.No_buku where detail_peminjaman.ko
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="224" y="0" width="100" height="20" uuid="1ac64c55-3d43-4913-a135-4028499a923f"/>
+				<reportElement x="161" y="0" width="235" height="20" uuid="1ac64c55-3d43-4913-a135-4028499a923f"/>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
@@ -213,25 +257,28 @@ JOIN buku ON buku.No_buku = detail_peminjaman.No_buku where detail_peminjaman.ko
 					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{judul_buku}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
 	<columnFooter>
-		<band height="51" splitType="Stretch">
+		<band height="69" splitType="Stretch">
 			<componentElement>
-				<reportElement x="153" y="0" width="200" height="50" uuid="7ddc2cb7-72c0-4aef-bc21-a5610dace0a3"/>
+				<reportElement x="177" y="0" width="200" height="50" uuid="7ddc2cb7-72c0-4aef-bc21-a5610dace0a3"/>
 				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39 (Extended)" drawText="false" checksumRequired="false">
 					<jr:codeExpression><![CDATA[$F{kode_peminjaman}]]></jr:codeExpression>
 				</jr:barbecue>
 			</componentElement>
+			<textField>
+				<reportElement x="225" y="50" width="100" height="19" uuid="6a95e27f-f61d-4f75-a29b-3a52020054d3"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{kode_peminjaman}]]></textFieldExpression>
+			</textField>
 		</band>
 	</columnFooter>
-	<pageFooter>
-		<band height="54" splitType="Stretch"/>
-	</pageFooter>
-	<summary>
-		<band height="42" splitType="Stretch"/>
-	</summary>
 </jasperReport>
