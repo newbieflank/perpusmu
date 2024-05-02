@@ -418,7 +418,7 @@ public class Navbar extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Logout;
-    private javax.swing.JButton admin;
+    public static javax.swing.JButton admin;
     private javax.swing.JButton anggota;
     private javax.swing.JButton buku;
     private javax.swing.JButton dashboard;

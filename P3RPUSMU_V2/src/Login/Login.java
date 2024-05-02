@@ -355,9 +355,11 @@ public class Login extends javax.swing.JFrame {
                     admin.setVisible(true);
                     this.dispose();
                 } else {
-                    // Masuk ke class Peminjaman
-                    Pengembalian Pengembalian = new Pengembalian();
-                    Pengembalian.setVisible(true);
+                Navbar admin = new Navbar();    
+                    // Menonaktifkan tombol admin di Navbar
+                Navbar.admin.setEnabled(false);
+                
+                this.dispose();
                 }
             } else {
                 // Username atau password tidak cocok

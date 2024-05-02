@@ -55,6 +55,13 @@ import net.sf.jasperreports.view.JasperViewer;
 import net.sourceforge.barbecue.BarcodeFactory;
 import net.sourceforge.barbecue.BarcodeImageHandler;
 import com.toedter.calendar.JDateChooser;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JPanel;
 
 /**
  *
@@ -65,7 +72,7 @@ public class Peminjaman extends javax.swing.JPanel {
     private int nomorUrutanTerakhir = 0;
 
     private Connection con;
-    
+
     /**
      * Creates new form Peminjaman1
      */
@@ -81,21 +88,22 @@ public class Peminjaman extends javax.swing.JPanel {
         id_autoincrement();
         setTanggalHariIni();
         loadtable();
-
+        jDialog1();
         tabel_peminjaman.getTableHeader().setBackground(new Color(63, 148, 105));
         tabel_peminjaman.getTableHeader().setForeground(Color.white);
-        panel_print1.setSize(570, 514);
+        panel_print1.setSize(267, 120);
 
         txt_nisn.requestFocusInWindow();
         txt_petugas.setText(Login.username1);
     }
 
-    private void Jdialog() {
-        panel_print1.setLocationRelativeTo(null);
-        panel_print1.setBackground(Color.white);
-        panel_print1.getRootPane().setOpaque(false);
-        panel_print1.getContentPane().setBackground(new Color(0, 0, 0, 0));
-        panel_print1.setBackground(new Color(0, 0, 0, 0));
+   private void jDialog1() {
+        panel_print1.setSize(267, 120);
+        final Toolkit toolkit = Toolkit.getDefaultToolkit();
+        final Dimension screenSize = toolkit.getScreenSize();
+        final int x = (screenSize.width - panel_print1.getWidth()) / 2;
+        final int y = (screenSize.height - panel_print1.getHeight()) / 2;
+        panel_print1.setLocation(x, y);
     }
 
     private void loadtable() throws SQLException {
@@ -353,7 +361,7 @@ public class Peminjaman extends javax.swing.JPanel {
         menu3 = new javax.swing.JPopupMenu();
         panel_print1 = new javax.swing.JDialog();
         panel_print2 = new javax.swing.JPanel();
-        testing = new javax.swing.JTextField();
+        txt_testing = new javax.swing.JTextField();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jPanel11 = new javax.swing.JPanel();
@@ -483,13 +491,18 @@ public class Peminjaman extends javax.swing.JPanel {
 
         menu3.setFocusable(false);
 
-        testing.addActionListener(new java.awt.event.ActionListener() {
+        txt_testing.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                testingActionPerformed(evt);
+                txt_testingActionPerformed(evt);
             }
         });
 
         jButton3.setText("Cancel");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText("Print");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
@@ -505,7 +518,7 @@ public class Peminjaman extends javax.swing.JPanel {
             .addGroup(panel_print2Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(panel_print2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(testing)
+                    .addComponent(txt_testing)
                     .addGroup(panel_print2Layout.createSequentialGroup()
                         .addComponent(jButton3)
                         .addGap(71, 71, 71)
@@ -516,7 +529,7 @@ public class Peminjaman extends javax.swing.JPanel {
             panel_print2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel_print2Layout.createSequentialGroup()
                 .addGap(15, 15, 15)
-                .addComponent(testing, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txt_testing, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panel_print2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton3)
@@ -857,6 +870,11 @@ public class Peminjaman extends javax.swing.JPanel {
         jButton5.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         jButton5.setForeground(new java.awt.Color(255, 255, 255));
         jButton5.setText("SIMPAN");
+        jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton5MouseClicked(evt);
+            }
+        });
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton5ActionPerformed(evt);
@@ -1129,146 +1147,87 @@ public class Peminjaman extends javax.swing.JPanel {
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         DefaultTableModel model = (DefaultTableModel) tabel_peminjaman.getModel();
 
-        if (model.getRowCount() == 0) {
-            JOptionPane.showMessageDialog(this, "Tabel kosong");
-        } else {
-            try (Connection conn = Config.configDB()) {
-                conn.setAutoCommit(false); // Mulai transaksi
+    if (model.getRowCount() == 0) {
+        JOptionPane.showMessageDialog(this, "Tabel kosong");
+    } else {
+        try (Connection conn = Config.configDB()) {
+            conn.setAutoCommit(false); // Mulai transaksi
 
-                // Proses baris pertama untuk tabel peminjaman
-                int barisPertama = 0;
-                String kodePeminjamanPertama = model.getValueAt(barisPertama, 0).toString();
-                String nisnPertama = model.getValueAt(barisPertama, 3).toString();
-                String idPetugasPertama = model.getValueAt(barisPertama, 6).toString();
+            // Proses baris pertama untuk tabel peminjaman
+            int barisPertama = 0;
+            String kodePeminjamanPertama = model.getValueAt(barisPertama, 0).toString();
+            String nisnPertama = model.getValueAt(barisPertama, 3).toString();
+            String idPetugasPertama = model.getValueAt(barisPertama, 6).toString();
 
-                try {
-                    if (!isKodePeminjamanExists(kodePeminjamanPertama)) {
-                        // Insert into tabel peminjaman
-                        String sqlPeminjaman = "INSERT INTO peminjaman (kode_peminjaman, NISN, ID_users) VALUES (?, (SELECT NISN FROM anggota WHERE nama = ?), (SELECT ID_users FROM users WHERE username = ?))";
-                        try (PreparedStatement pstPeminjaman = conn.prepareStatement(sqlPeminjaman)) {
-                            pstPeminjaman.setString(1, kodePeminjamanPertama);
-                            pstPeminjaman.setString(2, nisnPertama);
-                            pstPeminjaman.setString(3, idPetugasPertama);
-                            pstPeminjaman.executeUpdate();
-                        }
-
-                        // Proses sisa baris untuk tabel detail_peminjaman
-                        boolean stokCukup = true; // Menandakan apakah stok cukup untuk semua baris
-                        for (int i = 0; i < model.getRowCount(); i++) {
-                            String kodePeminjaman = model.getValueAt(i, 0).toString();
-                            String totalPeminjamanStr = model.getValueAt(i, 5).toString();
-                            String tanggalpinjam = model.getValueAt(i, 1).toString();
-                            String tanggalkembali = model.getValueAt(i, 2).toString();
-                            String kodeBuku = model.getValueAt(i, 4).toString();
-
-                            // Pengecekan stok buku
-                            int jumlahPeminjaman = Integer.parseInt(totalPeminjamanStr);
-                            int stokBuku = getStokBuku(conn, kodeBuku);
-                            if (stokBuku >= jumlahPeminjaman) {
-                                // Jika stok mencukupi, kurangi jumlah stok buku
-                                kurangiStokBuku(conn, kodeBuku, jumlahPeminjaman);
-
-                                // Insert ke dalam tabel detail_peminjaman
-                                String detailPeminjamanSql = "INSERT INTO detail_peminjaman (kode_peminjaman, jumlah_peminjaman, status_peminjaman, tanggal_peminjaman, tanggal_kembali, No_buku) VALUES (?, ?, ?, ?, ?, (SELECT No_buku FROM buku WHERE judul_buku = ?))";
-                                try (PreparedStatement pstDetailPeminjaman = conn.prepareStatement(detailPeminjamanSql)) {
-                                    pstDetailPeminjaman.setString(1, kodePeminjaman);
-                                    pstDetailPeminjaman.setInt(2, jumlahPeminjaman);
-                                    pstDetailPeminjaman.setString(3, "dipinjam");
-                                    pstDetailPeminjaman.setString(4, tanggalpinjam);
-                                    pstDetailPeminjaman.setString(5, tanggalkembali);
-                                    pstDetailPeminjaman.setString(6, kodeBuku);
-                                    pstDetailPeminjaman.executeUpdate();
-                                }
-                            } else {
-                                // Jika stok tidak mencukupi, batalkan transaksi dan tandai bahwa stok tidak cukup
-                                conn.rollback();
-                                stokCukup = false;
-                                JOptionPane.showMessageDialog(this, "Error: Stok buku tidak mencukupi untuk peminjaman pada baris " + (i + 1));
-                                break; // Keluar dari loop karena stok tidak mencukupi
-                            }
-                        }
-
-                        // Jika stok cukup untuk semua baris, commit transaksi dan tampilkan notifikasi berhasil
-                        if (stokCukup) {
-                            conn.commit(); // Commit transaksi
-                            JOptionPane.showMessageDialog(this, "Peminjaman berhasil disimpan!");
-                            kosong();
-                            refresh();
-                            clear3();
-                            // Tampilkan panel cetak
-                            // panel_print1.setVisible(true);
-
-                            try {
-                                this.disable();
-
-                                String reportPath = "src/Transaksi/report1s.jasper";
-                                // Connection conn = koneksi.Koneksi();
-
-                                HashMap<String, Object> parameters = new HashMap<>();
-                                List<BufferedImage> barcodeImages = new ArrayList<>(); // List untuk menyimpan gambar barcode
-
-                                // Execute your SQL query to fetch data
-                                String sql = "SELECT detail_peminjaman.kode_peminjaman, anggota.NISN, anggota.nama, detail_peminjaman.tanggal_kembali, users.username, buku.kode_buku, buku.judul_buku, detail_peminjaman.jumlah_peminjaman "
-                                        + "FROM peminjaman "
-                                        + "JOIN anggota ON anggota.NISN = peminjaman.NISN "
-                                        + "JOIN detail_peminjaman ON detail_peminjaman.kode_peminjaman = peminjaman.kode_peminjaman "
-                                        + "JOIN users ON users.ID_users = peminjaman.ID_users "
-                                        + "JOIN buku ON buku.No_buku = detail_peminjaman.No_buku";
-
-                                PreparedStatement statement = conn.prepareStatement(sql);
-                                ResultSet resultSet = statement.executeQuery();
-
-                                // Temporary variable to store the last processed kode_peminjaman
-                                String lastKodePeminjaman = "";
-
-                                // Loop through the result set
-                                while (resultSet.next()) {
-                                    // Retrieve the kode_peminjaman
-                                    String kodePeminjaman = resultSet.getString("kode_peminjaman");
-
-                                    // Check if this is a new kode_peminjaman
-                                    if (!kodePeminjaman.equals(lastKodePeminjaman)) {
-                                        // Generate barcode for kode_peminjaman
-                                        net.sourceforge.barbecue.Barcode barcode = BarcodeFactory.createCode128(kodePeminjaman);
-                                        BufferedImage image = BarcodeImageHandler.getImage(barcode);
-
-                                        // Put the barcode image into parameters
-                                        barcodeImages.add(image);
-
-                                        // Store the current kode_peminjaman as the last processed one
-                                        lastKodePeminjaman = kodePeminjaman;
-                                    }
-                                }
-
-                                resultSet.close();
-                                statement.close();
-
-                                // Put the list of barcode images into parameters
-                                parameters.put("barcodeImages", barcodeImages);
-
-                                // Fill the JasperReport with parameters
-                                JasperPrint print = JasperFillManager.fillReport(reportPath, parameters, con);
-                                JasperViewer viewer = new JasperViewer(print, false);
-                                viewer.setVisible(true);
-
-                                conn.close(); // Menutup koneksi setelah selesai menggunakan
-
-                            } catch (Exception e) {
-                                JOptionPane.showMessageDialog(this, "Error displaying report: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                            }
-
-                        }
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Error: Kode Peminjaman sudah ada pada baris " + (barisPertama + 1));
+            try {
+                if (!isKodePeminjamanExists(kodePeminjamanPertama)) {
+                    // Insert into tabel peminjaman
+                    String sqlPeminjaman = "INSERT INTO peminjaman (kode_peminjaman, NISN, ID_users) VALUES (?, (SELECT NISN FROM anggota WHERE nama = ?), (SELECT ID_users FROM users WHERE username = ?))";
+                    try (PreparedStatement pstPeminjaman = conn.prepareStatement(sqlPeminjaman)) {
+                        pstPeminjaman.setString(1, kodePeminjamanPertama);
+                        pstPeminjaman.setString(2, nisnPertama);
+                        pstPeminjaman.setString(3, idPetugasPertama);
+                        pstPeminjaman.executeUpdate();
                     }
-                } catch (NumberFormatException e) {
-                    JOptionPane.showMessageDialog(this, "Error: Format Total Peminjaman tidak valid pada baris " + (barisPertama + 1));
+
+                    // Proses sisa baris untuk tabel detail_peminjaman
+                    boolean stokCukup = true; // Menandakan apakah stok cukup untuk semua baris
+                    for (int i = 0; i < model.getRowCount(); i++) {
+                        String kodePeminjaman = model.getValueAt(i, 0).toString();
+                        String totalPeminjamanStr = model.getValueAt(i, 5).toString();
+                        String tanggalpinjam = model.getValueAt(i, 1).toString();
+                        String tanggalkembali = model.getValueAt(i, 2).toString();
+                        String kodeBuku = model.getValueAt(i, 4).toString();
+
+                        // Pengecekan stok buku
+                        int jumlahPeminjaman = Integer.parseInt(totalPeminjamanStr);
+                        int stokBuku = getStokBuku(conn, kodeBuku);
+                        if (stokBuku >= jumlahPeminjaman) {
+                            // Jika stok mencukupi, kurangi jumlah stok buku
+                            kurangiStokBuku(conn, kodeBuku, jumlahPeminjaman);
+
+                            // Insert ke dalam tabel detail_peminjaman
+                            String detailPeminjamanSql = "INSERT INTO detail_peminjaman (kode_peminjaman, jumlah_peminjaman, status_peminjaman, tanggal_peminjaman, tanggal_kembali, No_buku) VALUES (?, ?, ?, ?, ?, (SELECT No_buku FROM buku WHERE judul_buku = ?))";
+                            try (PreparedStatement pstDetailPeminjaman = conn.prepareStatement(detailPeminjamanSql)) {
+                                pstDetailPeminjaman.setString(1, kodePeminjaman);
+                                pstDetailPeminjaman.setInt(2, jumlahPeminjaman);
+                                pstDetailPeminjaman.setString(3, "dipinjam");
+                                pstDetailPeminjaman.setString(4, tanggalpinjam);
+                                pstDetailPeminjaman.setString(5, tanggalkembali);
+                                pstDetailPeminjaman.setString(6, kodeBuku);
+                                pstDetailPeminjaman.executeUpdate();
+                            }
+                        } else {
+                            // Jika stok tidak mencukupi, batalkan transaksi dan tandai bahwa stok tidak cukup
+                            conn.rollback();
+                            stokCukup = false;
+                            JOptionPane.showMessageDialog(this, "Error: Stok buku tidak mencukupi untuk peminjaman pada baris " + (i + 1));
+                            break; // Keluar dari loop karena stok tidak mencukupi
+                        }
+                    }
+
+                    // Jika stok cukup untuk semua baris, commit transaksi dan tampilkan notifikasi berhasil
+                    if (stokCukup) {
+                        conn.commit(); // Commit transaksi
+                        JOptionPane.showMessageDialog(this, "Peminjaman berhasil disimpan!");
+                        kosong();
+                        refresh();
+                        clear3();
+                        // Tampilkan panel cetak
+                        panel_print1.setVisible(true);
+                        conn.close(); // Menutup koneksi setelah selesai menggunakan
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error: Kode Peminjaman sudah ada pada baris " + (barisPertama + 1));
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Error: Format Total Peminjaman tidak valid pada baris " + (barisPertama + 1));
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
         }
+    }
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton21ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton21ActionPerformed
@@ -1324,12 +1283,26 @@ public class Peminjaman extends javax.swing.JPanel {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
+        try {
+        String reportPath = "src/Transaksi/peminjaman.jasper";
+        Connection conn = koneksi.Koneksi();
 
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("kode",Integer.parseInt(txt_testing.getText()));
+        JasperPrint print = JasperFillManager.fillReport(reportPath, parameters, conn);
+        JasperViewer viewer = new JasperViewer(print, false);
+        viewer.setVisible(true);
+
+        conn.close(); // Menutup koneksi setelah selesai menggunakan
+        panel_print1.dispose();
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error displaying report: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+}
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    private void testingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testingActionPerformed
+    private void txt_testingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_testingActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_testingActionPerformed
+    }//GEN-LAST:event_txt_testingActionPerformed
 
     private void txt_nisnMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_nisnMousePressed
         // TODO add your handling code here:
@@ -1388,6 +1361,15 @@ public class Peminjaman extends javax.swing.JPanel {
         txt_nisn.requestFocusInWindow();
     }//GEN-LAST:event_tanggal_kembaliAncestorAdded
 
+    private void jButton5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton5MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton5MouseClicked
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+         panel_print1.dispose();
+    }//GEN-LAST:event_jButton3ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton20;
@@ -1428,7 +1410,6 @@ public class Peminjaman extends javax.swing.JPanel {
     private javax.swing.JTable tabel_users;
     private com.toedter.calendar.JDateChooser tanggal_kembali;
     private com.toedter.calendar.JDateChooser tanggal_pinjam;
-    private javax.swing.JTextField testing;
     private javax.swing.JTextField txt_anggota;
     private javax.swing.JTextField txt_judul_buku;
     private javax.swing.JTextField txt_jumlah_pinjam;
@@ -1436,6 +1417,7 @@ public class Peminjaman extends javax.swing.JPanel {
     private javax.swing.JTextField txt_kode_peminjaman;
     private javax.swing.JTextField txt_nisn;
     private static javax.swing.JTextField txt_petugas;
+    private javax.swing.JTextField txt_testing;
     // End of variables declaration//GEN-END:variables
 
 }
