@@ -71,6 +71,7 @@ public class Pengembalian extends javax.swing.JPanel {
         tabel_pending.getColumnModel().getColumn(0).setPreferredWidth(20);
 
         jDialog1.setSize(1000, 700);
+        setVisible(true);
 
     }
 
@@ -425,6 +426,15 @@ private void processScannedReceipt(String scannedText) {
     // Implementasikan logika untuk menangani struk yang dipindai di sini
 }
     
+@Override
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        // Memindahkan fokus kursor ke txt_search saat frame terlihat
+        if (visible) {
+            txt_search.requestFocusInWindow();
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -1396,15 +1406,13 @@ tambahStokBuku(con, totalBukuKembali, kodebuku);
 
     private void txt_searchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_searchKeyReleased
         String keyword = txt_search.getText().trim();
-        String sql = "SELECT peminjaman.kode_peminjaman,anggota.nama,users.username,detail_peminjaman.tanggal_peminjaman,detail_peminjaman.tanggal_kembali, detail_peminjaman.jumlah_peminjaman, buku.kode_buku,buku.judul_buku \n"
-                + "FROM peminjaman \n"
-                + "LEFT JOIN detail_peminjaman ON peminjaman.kode_peminjaman = detail_peminjaman.kode_peminjaman \n"
-                + "LEFT JOIN anggota ON peminjaman.NISN = anggota.NISN \n"
-                + "LEFT JOIN buku ON detail_peminjaman.No_buku = buku.No_buku \n"
-                + "LEFT JOIN users ON peminjaman.ID_users = users.ID_users "
-                + "WHERE anggota.nama LIKE '%" + keyword + "%' OR "
-                + "buku.judul_buku LIKE '%" + keyword + "%' OR "
-                + "detail_peminjaman.jumlah_peminjaman LIKE '%" + keyword + "%'";
+        String sql = "SELECT peminjaman.kode_peminjaman,anggota.nama,users.username,detail_peminjaman.tanggal_peminjaman,detail_peminjaman.tanggal_kembali, detail_peminjaman.jumlah_peminjaman, buku.kode_buku,buku.judul_buku \\n\"\n" +
+"                + \"FROM peminjaman \\n\"\n" +
+"                + \"LEFT JOIN detail_peminjaman ON peminjaman.kode_peminjaman = detail_peminjaman.kode_peminjaman \\n\"\n" +
+"                + \"LEFT JOIN anggota ON peminjaman.NISN = anggota.NISN \\n\"\n" +
+"                + \"LEFT JOIN buku ON detail_peminjaman.No_buku = buku.No_buku \\n\"\n" +
+"                + \"LEFT JOIN users ON peminjaman.ID_users = users.ID_users \"\n" +
+"                + \"WHERE peminjaman.kode_peminjaman LIKE '%\" + keyword + \"%'";
 
         try {
 //            java.sql.Connection con = (java.sql.Connection) Config.configDB();
