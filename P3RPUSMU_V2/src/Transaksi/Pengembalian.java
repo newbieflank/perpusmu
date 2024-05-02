@@ -411,7 +411,19 @@ int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
     txt_denda_total.setText(Integer.toString(totalDenda));
 }
 
+private boolean isScannedReceipt(String text) {
+    // Implementasikan logika untuk mendeteksi apakah teks adalah hasil pemindaian struk
+    // Misalnya, Anda bisa memeriksa panjang teks, karakteristik tertentu, atau pola tertentu dalam teks
+    // Kembalikan true jika teks cocok dengan kriteria pemindaian struk, false jika tidak
+        return false;
+    // Implementasikan logika untuk mendeteksi apakah teks adalah hasil pemindaian struk
+    // Misalnya, Anda bisa memeriksa panjang teks, karakteristik tertentu, atau pola tertentu dalam teks
+    // Kembalikan true jika teks cocok dengan kriteria pemindaian struk, false jika tidak
+}
 
+private void processScannedReceipt(String scannedText) {
+    // Implementasikan logika untuk menangani struk yang dipindai di sini
+}
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -949,6 +961,11 @@ int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        txt_search.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_searchActionPerformed(evt);
+            }
+        });
         txt_search.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txt_searchKeyReleased(evt);
@@ -1661,6 +1678,20 @@ tambahStokBuku(con, totalBukuKembali, kodebuku);
     private void spinner_hilangAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_spinner_hilangAncestorAdded
         // TODO add your handling code here:
     }//GEN-LAST:event_spinner_hilangAncestorAdded
+
+    private void txt_searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_searchActionPerformed
+        // TODO add your handling code here:
+        String scannedText = txt_search.getText();
+
+    // Lakukan pengecekan apakah teks yang dimasukkan adalah hasil pemindaian struk
+    if (isScannedReceipt(scannedText)) {
+        // Lakukan aksi yang sesuai ketika struk dipindai
+        processScannedReceipt(scannedText);
+    } else {
+        // Lakukan aksi lain jika bukan hasil pemindaian struk
+        // Misalnya, tampilkan pesan kesalahan atau lanjutkan dengan logika Anda yang lain
+    }
+    }//GEN-LAST:event_txt_searchActionPerformed
 
     DefaultTableModel model = new DefaultTableModel() {
         public boolean isCellEditable(int row, int column) {
