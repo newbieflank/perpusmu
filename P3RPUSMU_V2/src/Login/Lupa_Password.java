@@ -155,10 +155,11 @@ public void setUsernameText(String username) {
             }
         });
 
-        jPanel4.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel4.setBackground(new java.awt.Color(204, 204, 204));
 
         txt_username.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         txt_username.setBorder(null);
+        txt_username.setEnabled(false);
         txt_username.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txt_usernameActionPerformed(evt);
