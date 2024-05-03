@@ -12,7 +12,10 @@ import java.awt.Font;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -24,37 +27,110 @@ public class history extends javax.swing.JPanel {
     private Connection con;
     private PreparedStatement pst;
     private ResultSet rs;
-    private DefaultTableModel model = new DefaultTableModel() {
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return false;
-        }
-    };
+    private int tgl, thn, bln;
+    String thn_get, bln_get, hari_get;
+
+    private ArrayList<String> Tahun = new ArrayList<>();
 
     public history() {
         initComponents();
         con = koneksi.Koneksi();
-        loadTabel();
         jPanel1.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         txtcari.putClientProperty(FlatClientProperties.STYLE, "arc:30");
+        txtcari.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Cari");
+        JcomboTahun();
+        loadTabel2();
 
         tabel.getTableHeader().setBackground(new Color(63, 148, 105));
         tabel.getTableHeader().setForeground(Color.white);
         tabel.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
-
     }
 
-    private void loadTabel() {
+    private void JcomboTahun() {
+        try {
+
+            pst = con.prepareStatement("SELECT DISTINCT Year(tanggal) as tahun FROM data_history;");
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                String year = rs.getString("tahun");
+                tahun.addItem(year); // Add each distinct year to the JComboBox
+            }
+
+            int itemCount = tahun.getItemCount();
+
+            if (itemCount > 0) {
+                tahun.setSelectedIndex(itemCount - 1); // Select the last item in the JComboBox
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getHari() {
+        try {
+            String selected = (String) hari.getSelectedItem();
+            if (hari.getSelectedIndex() != 0) {
+                tgl = Integer.parseInt(selected);
+                hari_get = " AND day(tanggal) = " + tgl;
+            } else {
+                hari_get = ""; // Reset the condition if no day is selected
+            }
+        } catch (NumberFormatException e) {
+            // Handle the case where the selected item cannot be parsed to an integer
+            // You can log the error or display a message to the user
+            System.out.println("Error parsing day: " + e.getMessage());
+        }
+    }
+
+    private void getBulan() {
+        try {
+            if (bulan.getSelectedIndex() != 0) {
+                bln = bulan.getSelectedIndex();
+                bln_get = " AND month(tanggal) = " + bln;
+            } else {
+                bln_get = ""; // Reset the condition if no month is selected
+            }
+        } catch (Exception e) {
+            // Handle any other exceptions that might occur
+            System.out.println("Error in getBulan: " + e.getMessage());
+        }
+    }
+
+    private void getTahun() {
+        try {
+            String selected = (String) tahun.getSelectedItem();
+            thn = Integer.parseInt(selected);
+            thn_get = "year(tanggal) = " + thn;
+        } catch (NumberFormatException e) {
+            // Handle the case where the selected item cannot be parsed to an integer
+            // You can log the error or display a message to the user
+            System.out.println("Error parsing year: " + e.getMessage());
+        }
+    }
+
+    private void loadTabel2() {
         tabel.clearSelection();
         tabel.getTableHeader().setReorderingAllowed(false);
         tabel.getTableHeader().setResizingAllowed(false);
+        DefaultTableModel model = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        getTahun();
+        getBulan();
+        getHari();
+        String query = "select * from data_history where ";
+
         try {
-            pst = con.prepareStatement("SELECT history.id_history, history.tgl_masuk, history.peristiwa, history.keterangan,\n"
-                    + "buku.kode_buku, buku.judul_buku, buku.kategori, buku.kondisi_buku, buku.harga, detail_pengembalian.tanggal, \n"
-                    + "history.id_buku\n"
-                    + "FROM history\n"
-                    + "JOIN buku ON history.id_buku = buku.No_buku\n"
-                    + "LEFT JOIN detail_pengembalian ON buku.No_buku = detail_pengembalian.No_buku and detail_pengembalian.kondisi_buku = 'hilang';");
+            if (bulan.getSelectedIndex() == 0 && hari.getSelectedIndex() == 0) {
+                query = query + thn_get;
+            } else {
+                query = query + thn_get + bln_get + hari_get;
+            }
+
+            pst = con.prepareStatement(query);
             rs = pst.executeQuery();
             ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
             int columnCount = rsmd.getColumnCount();
@@ -69,48 +145,41 @@ public class history extends javax.swing.JPanel {
                     rowData[i - 1] = rs.getObject(i);
                 }
                 model.addRow(rowData);
-                tabel.setModel(model);
             }
+            tabel.setModel(model);
         } catch (Exception e) {
             System.out.println("loadTable" + e);
         }
     }
 
-    private void addBuku(String kodeBuku, String judulBuku, String kategori, String kondisi, int harga) {
-        try {
-            pst = con.prepareStatement("INSERT INTO history (No_buku, tgl_masuk, peristiwa, keterangan) VALUES (?, ?, ?, ?)");
-            int No_buku = pst.getGeneratedKeys().getInt(1);
-            pst.setDate(2, (java.sql.Date) new Date());
-            pst.setString(3, "Buku Baru Ditambahkan");
-            pst.setString(4, "Buku " + judulBuku + " (" + kodeBuku + ") ditambahkan ke database.");
-            pst.executeUpdate();
-        } catch (Exception e) {
-            System.out.println("addbuku" + e);
-        }
-        loadTabel();
-    }
-
-    private void cari(String key) {
+    private void cari() {
         tabel.clearSelection();
         tabel.getTableHeader().setReorderingAllowed(false);
         tabel.getTableHeader().setResizingAllowed(false);
+        DefaultTableModel model1 = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
-        if (key.equals(" ")) {
-            loadTabel();
+        String key = txtcari.getText();
+        String query = "select * from data_history where ";
+        if (key.equals("")) {
+            loadTabel2();
         } else {
             try {
-                pst = con.prepareStatement("SELECT history.id_history, history.tgl_masuk, history.peristiwa, history.keterangan,\n"
-                        + "buku.kode_buku, buku.judul_buku, buku.kategori, buku.kondisi_buku, buku.harga, detail_pengembalian.tanggal, \n"
-                        + "history.id_buku\n"
-                        + "FROM history\n"
-                        + "JOIN buku ON history.id_buku = buku.No_buku\n"
-                        + "LEFT JOIN detail_pengembalian ON buku.No_buku = detail_pengembalian.No_buku and detail_pengembalian.kondisi_buku = 'hilang';"
-                        + "where buku.judul_buku Like %'" + key + "'%");
+                if (bulan.getSelectedIndex() == 0 && hari.getSelectedIndex() == 0) {
+                    query = query + thn_get + " AND Judul_buku Like '%" + key + "%'";
+                } else {
+                    query = query + thn_get + bln_get + hari_get + " AND Judul_buku Like '%" + key + "%'";
+                }
+                pst = con.prepareStatement(query);
                 rs = pst.executeQuery();
                 ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
                 int columnCount = rsmd.getColumnCount();
                 for (int i = 1; i <= columnCount; i++) {
-                    model.addColumn(rsmd.getColumnName(i));
+                    model1.addColumn(rsmd.getColumnName(i));
                 }
 
                 // Add rows to the DefaultTableModel
@@ -119,11 +188,11 @@ public class history extends javax.swing.JPanel {
                     for (int i = 1; i <= columnCount; i++) {
                         rowData[i - 1] = rs.getObject(i);
                     }
-                    model.addRow(rowData);
-                    tabel.setModel(model);
+                    model1.addRow(rowData);
                 }
+                tabel.setModel(model1);
             } catch (Exception e) {
-                System.out.println("cari" + e);
+                System.out.println("data cari" + e);
             }
         }
     }
@@ -141,8 +210,13 @@ public class history extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         tabel = new javax.swing.JTable();
         txtcari = new javax.swing.JTextField();
-        btncetak = new javax.swing.JToggleButton();
         jLabel2 = new javax.swing.JLabel();
+        tahun = new javax.swing.JComboBox<>();
+        hari = new javax.swing.JComboBox<>();
+        bulan = new javax.swing.JComboBox<>();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(204, 204, 204));
 
@@ -179,17 +253,41 @@ public class history extends javax.swing.JPanel {
             }
         });
 
-        btncetak.setBackground(new java.awt.Color(51, 153, 0));
-        btncetak.setForeground(new java.awt.Color(153, 204, 0));
-        btncetak.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/printer-88 2.png"))); // NOI18N
-        btncetak.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btncetakActionPerformed(evt);
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        jLabel2.setText("HISTORY BUKU");
+
+        tahun.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
+            public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
+            }
+            public void popupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {
+                tahunPopupMenuWillBecomeInvisible(evt);
+            }
+            public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {
             }
         });
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        jLabel2.setText("HISTORY BUKU");
+        hari.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Semua", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", " " }));
+        hari.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                hariItemStateChanged(evt);
+            }
+        });
+
+        bulan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Semua", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember" }));
+        bulan.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                bulanItemStateChanged(evt);
+            }
+        });
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel1.setText("Tahun");
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel3.setText("Bulan");
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel4.setText("Hari");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -199,16 +297,25 @@ public class history extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
-                    .addComponent(txtcari, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(947, 947, 947))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(txtcari, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(14, 14, 14)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tahun, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(24, 24, 24)
+                        .addComponent(jLabel3)
+                        .addGap(5, 5, 5)
+                        .addComponent(bulan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(36, 36, 36)
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(hari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(526, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
                     .addContainerGap()
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1140, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addGap(0, 0, Short.MAX_VALUE)
-                            .addComponent(btncetak, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1140, Short.MAX_VALUE)
                     .addContainerGap()))
         );
         jPanel1Layout.setVerticalGroup(
@@ -216,15 +323,20 @@ public class history extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtcari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(567, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtcari, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tahun, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(hari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bulan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4))
+                .addContainerGap(537, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(55, 55, 55)
-                    .addComponent(btncetak)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 539, Short.MAX_VALUE)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                    .addGap(110, 110, 110)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 520, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -243,25 +355,36 @@ public class history extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtcariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtcariKeyReleased
-        String key = txtcari.getText();
-        try {
-            cari(key);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        cari();
     }//GEN-LAST:event_txtcariKeyReleased
 
-    private void btncetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btncetakActionPerformed
+    private void bulanItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_bulanItemStateChanged
+        // TODO add your handling code here:
+        loadTabel2();
+    }//GEN-LAST:event_bulanItemStateChanged
 
-    }//GEN-LAST:event_btncetakActionPerformed
+    private void hariItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_hariItemStateChanged
+        // TODO add your handling code here:
+        loadTabel2();
+    }//GEN-LAST:event_hariItemStateChanged
+
+    private void tahunPopupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_tahunPopupMenuWillBecomeInvisible
+        // TODO add your handling code here:
+        loadTabel2();
+    }//GEN-LAST:event_tahunPopupMenuWillBecomeInvisible
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JToggleButton btncetak;
+    private javax.swing.JComboBox<String> bulan;
+    private javax.swing.JComboBox<String> hari;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tabel;
+    private javax.swing.JComboBox<String> tahun;
     private javax.swing.JTextField txtcari;
     // End of variables declaration//GEN-END:variables
 }

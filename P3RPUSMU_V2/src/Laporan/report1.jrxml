@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ee3f81f2-862e-478a-9b6e-77ed1758e6ad">
-	<property name="ireport.zoom" value="1.0000000000000016"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.zoom" value="1.2100000000000026"/>
+	<property name="ireport.x" value="51"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="tgl1" class="java.util.Date">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -48,18 +48,35 @@ WHERE
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="79" splitType="Stretch">
+		<band height="99" splitType="Stretch">
+			<rectangle>
+				<reportElement x="63" y="0" width="673" height="99" uuid="ecb28073-e907-46c9-bb7d-ac9eafe4d133"/>
+			</rectangle>
 			<staticText>
-				<reportElement x="227" y="22" width="251" height="39" uuid="e63a5042-f5f0-4eb6-9338-ac5e2d363b24"/>
+				<reportElement x="194" y="44" width="450" height="40" uuid="7e98b8e4-efb3-4a04-877d-b2e9a86dc162"/>
 				<textElement>
-					<font size="24"/>
+					<font size="15"/>
+				</textElement>
+				<text><![CDATA[JL. Raya Situbondo - Wonosari, Tangsil Wetan, 68282, Kapunduk]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="214" y="-4" width="415" height="59" uuid="b6fdf324-13c1-42a3-9e10-9b210da54622"/>
+				<textElement>
+					<font size="36" isBold="true"/>
 				</textElement>
 				<text><![CDATA[SMK MANBAUL ULUM]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="113" y="69" width="592" height="30" uuid="de1a59f5-87f6-4af2-8a41-5752777b4012"/>
+				<textElement textAlignment="Center">
+					<font size="17"/>
+				</textElement>
+				<text><![CDATA[Wonosari, Kec. Bondowoso, Kabupaten Bondowoso Provinsi Jawa Timur]]></text>
 			</staticText>
 		</band>
 	</title>
 	<pageHeader>
-		<band height="35" splitType="Stretch"/>
+		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
 		<band height="34" splitType="Stretch">
@@ -95,52 +112,72 @@ WHERE
 			</rectangle>
 			<staticText>
 				<reportElement x="109" y="0" width="72" height="34" uuid="090a604a-45ec-43ad-802f-9aa1b4662fa8"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[nama]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="181" y="0" width="64" height="34" uuid="13b641bc-30e9-4b99-a3aa-ce080ee135de"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[angkatan]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="245" y="0" width="64" height="34" uuid="141c460f-8c43-44ef-a2a3-94753b90bf81"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Status Siswa]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="309" y="0" width="74" height="34" uuid="ce8b7190-9650-44f6-91ce-4a49143665e5"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Judul Buku]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="383" y="0" width="69" height="34" uuid="924ac58b-3295-437d-ba75-85f2be1050fc"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[kategori]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="542" y="0" width="58" height="34" uuid="36ceed1a-0aa6-4358-9df3-399750648731"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Status Buku]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="600" y="0" width="65" height="34" uuid="36ce0d9f-8d50-44d7-933e-a7c9716cd94e"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Kondisi Buku]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="63" y="0" width="46" height="34" uuid="a6fb40e2-1cf3-45dd-b759-aa93f2c4020d"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Kode]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="452" y="0" width="89" height="34" uuid="3112d016-bc72-46a4-8d04-2ed030f33051"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Tanggal]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="665" y="0" width="71" height="34" uuid="7a7d61cb-c374-460b-8379-e84b0224d561"/>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Jumlah Pengembalian]]></text>
 			</staticText>
 		</band>
