@@ -580,6 +580,7 @@ public class Peminjaman extends javax.swing.JPanel {
             }
         });
 
+        kd_peminjaman.setEnabled(false);
         kd_peminjaman.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 kd_peminjamanActionPerformed(evt);
