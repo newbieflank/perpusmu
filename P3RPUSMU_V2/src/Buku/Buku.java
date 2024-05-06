@@ -1027,7 +1027,7 @@ public class Buku extends javax.swing.JPanel {
             dial_stock.setText(String.valueOf(jumlah_stock));
             dial_kode.enable(false);
             noBukuEdit = noBuku;
-            Tambah.setVisible(true);
+            Edit.setVisible(true);
         } catch (Exception e) {
             System.out.println("click" + e.getMessage());
             JOptionPane.showMessageDialog(jPanel4, "Pilih Dahulu Data Yang Akan Di Ubah");
