@@ -4,6 +4,7 @@
  */
 package dashboard;
 
+import Login.Config;
 import dashboard.DatabaseConnection;
 import dashboard.ModelData;
 import dashboard.koneksi;
@@ -25,10 +26,27 @@ public class Dashboard1 extends javax.swing.JPanel {
     /**
      * Creates new form Dashboard
      */
+    
+      public static void resetcomponen() {
+        jumlahanggota();
+        jumlahbuku();
+        jumlahpetugas();
+        jumlahtransaksihariini();
+        jumlahkembali();
+    }
+    
+    private Connection con;
+
     public Dashboard1() {
 
         initComponents();
         init();
+        con = Navbar.koneksi.Koneksi();
+        jumlahbuku();
+        jumlahpetugas();
+        jumlahanggota();
+        jumlahtransaksihariini();
+        jumlahkembali();
 //        chart.addLegend("Jumlah Peminjaman", Color.decode("#000000"), Color.decode("#000000"));
 //        chart.addData(new ModelChart("January", new double[]{50}));
 //        chart.addData(new ModelChart("February", new double[]{60}));
@@ -42,45 +60,124 @@ public class Dashboard1 extends javax.swing.JPanel {
 //        pieChart1.addData(new ModelPieChart("Buku Di Inventory", 20, new Color(0, 0, 255)));
     }
 
-
-
-private void init () {
+    private void init() {
         chart.addLegend("Jumlah Peminjaman", Color.decode("#000000"), Color.decode("#000000"));
         chart.addLegend("Buku Kembali", Color.black, Color.black);
         chart.addLegend("Buku Dipinjam", Color.black, Color.black);
         try {
             List<ModelData> lists = getdata();
-             for (int i = lists.size() - 1; i >= 0; i--) {
-                 ModelData d = lists.get(i);
-             chart.addData(new ModelChart(d.getMonth(), new double[]{d.getAmount(), d.getCost(), d.getProfit()}));
-             }
+            for (int i = lists.size() - 1; i >= 0; i--) {
+                ModelData d = lists.get(i);
+                chart.addData(new ModelChart(d.getMonth(), new double[]{d.getAmount(), d.getCost(), d.getProfit()}));
+            }
         } catch (Exception e) {
-                System.err.println(e);
-                }
+            System.err.println(e);
+        }
         chart.start();
     }
-           
-            private List<ModelData> getdata() throws SQLException {
-            List<ModelData> lists = new ArrayList<>();
-                DatabaseConnection.getInstance().connectToDatabase();
-            String sql = "SELECT DATE_FORMAT(tanggal_peminjaman,'%M') AS Month, SUM(jumlah_peminjaman) AS Amount, SUM(jumlah_peminjaman) AS Cost, SUM(jumlah_peminjaman) AS Profit FROM detail_peminjaman GROUP BY DATE_FORMAT(tanggal_peminjaman,'%m%Y') ORDER BY tanggal_peminjaman;";
-            PreparedStatement p=DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
-            ResultSet r = p.executeQuery();
-            while (r.next()) {
-                String month = r.getString("Month");
-                Double amount = r.getDouble("Amount");
-                Double Cost = r.getDouble("Cost");
-                Double profit = r.getDouble("profit");
-                lists.add(new ModelData(month, amount, Cost, profit));
+
+    private List<ModelData> getdata() throws SQLException {
+        List<ModelData> lists = new ArrayList<>();
+        DatabaseConnection.getInstance().connectToDatabase();
+        String sql = "SELECT DATE_FORMAT(tanggal_peminjaman,'%M') AS Month, SUM(jumlah_peminjaman) AS Amount, SUM(jumlah_peminjaman) AS Cost, SUM(jumlah_peminjaman) AS Profit FROM detail_peminjaman GROUP BY DATE_FORMAT(tanggal_peminjaman,'%m%Y') ORDER BY tanggal_peminjaman;";
+        PreparedStatement p = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
+        ResultSet r = p.executeQuery();
+        while (r.next()) {
+            String month = r.getString("Month");
+            Double amount = r.getDouble("Amount");
+            Double Cost = r.getDouble("Cost");
+            Double profit = r.getDouble("profit");
+            lists.add(new ModelData(month, amount, Cost, profit));
+        }
+        r.close();
+        p.close();
+        return lists;
+    }
+
+    private static void jumlahbuku() {
+        try {
+            String sql = "SELECT SUM(jumlah_stock) AS total_stock FROM buku";
+            java.sql.Connection con = (Connection) Config.configDB();
+            java.sql.Statement stm = con.createStatement();
+            java.sql.ResultSet res = stm.executeQuery(sql);
+            if (res.next()) {
+                int totalStock = res.getInt("total_stock");
+                // Menampilkan hasil SUM pada JLabel
+                label_buku.setText(String.valueOf(totalStock));
             }
-            r.close();
-            p.close();
-         return lists;
-} 
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Tambahkan penanganan kesalahan sesuai kebutuhan Anda
+        }
+    }
 
-    
-    
+    private static void jumlahanggota() {
+        try {
+            String sql = "SELECT COUNT(nama) AS total_anggota FROM anggota;";
+            java.sql.Connection con = (Connection) Config.configDB();
+            java.sql.Statement stm = con.createStatement();
+            java.sql.ResultSet res = stm.executeQuery(sql);
+            if (res.next()) {
+                int totalStock = res.getInt("total_anggota");
+                // Menampilkan hasil SUM pada JLabel
+                label_anggota.setText(String.valueOf(totalStock));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Tambahkan penanganan kesalahan sesuai kebutuhan Anda
+        }
+    }
 
+    private static void jumlahpetugas() {
+        try {
+            String sql = "SELECT COUNT(username) AS total_petugas FROM users;";
+            java.sql.Connection con = (Connection) Config.configDB();
+            java.sql.Statement stm = con.createStatement();
+            java.sql.ResultSet res = stm.executeQuery(sql);
+            if (res.next()) {
+                int totalStock = res.getInt("total_petugas");
+                // Menampilkan hasil SUM pada JLabel
+                Label_petugas.setText(String.valueOf(totalStock));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Tambahkan penanganan kesalahan sesuai kebutuhan Anda
+        }
+    }
+
+    private static void jumlahtransaksihariini() {
+        try {
+            String sql = "SELECT COUNT(DISTINCT kode_peminjaman) AS jumlah_transaksi_hari_ini FROM detail_peminjaman WHERE DATE(tanggal_peminjaman) = CURDATE();";
+            java.sql.Connection con = (Connection) Config.configDB();
+            java.sql.Statement stm = con.createStatement();
+            java.sql.ResultSet res = stm.executeQuery(sql);
+            if (res.next()) {
+                int totalStock = res.getInt("jumlah_transaksi_hari_ini");
+                // Menampilkan hasil SUM pada JLabel
+                label_transaksi.setText(String.valueOf(totalStock));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Tambahkan penanganan kesalahan sesuai kebutuhan Anda
+        }
+    }
+    
+     private static void jumlahkembali() {
+        try {
+            String sql = "SELECT COUNT(kode_pengembalian) AS jumlah_transaksi_hari_ini FROM detail_pengembalian WHERE DATE(tanggal) = CURDATE();";
+            java.sql.Connection con = (Connection) Config.configDB();
+            java.sql.Statement stm = con.createStatement();
+            java.sql.ResultSet res = stm.executeQuery(sql);
+            if (res.next()) {
+                int totalStock = res.getInt("jumlah_transaksi_hari_ini");
+                // Menampilkan hasil SUM pada JLabel
+                label_transaksi1.setText(String.valueOf(totalStock));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Tambahkan penanganan kesalahan sesuai kebutuhan Anda
+        }
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -91,24 +188,29 @@ private void init () {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel16 = new javax.swing.JLabel();
+        label_buku = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jLabel17 = new javax.swing.JLabel();
+        label_anggota = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        jLabel18 = new javax.swing.JLabel();
+        Label_petugas = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
-        jLabel19 = new javax.swing.JLabel();
+        label_transaksi = new javax.swing.JLabel();
         panelShadow1 = new raven.panel.PanelShadow();
         chart = new raven.chart.CurveLineChart();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
+        jLabel16 = new javax.swing.JLabel();
+        label_transaksi1 = new javax.swing.JLabel();
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel1.setText("DASHBOARD");
@@ -123,8 +225,8 @@ private void init () {
 
         jLabel4.setText("Jumlah Buku");
 
-        jLabel16.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel16.setText("0");
+        label_buku.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        label_buku.setText("0");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -139,7 +241,7 @@ private void init () {
                             .addComponent(jLabel4))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(label_buku, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 73, Short.MAX_VALUE)
                         .addComponent(jLabel2)))
                 .addContainerGap())
@@ -149,7 +251,7 @@ private void init () {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel16)
+                    .addComponent(label_buku)
                     .addComponent(jLabel2))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel3)
@@ -168,8 +270,8 @@ private void init () {
 
         jLabel7.setText("Jumlah Anggota");
 
-        jLabel17.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel17.setText("0");
+        label_anggota.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        label_anggota.setText("0");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -179,7 +281,7 @@ private void init () {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(label_anggota, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
                         .addComponent(jLabel5))
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -195,7 +297,7 @@ private void init () {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5)
-                    .addComponent(jLabel17))
+                    .addComponent(label_anggota))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -213,8 +315,8 @@ private void init () {
 
         jLabel10.setText("Jumlah Petugas");
 
-        jLabel18.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel18.setText("0");
+        Label_petugas.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        Label_petugas.setText("0");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -224,7 +326,7 @@ private void init () {
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(Label_petugas, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel8))
                     .addGroup(jPanel3Layout.createSequentialGroup()
@@ -240,7 +342,7 @@ private void init () {
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel8)
-                    .addComponent(jLabel18))
+                    .addComponent(Label_petugas))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -254,12 +356,12 @@ private void init () {
         jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/invoice.png"))); // NOI18N
 
         jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel12.setText("TRANSAKSI");
+        jLabel12.setText("Jumlah Peminjaman");
 
-        jLabel13.setText("Jumlah Transaksi");
+        jLabel13.setText("Jumlah Peminjaman Hari Ini");
 
-        jLabel19.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel19.setText("0");
+        label_transaksi.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        label_transaksi.setText("0");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -269,8 +371,8 @@ private void init () {
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+                        .addComponent(label_transaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel11))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -285,7 +387,7 @@ private void init () {
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel11)
-                    .addComponent(jLabel19))
+                    .addComponent(label_transaksi))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel12)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -314,6 +416,51 @@ private void init () {
                 .addContainerGap())
         );
 
+        jPanel5.setBackground(new java.awt.Color(0, 204, 51));
+        jPanel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/invoice.png"))); // NOI18N
+
+        jLabel15.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel15.setText("Jumlah Pengembalian");
+
+        jLabel16.setText("Jumlah Pengembalian Hari Ini");
+
+        label_transaksi1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        label_transaksi1.setText("0");
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(label_transaksi1, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel14))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel15)
+                            .addComponent(jLabel16))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel14)
+                    .addComponent(label_transaksi1))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel15)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel16)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -322,7 +469,7 @@ private void init () {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(50, 50, 50)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(panelShadow1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -330,13 +477,14 @@ private void init () {
                                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(50, 50, 50)
                                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(50, 50, 50)
                                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(126, 126, 126))))
+                                .addGap(50, 50, 50)
+                                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jLabel1)))
-                .addContainerGap(376, Short.MAX_VALUE))
+                .addContainerGap(231, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -349,7 +497,8 @@ private void init () {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addComponent(panelShadow1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -360,16 +509,16 @@ private void init () {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private static javax.swing.JLabel Label_petugas;
     private raven.chart.CurveLineChart chart;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -382,6 +531,11 @@ private void init () {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private static javax.swing.JLabel label_anggota;
+    private static javax.swing.JLabel label_buku;
+    private static javax.swing.JLabel label_transaksi;
+    private static javax.swing.JLabel label_transaksi1;
     private raven.panel.PanelShadow panelShadow1;
     // End of variables declaration//GEN-END:variables
 }

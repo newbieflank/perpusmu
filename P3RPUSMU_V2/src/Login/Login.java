@@ -10,8 +10,17 @@ import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.event.KeyEvent;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import javax.smartcardio.Card;
+import javax.smartcardio.CardChannel;
+import javax.smartcardio.CardException;
+import javax.smartcardio.CardTerminal;
+import javax.smartcardio.CardTerminals;
+import javax.smartcardio.CommandAPDU;
+import javax.smartcardio.ResponseAPDU;
+import javax.smartcardio.TerminalFactory;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import javax.smartcardio.*;
 
 public class Login extends javax.swing.JFrame {
 
@@ -31,6 +40,36 @@ public class Login extends javax.swing.JFrame {
         jPanel2.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         hide.setVisible(false);
         txt_username.requestFocusInWindow();
+    }
+    
+     private void readRFID() {
+        // Inisialisasi context untuk Smart Card IO API
+        CardTerminals terminals = TerminalFactory.getDefault().terminals();
+
+        try {
+            // Cari pembaca RFID yang tersedia
+            for (CardTerminal terminal : terminals.list()) {
+                // Lakukan koneksi ke pembaca RFID
+                terminal.waitForCardPresent(0);
+                Card card = terminal.connect("*");
+                CardChannel channel = card.getBasicChannel();
+
+                // Perintah APDU untuk membaca data dari tag RFID
+                byte[] command = {(byte) 0xFF, (byte) 0xCA, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+                ResponseAPDU response = channel.transmit(new CommandAPDU(command));
+
+                // Mendapatkan data yang dibaca dari tag RFID sebagai string
+                String rfidData = new String(response.getData());
+
+                // Menampilkan ID RFID pada JTextField
+                txt_username.setText(rfidData);
+
+                // Putuskan koneksi dari pembaca RFID
+                card.disconnect(false);
+            }
+        } catch (CardException ex) {
+            ex.printStackTrace();
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -462,6 +501,7 @@ public class Login extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
+        
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Login().setVisible(true);
