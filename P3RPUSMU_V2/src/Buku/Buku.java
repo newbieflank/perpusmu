@@ -9,7 +9,6 @@ import javax.swing.table.DefaultTableModel;
 import Navbar.koneksi;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.event.KeyEvent;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.text.Format;
@@ -18,10 +17,7 @@ import java.util.Date;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import javax.swing.JOptionPane;
-import javax.swing.RowFilter;
 import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
-import Buku.BukuMain;
 import com.mysql.cj.jdbc.result.ResultSetMetaData;
 
 public class Buku extends javax.swing.JPanel {
@@ -50,13 +46,42 @@ public class Buku extends javax.swing.JPanel {
     }
 
     private void addHistory(int harga, String kondisi) {
+        String kode_buku = dial_kode.getText();
+        String judul_buku = dial_judul.getText();
+        String referensi = dial_referensi.getText();
+        String jilid = dial_jilid.getText();
+        Object kategori = dial_kategori.getSelectedItem();
+        String pengarang = dial_pengarang.getText();
+        String lokasi = dial_lokasi.getText();
+        Object kondisi_buku = dial_kondisi.getSelectedItem();
+        int tahun_terbit = Integer.parseInt(dial_tahun.getText());
+        String asal_buku = dial_asal.getText();
+        int harga_buku = Integer.parseInt(dial_harga.getText());
+        int jumlah_stock = Integer.parseInt(dial_stock.getText());
+
         String sql = "insert into history (id_buku, peristiwa, tanggal, harga_buku, keterangan) "
-                + "values ((select count(*) + 1 as id_buku from buku), 'masuk', current_date(), ?, ?)";
+                + "values ((select No_buku from buku where kode_buku = ? and referensi = ? and judul_buku = ? and"
+                + " jilid = ? and kategori = ? and"
+                + " pengarang = ? and lokasi = ? and kondisi_buku = ? and tahun_terbit = ? and asal_buku = ? and harga =? and"
+                + " jumlah_stock = ?), 'masuk', current_date(), ?, ?)";
         String keterangan = "Buku ini masuk dalam kondisi " + kondisi;
+
         try {
             pst = con.prepareStatement(sql);
-            pst.setInt(2, harga);
-            pst.setString(3, keterangan);
+            pst.setString(1, kode_buku);
+            pst.setString(2, referensi);
+            pst.setString(3, judul_buku);
+            pst.setString(4, jilid);
+            pst.setString(5, (String) kategori);
+            pst.setString(6, pengarang);
+            pst.setString(7, lokasi);
+            pst.setString(8, (String) kondisi_buku);
+            pst.setInt(9, tahun_terbit);
+            pst.setString(10, asal_buku);
+            pst.setInt(11, harga_buku);
+            pst.setInt(12, jumlah_stock);
+            pst.setInt(13, harga);
+            pst.setString(14, keterangan);
             pst.execute();
         } catch (Exception e) {
             e.printStackTrace();
@@ -93,7 +118,7 @@ public class Buku extends javax.swing.JPanel {
         };
 
         try {
-            pst = con.prepareStatement("SELECT * FROM buku");
+            pst = con.prepareStatement("SELECT * FROM buku_view");
             rs = pst.executeQuery();
             ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
             int columnCount = rsmd.getColumnCount();
@@ -116,18 +141,18 @@ public class Buku extends javax.swing.JPanel {
     }
 
     private void editData() {
-        String kode_buku = dial_kode.getText();
-        String judul_buku = dial_judul.getText();
-        String referensi = dial_referensi.getText();
-        String jilid = dial_jilid.getText();
-        Object kategori = dial_kategori.getSelectedItem();
-        String pengarang = dial_pengarang.getText();
-        String lokasi = dial_lokasi.getText();
-        Object kondisi_buku = dial_kondisi.getSelectedItem();
-        int tahun_terbit = Integer.parseInt(dial_tahun.getText());
-        String asal_buku = dial_asal.getText();
-        int harga = Integer.parseInt(dial_harga.getText());
-        int jumlah_stock = Integer.parseInt(dial_stock.getText());
+        String kode_buku = edit_kode.getText();
+        String judul_buku = edit_judul.getText();
+        String referensi = edit_referensi.getText();
+        String jilid = edit_jilid.getText();
+        Object kategori = edit_kategori.getSelectedItem();
+        String pengarang = edit_pengarang.getText();
+        String lokasi = edit_lokasi.getText();
+        Object kondisi_buku = edit_kondisi.getSelectedItem();
+        int tahun_terbit = Integer.parseInt(edit_tahun.getText());
+        String asal_buku = edit_asal.getText();
+        int harga = Integer.parseInt(edit_harga.getText());
+        int jumlah_stock = Integer.parseInt(edit_stock.getText());
         try {
             pst = con.prepareStatement("UPDATE buku SET kode_buku = ?, referensi = ?, judul_buku = ?, jilid = ?, kategori = ?,"
                     + " pengarang = ?, lokasi = ?, kondisi_buku = ?, tahun_terbit = ?, asal_buku = ?, harga =?,"
@@ -160,8 +185,10 @@ public class Buku extends javax.swing.JPanel {
             pst.setInt(13, noBukuEdit);
             pst.executeUpdate();
             noBukuEdit = -1;
-            
+
             loadTabel();
+            JOptionPane.showMessageDialog(null, "Data berhasil di Update");
+            Edit.dispose();
         } catch (Exception e) {
             System.out.println("Edit" + e);
         }
@@ -189,7 +216,7 @@ public class Buku extends javax.swing.JPanel {
         try {
             //get data dari table  berdasarkan row index dan colom keberapa
             //0 index colom no buku
-            int noBuku = Integer.parseInt((String) JTabel1.getValueAt(row, 0));
+            int noBuku = (int) JTabel1.getValueAt(row, 0);
             pst = con.prepareStatement("SELECT * FROM buku WHERE No_buku = '" + noBuku + "'");
             rs = pst.executeQuery();
             rs.next();
@@ -254,19 +281,19 @@ public class Buku extends javax.swing.JPanel {
                 try {
                     pst = con.prepareStatement("SELECT jumlah_stock FROM buku WHERE kode_buku = ? and referensi = ?"
                             + " and judul_buku = ? and jilid = ? and kategori = ? and pengarang = ? and lokasi = ? "
-                            + "and kondisi_buku = ? tahun_terbit = ? and asal_buku = ? and harga = ?");
-                    pst1.setString(1, kode_buku);
-                    pst1.setString(2, referensi);
-                    pst1.setString(3, judul_buku);
-                    pst1.setString(4, jilid);
-                    pst1.setString(5, (String) kategori);
-                    pst1.setString(6, pengarang);
-                    pst1.setString(7, lokasi);
-                    pst1.setString(8, (String) kondisi_buku);
-                    pst1.setInt(9, tahun_terbit);
-                    pst1.setString(10, asal_buku);
-                    pst1.setInt(11, harga);
-                    rs = pst1.executeQuery();
+                            + "and kondisi_buku = ? and tahun_terbit = ? and asal_buku = ? and harga = ?");
+                    pst.setString(1, kode_buku);
+                    pst.setString(2, referensi);
+                    pst.setString(3, judul_buku);
+                    pst.setString(4, jilid);
+                    pst.setString(5, (String) kategori);
+                    pst.setString(6, pengarang);
+                    pst.setString(7, lokasi);
+                    pst.setString(8, (String) kondisi_buku);
+                    pst.setInt(9, tahun_terbit);
+                    pst.setString(10, asal_buku);
+                    pst.setInt(11, harga);
+                    rs = pst.executeQuery();
                     if (rs.next()) {
                         int stok_awal = rs.getInt((1));
                         int stok = stok_awal + jumlah_stock;
@@ -288,8 +315,10 @@ public class Buku extends javax.swing.JPanel {
                             pst1.setInt(11, harga);
                             pst1.setInt(12, jumlah_stock);
                             pst1.executeUpdate();
-                            addHistory(harga, lokasi);
+                            addHistory(harga, (String)kondisi_buku);
+                            JOptionPane.showMessageDialog(null, "Data berhasil di Tambahkan");
                         } catch (Exception r) {
+                            JOptionPane.showMessageDialog(null, "Data Gagal di Tambahkan");
                             System.out.println("insert simpan " + r);
                         }
                     }
@@ -298,7 +327,6 @@ public class Buku extends javax.swing.JPanel {
                 } catch (Exception e) {
                     System.out.println("No_buku buku" + e.getMessage());
                 }
-
                 Tambah.dispose();
             }
         }
@@ -306,7 +334,15 @@ public class Buku extends javax.swing.JPanel {
     }
 
     private void searchFunc(String keyword) {
-        String sql = "SELECT * FROM buku "
+        JTabel1.clearSelection();
+        DefaultTableModel model = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                //all cells false
+                return false;
+            }
+        };
+        String sql = "SELECT * FROM buku_view "
                 + "WHERE No_buku LIKE '%" + keyword + "%' OR "
                 + "kode_buku LIKE '%" + keyword + "%' OR "
                 + "judul_buku LIKE '%" + keyword + "%' OR "
@@ -317,47 +353,28 @@ public class Buku extends javax.swing.JPanel {
                 + "kondisi_buku LIKE '%" + keyword + "%' OR "
                 + "tahun_terbit LIKE '%" + keyword + "%' OR "
                 + "asal_buku LIKE '%" + keyword + "%' OR "
-                + "harga LIKE '%" + keyword + "%' OR "
-                + "jumlah_stock LIKE '%" + keyword + "%'";
+                + "jumlah_stock LIKE '%" + keyword + "%' OR "
+                + "referensi Like '%" + keyword + "%'";
 
         try {
             pst = con.prepareStatement(sql);
             rs = pst.executeQuery();
 
-            // Creating a model to store the filtered data
-            DefaultTableModel filteredModel = new DefaultTableModel();
-            filteredModel.addColumn("No");
-            filteredModel.addColumn("Kode Buku");
-            filteredModel.addColumn("Judul Buku");
-            filteredModel.addColumn("Jilid");
-            filteredModel.addColumn("Kategori");
-            filteredModel.addColumn("Pengarang");
-            filteredModel.addColumn("Lokasi");
-            filteredModel.addColumn("Kondisi");
-            filteredModel.addColumn("Tahun Terbit");
-            filteredModel.addColumn("Asal Buku");
-            filteredModel.addColumn("Harga");
-            filteredModel.addColumn("Stock");
-
-            while (rs.next()) {
-                filteredModel.addRow(new Object[]{
-                    rs.getString("No_buku"),
-                    rs.getString("kode_buku"),
-                    rs.getString("judul_buku"),
-                    rs.getString("jilid"),
-                    rs.getString("kategori"),
-                    rs.getString("pengarang"),
-                    rs.getString("lokasi"),
-                    rs.getString("kondisi_buku"),
-                    rs.getString("tahun_terbit"),
-                    rs.getString("asal_buku"),
-                    rs.getString("harga"),
-                    rs.getString("jumlah_stock")
-                });
+            ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
+            int columnCount = rsmd.getColumnCount();
+            for (int i = 1; i <= columnCount; i++) {
+                model.addColumn(rsmd.getColumnName(i));
             }
 
-            // Set the filtered model to the JTable
-            JTabel1.setModel(filteredModel);
+            // Add rows to the DefaultTableModel
+            while (rs.next()) {
+                Object[] rowData = new Object[columnCount];
+                for (int i = 1; i <= columnCount; i++) {
+                    rowData[i - 1] = rs.getObject(i);
+                }
+                model.addRow(rowData);
+            }
+            JTabel1.setModel(model);
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -1179,8 +1196,10 @@ public class Buku extends javax.swing.JPanel {
             // TODO add your handling code here:
             loadTabel();
             Jdialog();
+
         } catch (SQLException ex) {
-            Logger.getLogger(Buku.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Buku.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jPanel1AncestorAdded
 
@@ -1188,8 +1207,10 @@ public class Buku extends javax.swing.JPanel {
         try {
             // TODO add your handling code here:
             loadTabel();
+
         } catch (SQLException ex) {
-            Logger.getLogger(Buku.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Buku.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_formAncestorAdded
 
