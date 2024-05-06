@@ -44,15 +44,15 @@ public class Buku extends javax.swing.JPanel {
         JTabel1.getTableHeader().setBackground(new Color(63, 148, 105));
         JTabel1.getTableHeader().setForeground(Color.white);
         JTabel1.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
-        Jdialog.setSize(570, 514);
+        Tambah.setSize(570, 514);
     }
 
     private void Jdialog() {
-        Jdialog.setLocationRelativeTo(null);
-        Jdialog.setBackground(Color.white);
-        Jdialog.getRootPane().setOpaque(false);
-        Jdialog.getContentPane().setBackground(new Color(0, 0, 0, 0));
-        Jdialog.setBackground(new Color(0, 0, 0, 0));
+        Tambah.setLocationRelativeTo(null);
+        Tambah.setBackground(Color.white);
+        Tambah.getRootPane().setOpaque(false);
+        Tambah.getContentPane().setBackground(new Color(0, 0, 0, 0));
+        Tambah.setBackground(new Color(0, 0, 0, 0));
     }
 
     private void jcombo() {
@@ -105,7 +105,7 @@ public class Buku extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        Jdialog = new javax.swing.JDialog();
+        Tambah = new javax.swing.JDialog();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -135,7 +135,7 @@ public class Buku extends javax.swing.JPanel {
         dial_kategori = new javax.swing.JComboBox<>();
         jLabel7 = new javax.swing.JLabel();
         dial_referensi = new javax.swing.JTextField();
-        Jdialog1 = new javax.swing.JDialog();
+        Edit = new javax.swing.JDialog();
         jPanel4 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
@@ -173,16 +173,16 @@ public class Buku extends javax.swing.JPanel {
         btn_hapus = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
 
-        Jdialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        Jdialog.setUndecorated(true);
-        Jdialog.addFocusListener(new java.awt.event.FocusAdapter() {
+        Tambah.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        Tambah.setUndecorated(true);
+        Tambah.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
-                JdialogFocusLost(evt);
+                TambahFocusLost(evt);
             }
         });
-        Jdialog.addKeyListener(new java.awt.event.KeyAdapter() {
+        Tambah.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
-                JdialogKeyPressed(evt);
+                TambahKeyPressed(evt);
             }
         });
 
@@ -448,27 +448,27 @@ public class Buku extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout JdialogLayout = new javax.swing.GroupLayout(Jdialog.getContentPane());
-        Jdialog.getContentPane().setLayout(JdialogLayout);
-        JdialogLayout.setHorizontalGroup(
-            JdialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout TambahLayout = new javax.swing.GroupLayout(Tambah.getContentPane());
+        Tambah.getContentPane().setLayout(TambahLayout);
+        TambahLayout.setHorizontalGroup(
+            TambahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 570, Short.MAX_VALUE)
         );
-        JdialogLayout.setVerticalGroup(
-            JdialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        TambahLayout.setVerticalGroup(
+            TambahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 514, Short.MAX_VALUE)
         );
 
-        Jdialog1.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        Jdialog1.setUndecorated(true);
-        Jdialog1.addFocusListener(new java.awt.event.FocusAdapter() {
+        Edit.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        Edit.setUndecorated(true);
+        Edit.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
-                Jdialog1FocusLost(evt);
+                EditFocusLost(evt);
             }
         });
-        Jdialog1.addKeyListener(new java.awt.event.KeyAdapter() {
+        Edit.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
-                Jdialog1KeyPressed(evt);
+                EditKeyPressed(evt);
             }
         });
 
@@ -718,14 +718,14 @@ public class Buku extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout Jdialog1Layout = new javax.swing.GroupLayout(Jdialog1.getContentPane());
-        Jdialog1.getContentPane().setLayout(Jdialog1Layout);
-        Jdialog1Layout.setHorizontalGroup(
-            Jdialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout EditLayout = new javax.swing.GroupLayout(Edit.getContentPane());
+        Edit.getContentPane().setLayout(EditLayout);
+        EditLayout.setHorizontalGroup(
+            EditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 570, Short.MAX_VALUE)
         );
-        Jdialog1Layout.setVerticalGroup(
-            Jdialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        EditLayout.setVerticalGroup(
+            EditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 514, Short.MAX_VALUE)
         );
 
@@ -818,7 +818,6 @@ public class Buku extends javax.swing.JPanel {
         }
 
         btn_tambah.setBackground(new java.awt.Color(63, 148, 105));
-        btn_tambah.setIcon(new javax.swing.ImageIcon("D:\\perpusmu\\P3RPUSMU_V2\\src\\img_15\\image_button\\+.png")); // NOI18N
         btn_tambah.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_tambahActionPerformed(evt);
@@ -826,7 +825,6 @@ public class Buku extends javax.swing.JPanel {
         });
 
         btn_edit.setBackground(new java.awt.Color(255, 227, 130));
-        btn_edit.setIcon(new javax.swing.ImageIcon("D:\\perpusmu\\P3RPUSMU_V2\\src\\img_15\\image_button\\edit_1160515 3.png")); // NOI18N
         btn_edit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_editActionPerformed(evt);
@@ -834,7 +832,6 @@ public class Buku extends javax.swing.JPanel {
         });
 
         btn_hapus.setBackground(new java.awt.Color(255, 145, 66));
-        btn_hapus.setIcon(new javax.swing.ImageIcon("D:\\perpusmu\\P3RPUSMU_V2\\src\\img_15\\image_button\\trash-can_7343703 2.png")); // NOI18N
         btn_hapus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_hapusActionPerformed(evt);
@@ -919,7 +916,7 @@ public class Buku extends javax.swing.JPanel {
         dial_kode.setEnabled(true);
         noBukuEdit = -1;
 
-        Jdialog.setVisible(true);
+        Tambah.setVisible(true);
     }//GEN-LAST:event_btn_tambahActionPerformed
 
     private void btn_editActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editActionPerformed
@@ -967,7 +964,7 @@ public class Buku extends javax.swing.JPanel {
             dial_stock.setText(String.valueOf(jumlah_stock));
             dial_kode.enable(false);
             noBukuEdit = noBuku;
-            Jdialog.setVisible(true);
+            Tambah.setVisible(true);
         } catch (Exception e) {
             System.out.println("click" + e.getMessage());
             JOptionPane.showMessageDialog(jPanel4, "Pilih Dahulu Data Yang Akan Di Ubah");
@@ -1022,9 +1019,9 @@ public class Buku extends javax.swing.JPanel {
         int jumlah_stock = Integer.parseInt(dial_stock.getText());
 
         if (kode_buku == null || referensi == null || judul_buku == null || jilid == null || kategori == null || pengarang == null || lokasi == null || kondisi_buku == null || tahun_terbit == -1 || asal_buku == null || harga == -1 || jumlah_stock == -1) {
-            JOptionPane.showMessageDialog(Jdialog, "Anda Harus Mengisi Semua Data Terlebih Dahulu");
+            JOptionPane.showMessageDialog(Tambah, "Anda Harus Mengisi Semua Data Terlebih Dahulu");
         } else {
-            int result = JOptionPane.showConfirmDialog(Jdialog, "Apakah Anda Ingin Menyimpan?", "Konfirmasi",
+            int result = JOptionPane.showConfirmDialog(Tambah, "Apakah Anda Ingin Menyimpan?", "Konfirmasi",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE);
             if (result == JOptionPane.YES_OPTION) {
@@ -1089,7 +1086,7 @@ public class Buku extends javax.swing.JPanel {
                     System.out.println("No_buku buku" + e.getMessage());
                 }
                 
-                Jdialog.dispose();
+                Tambah.dispose();
             }
         }
 
@@ -1117,7 +1114,7 @@ public class Buku extends javax.swing.JPanel {
     }//GEN-LAST:event_dial_asalActionPerformed
 
     private void btn_cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancelActionPerformed
-        Jdialog.dispose();
+        Tambah.dispose();
     }//GEN-LAST:event_btn_cancelActionPerformed
 
     private void dial_kategoriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dial_kategoriActionPerformed
@@ -1134,15 +1131,15 @@ public class Buku extends javax.swing.JPanel {
         kode_buku = model.getValueAt(index, 1).toString();
     }//GEN-LAST:event_JTabel1MouseClicked
 
-    private void JdialogFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_JdialogFocusLost
-        Jdialog.dispose();
-    }//GEN-LAST:event_JdialogFocusLost
+    private void TambahFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_TambahFocusLost
+        Tambah.dispose();
+    }//GEN-LAST:event_TambahFocusLost
 
-    private void JdialogKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JdialogKeyPressed
+    private void TambahKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TambahKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            Jdialog.setVisible(true);
+            Tambah.setVisible(true);
         }
-    }//GEN-LAST:event_JdialogKeyPressed
+    }//GEN-LAST:event_TambahKeyPressed
 
     private void jPanel1AncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_jPanel1AncestorAdded
         try {
@@ -1164,7 +1161,7 @@ public class Buku extends javax.swing.JPanel {
     }//GEN-LAST:event_formAncestorAdded
 
     private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
-        Jdialog.dispose();
+        Tambah.dispose();
     }//GEN-LAST:event_formMouseClicked
 
     private void txt_searchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_searchKeyReleased
@@ -1264,19 +1261,19 @@ public class Buku extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_dial_kategori1ActionPerformed
 
-    private void Jdialog1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_Jdialog1FocusLost
+    private void EditFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_EditFocusLost
         // TODO add your handling code here:
-    }//GEN-LAST:event_Jdialog1FocusLost
+    }//GEN-LAST:event_EditFocusLost
 
-    private void Jdialog1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_Jdialog1KeyPressed
+    private void EditKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_EditKeyPressed
         // TODO add your handling code here:
-    }//GEN-LAST:event_Jdialog1KeyPressed
+    }//GEN-LAST:event_EditKeyPressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JDialog Edit;
     private javax.swing.JTable JTabel1;
-    private javax.swing.JDialog Jdialog;
-    private javax.swing.JDialog Jdialog1;
+    private javax.swing.JDialog Tambah;
     private javax.swing.JButton btn_cancel;
     private javax.swing.JButton btn_cancel1;
     private javax.swing.JButton btn_edit;
