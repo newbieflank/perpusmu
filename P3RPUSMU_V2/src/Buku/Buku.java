@@ -47,6 +47,20 @@ public class Buku extends javax.swing.JPanel {
         Tambah.setSize(570, 514);
     }
 
+    private void addHistory(int harga, String kondisi) {
+        String sql = "insert into history (id_buku, peristiwa, tanggal, harga_buku, keterangan) "
+                + "values ((select count(*) + 1 as id_buku from buku), 'masuk', current_date(), ?, ?)";
+        String keterangan = "Buku ini masuk dalam kondisi " + kondisi;
+        try {
+            pst = con.prepareStatement(sql);
+            pst.setInt(2, harga);
+            pst.setString(3, keterangan);
+            pst.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void Jdialog() {
         Tambah.setLocationRelativeTo(null);
         Tambah.setBackground(Color.white);
@@ -93,6 +107,55 @@ public class Buku extends javax.swing.JPanel {
             JTabel1.setModel(model);
         } catch (Exception e) {
             System.out.println("loadTable" + e);
+        }
+    }
+
+    private void editData() {
+        String kode_buku = dial_kode.getText();
+        String judul_buku = dial_judul.getText();
+        String referensi = dial_referensi.getText();
+        String jilid = dial_jilid.getText();
+        Object kategori = dial_kategori.getSelectedItem();
+        String pengarang = dial_pengarang.getText();
+        String lokasi = dial_lokasi.getText();
+        Object kondisi_buku = dial_kondisi.getSelectedItem();
+        int tahun_terbit = Integer.parseInt(dial_tahun.getText());
+        String asal_buku = dial_asal.getText();
+        int harga = Integer.parseInt(dial_harga.getText());
+        int jumlah_stock = Integer.parseInt(dial_stock.getText());
+        try {
+            pst = con.prepareStatement("UPDATE buku SET kode_buku = ?, referensi = ?, judul_buku = ?, jilid = ?, kategori = ?, pengarang = ?, lokasi = ?, kondisi_buku = ?, tahun_terbit = ?, asal_buku = ?, harga =?, jumlah_stock = ? WHERE No_buku = ?");
+            pst.setString(1, kode_buku);
+            pst.setString(2, referensi);
+            pst.setString(3, judul_buku);
+            pst.setString(4, jilid);
+            pst.setString(5, (String) kategori);
+            pst.setString(6, pengarang);
+            pst.setString(7, lokasi);
+            pst.setString(8, (String) kondisi_buku);
+            if (tahun_terbit != 0) {
+                pst.setInt(9, tahun_terbit);
+            } else {
+                pst.setNull(9, java.sql.Types.INTEGER);
+            }
+            pst.setString(10, asal_buku);
+            if (harga != 0) {
+                pst.setInt(11, harga);
+            } else {
+                pst.setNull(11, java.sql.Types.INTEGER);
+            }
+            if (jumlah_stock != 0) {
+                pst.setInt(12, jumlah_stock);
+            } else {
+                pst.setNull(12, java.sql.Types.INTEGER);
+            }
+
+            pst.setInt(13, noBukuEdit);
+            pst.executeUpdate();
+            noBukuEdit = -1;
+
+        } catch (Exception e) {
+            System.out.println("Edit" + e);
         }
     }
 
@@ -158,7 +221,7 @@ public class Buku extends javax.swing.JPanel {
         jLabel32 = new javax.swing.JLabel();
         dial_harga1 = new javax.swing.JTextField();
         dial_kondisi1 = new javax.swing.JComboBox<>();
-        btn_simpan1 = new javax.swing.JButton();
+        btn_simpan_edit = new javax.swing.JButton();
         jLabel33 = new javax.swing.JLabel();
         dial_stock1 = new javax.swing.JTextField();
         btn_cancel1 = new javax.swing.JButton();
@@ -564,13 +627,13 @@ public class Buku extends javax.swing.JPanel {
             }
         });
 
-        btn_simpan1.setBackground(new java.awt.Color(63, 148, 105));
-        btn_simpan1.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
-        btn_simpan1.setForeground(new java.awt.Color(255, 255, 255));
-        btn_simpan1.setText("SIMPAN");
-        btn_simpan1.addActionListener(new java.awt.event.ActionListener() {
+        btn_simpan_edit.setBackground(new java.awt.Color(63, 148, 105));
+        btn_simpan_edit.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        btn_simpan_edit.setForeground(new java.awt.Color(255, 255, 255));
+        btn_simpan_edit.setText("SIMPAN");
+        btn_simpan_edit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_simpan1ActionPerformed(evt);
+                btn_simpan_editActionPerformed(evt);
             }
         });
 
@@ -656,7 +719,7 @@ public class Buku extends javax.swing.JPanel {
                             .addGroup(jPanel4Layout.createSequentialGroup()
                                 .addComponent(btn_cancel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btn_simpan1))
+                                .addComponent(btn_simpan_edit))
                             .addComponent(dial_stock1, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel4Layout.createSequentialGroup()
@@ -713,7 +776,7 @@ public class Buku extends javax.swing.JPanel {
                 .addComponent(dial_stock1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btn_simpan1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_simpan_edit, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_cancel1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -1026,40 +1089,26 @@ public class Buku extends javax.swing.JPanel {
                     JOptionPane.QUESTION_MESSAGE);
             if (result == JOptionPane.YES_OPTION) {
                 try {
-                    pst = con.prepareStatement("SELECT * FROM buku WHERE No_buku = ?");
-                    pst.setString(1, String.valueOf(noBukuEdit));
-                    rs = pst.executeQuery();
+                    pst = con.prepareStatement("SELECT jumlah_stock FROM buku WHERE kode_buku = ? and referensi = ?"
+                            + " and judul_buku = ? and jilid = ? and kategori = ? and pengarang = ? and lokasi = ? "
+                            + "and kondisi_buku = ? tahun_terbit = ? and asal_buku = ? and harga = ?");
+                    pst1.setString(1, kode_buku);
+                    pst1.setString(2, referensi);
+                    pst1.setString(3, judul_buku);
+                    pst1.setString(4, jilid);
+                    pst1.setString(5, (String) kategori);
+                    pst1.setString(6, pengarang);
+                    pst1.setString(7, lokasi);
+                    pst1.setString(8, (String) kondisi_buku);
+                    pst1.setInt(9, tahun_terbit);
+                    pst1.setString(10, asal_buku);
+                    pst1.setInt(11, harga);
+                    rs = pst1.executeQuery();
                     if (rs.next()) {
-                        pst = con.prepareStatement("UPDATE buku SET kode_buku = ?, referensi = ?, judul_buku = ?, jilid = ?, kategori = ?, pengarang = ?, lokasi = ?, kondisi_buku = ?, tahun_terbit = ?, asal_buku = ?, harga =?, jumlah_stock = ? WHERE No_buku = ?");
-                        pst.setString(1, kode_buku);
-                        pst.setString(2, referensi);
-                        pst.setString(3, judul_buku);
-                        pst.setString(4, jilid);
-                        pst.setString(5, (String) kategori);
-                        pst.setString(6, pengarang);
-                        pst.setString(7, lokasi);
-                        pst.setString(8, (String) kondisi_buku);
-                        if (tahun_terbit != 0) {
-                            pst.setInt(9, tahun_terbit);
-                        } else {
-                            pst.setNull(9, java.sql.Types.INTEGER);
-                        }
-                        pst.setString(10, asal_buku);
-                        if (harga != 0) {
-                            pst.setInt(11, harga);
-                        } else {
-                            pst.setNull(11, java.sql.Types.INTEGER);
-                        }
-                        if (jumlah_stock != 0) {
-                            pst.setInt(12, jumlah_stock);
-                        } else {
-                            pst.setNull(12, java.sql.Types.INTEGER);
-                        }
-
-                        pst.setInt(13, noBukuEdit);
-                        pst.executeUpdate();
-                        noBukuEdit = -1;
-
+                        int stok_awal = rs.getInt((1));
+                        int stok = stok_awal + jumlah_stock;
+                        pst = con.prepareStatement("UPDATE buku SET jumlah_stock = " + stok);
+                        pst.execute();
                     } else {
                         try {
                             pst1 = con.prepareStatement("Insert into buku (kode_buku, referensi, judul_buku, jilid, kategori, pengarang, lokasi, kondisi_buku, tahun_terbit, asal_buku, harga, jumlah_stock) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -1076,6 +1125,7 @@ public class Buku extends javax.swing.JPanel {
                             pst1.setInt(11, harga);
                             pst1.setInt(12, jumlah_stock);
                             pst1.executeUpdate();
+                            addHistory(harga, lokasi);
                         } catch (Exception r) {
                             System.out.println("insert simpan " + r);
                         }
@@ -1085,7 +1135,7 @@ public class Buku extends javax.swing.JPanel {
                 } catch (Exception e) {
                     System.out.println("No_buku buku" + e.getMessage());
                 }
-                
+
                 Tambah.dispose();
             }
         }
@@ -1245,9 +1295,10 @@ public class Buku extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_dial_kondisi1ActionPerformed
 
-    private void btn_simpan1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_simpan1ActionPerformed
+    private void btn_simpan_editActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_simpan_editActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btn_simpan1ActionPerformed
+        editData();
+    }//GEN-LAST:event_btn_simpan_editActionPerformed
 
     private void dial_stock1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dial_stock1ActionPerformed
         // TODO add your handling code here:
@@ -1279,7 +1330,7 @@ public class Buku extends javax.swing.JPanel {
     private javax.swing.JButton btn_edit;
     private javax.swing.JButton btn_hapus;
     private javax.swing.JButton btn_simpan;
-    private javax.swing.JButton btn_simpan1;
+    private javax.swing.JButton btn_simpan_edit;
     private javax.swing.JButton btn_tambah;
     private javax.swing.JTextField dial_asal;
     private javax.swing.JTextField dial_asal1;

@@ -561,7 +561,7 @@
                                   <Group type="102" alignment="1" attributes="0">
                                       <Component id="btn_cancel1" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="btn_simpan1" min="-2" max="-2" attributes="0"/>
+                                      <Component id="btn_simpan_edit" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <Component id="dial_stock1" alignment="1" min="-2" pref="198" max="-2" attributes="0"/>
                               </Group>
@@ -635,7 +635,7 @@
                       <Component id="dial_stock1" min="-2" pref="28" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="btn_simpan1" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
+                          <Component id="btn_simpan_edit" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
                           <Component id="btn_cancel1" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
@@ -819,7 +819,7 @@
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
               </AuxValues>
             </Component>
-            <Component class="javax.swing.JButton" name="btn_simpan1">
+            <Component class="javax.swing.JButton" name="btn_simpan_edit">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="69" green="94" red="3f" type="rgb"/>
@@ -833,7 +833,7 @@
                 <Property name="text" type="java.lang.String" value="SIMPAN"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_simpan1ActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_simpan_editActionPerformed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel33">
