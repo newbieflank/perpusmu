@@ -20,6 +20,7 @@ import javax.smartcardio.ResponseAPDU;
 import javax.smartcardio.TerminalFactory;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import javax.smartcardio.*;
 
 public class Login extends javax.swing.JFrame {
 
@@ -39,7 +40,7 @@ public class Login extends javax.swing.JFrame {
         jPanel2.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         hide.setVisible(false);
         txt_username.requestFocusInWindow();
-        readRFID();
+        //readRFID();
     }
     
      private void readRFID() {
