@@ -445,20 +445,6 @@ int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
     // Mengatur nilai JTextField txt_denda_total dengan total denda
     txt_denda_total.setText(Integer.toString(totalDenda));
 }
-
-private boolean isScannedReceipt(String text) {
-    // Implementasikan logika untuk mendeteksi apakah teks adalah hasil pemindaian struk
-    // Misalnya, Anda bisa memeriksa panjang teks, karakteristik tertentu, atau pola tertentu dalam teks
-    // Kembalikan true jika teks cocok dengan kriteria pemindaian struk, false jika tidak
-        return false;
-    // Implementasikan logika untuk mendeteksi apakah teks adalah hasil pemindaian struk
-    // Misalnya, Anda bisa memeriksa panjang teks, karakteristik tertentu, atau pola tertentu dalam teks
-    // Kembalikan true jika teks cocok dengan kriteria pemindaian struk, false jika tidak
-}
-
-private void processScannedReceipt(String scannedText) {
-    // Implementasikan logika untuk menangani struk yang dipindai di sini
-}
     
 @Override
     public void setVisible(boolean visible) {
@@ -1440,13 +1426,7 @@ tambahStokBuku(con, totalBukuKembali, kodebuku);
 
     private void txt_searchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_searchKeyReleased
         String keyword = txt_search.getText().trim();
-        String sql = "SELECT peminjaman.kode_peminjaman,anggota.nama,users.username,detail_peminjaman.tanggal_peminjaman,detail_peminjaman.tanggal_kembali, detail_peminjaman.jumlah_peminjaman, buku.kode_buku,buku.judul_buku \\n\"\n" +
-"                + \"FROM peminjaman \\n\"\n" +
-"                + \"LEFT JOIN detail_peminjaman ON peminjaman.kode_peminjaman = detail_peminjaman.kode_peminjaman \\n\"\n" +
-"                + \"LEFT JOIN anggota ON peminjaman.NISN = anggota.NISN \\n\"\n" +
-"                + \"LEFT JOIN buku ON detail_peminjaman.No_buku = buku.No_buku \\n\"\n" +
-"                + \"LEFT JOIN users ON peminjaman.ID_users = users.ID_users \"\n" +
-"                + \"WHERE peminjaman.kode_peminjaman LIKE '%\" + keyword + \"%'";
+        String sql = "SELECT peminjaman.kode_peminjaman,anggota.nama,users.username,detail_peminjaman.tanggal_peminjaman,detail_peminjaman.tanggal_kembali, detail_peminjaman.jumlah_peminjaman, buku.kode_buku,buku.judul_buku FROM peminjaman LEFT JOIN detail_peminjaman ON peminjaman.kode_peminjaman = detail_peminjaman.kode_peminjaman LEFT JOIN anggota ON peminjaman.NISN = anggota.NISN LEFT JOIN buku ON detail_peminjaman.No_buku = buku.No_buku LEFT JOIN users ON peminjaman.ID_users = users.ID_users WHERE peminjaman.kode_peminjaman LIKE '%" + keyword + "%'";
 
         try {
 //            java.sql.Connection con = (java.sql.Connection) Config.configDB();
@@ -1722,17 +1702,7 @@ tambahStokBuku(con, totalBukuKembali, kodebuku);
     }//GEN-LAST:event_spinner_hilangAncestorAdded
 
     private void txt_searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_searchActionPerformed
-        // TODO add your handling code here:
-        String scannedText = txt_search.getText();
 
-    // Lakukan pengecekan apakah teks yang dimasukkan adalah hasil pemindaian struk
-    if (isScannedReceipt(scannedText)) {
-        // Lakukan aksi yang sesuai ketika struk dipindai
-        processScannedReceipt(scannedText);
-    } else {
-        // Lakukan aksi lain jika bukan hasil pemindaian struk
-        // Misalnya, tampilkan pesan kesalahan atau lanjutkan dengan logika Anda yang lain
-    }
     }//GEN-LAST:event_txt_searchActionPerformed
 
     DefaultTableModel model = new DefaultTableModel() {
