@@ -22,9 +22,12 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import javax.smartcardio.*;
 
 /**
  *
@@ -73,6 +76,37 @@ public class Pengembalian extends javax.swing.JPanel {
         jDialog1.setSize(1000, 700);
         setVisible(true);
 
+    }
+    
+    // Method untuk membaca ID dari tag RFID
+    private void readRFID() {
+        // Inisialisasi context untuk Smart Card IO API
+        CardTerminals terminals = TerminalFactory.getDefault().terminals();
+
+        try {
+            // Cari pembaca RFID yang tersedia
+            for (CardTerminal terminal : terminals.list()) {
+                // Lakukan koneksi ke pembaca RFID
+                terminal.waitForCardPresent(0);
+                Card card = terminal.connect("*");
+                CardChannel channel = card.getBasicChannel();
+
+                // Perintah APDU untuk membaca data dari tag RFID
+                byte[] command = {(byte) 0xFF, (byte) 0xCA, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+                ResponseAPDU response = channel.transmit(new CommandAPDU(command));
+
+                // Mendapatkan data yang dibaca dari tag RFID sebagai string
+                String rfidData = new String(response.getData());
+
+                // Menampilkan ID RFID pada JTextField
+                txt_search.setText(rfidData);
+
+                // Putuskan koneksi dari pembaca RFID
+                card.disconnect(false);
+            }
+        } catch (CardException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public int getHargaBuku(String judul_buku) {
@@ -1706,6 +1740,31 @@ tambahStokBuku(con, totalBukuKembali, kodebuku);
             return false;
         }
     };
+    
+    // Main method
+    public static void main(String args[]) {
+        // Set look and feel
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Pengembalian.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+
+        // Membuat dan menampilkan frame
+        java.awt.EventQueue.invokeLater(() -> {
+            try {
+                new Pengembalian().setVisible(true);
+            } catch (SQLException ex) {
+                Logger.getLogger(Pengembalian.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField baik;
