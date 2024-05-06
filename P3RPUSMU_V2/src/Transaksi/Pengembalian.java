@@ -10,6 +10,7 @@ import Navbar.koneksi;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -44,7 +45,7 @@ public class Pengembalian extends javax.swing.JPanel {
     private int nilaiSpinnerBaikSebelumnya = 0;
     private int nilaiSpinnerRusakSebelumnya = 0;
     private int nilaiSpinnerHilangSebelumnya = 0;
-    
+
     public Pengembalian() throws SQLException {
         con = koneksi.Koneksi();
         initComponents();
@@ -77,7 +78,7 @@ public class Pengembalian extends javax.swing.JPanel {
         setVisible(true);
 
     }
-    
+
     // Method untuk membaca ID dari tag RFID
     private void readRFID() {
         // Inisialisasi context untuk Smart Card IO API
@@ -331,65 +332,63 @@ public class Pengembalian extends javax.swing.JPanel {
         model.addRow(row);
     }
 
-private void masuktabelreturn() {
-    DefaultTableModel model = (DefaultTableModel) tabel_return.getModel();
-    // Mendapatkan teks dari field-field yang relevan
-    String kodepeminjaman = txt_kode_peminjaman.getText();
-    String nama = txt_nama.getText();
-    String username = txt_petugas.getText();
-    // Mendapatkan nilai dari semua spinners
-int nilaiSpinnerBaik = (int) spinner_baik.getValue();
-int nilaiSpinnerRusak = (int) spinner_rusak.getValue();
+    private void masuktabelreturn() {
+        DefaultTableModel model = (DefaultTableModel) tabel_return.getModel();
+        // Mendapatkan teks dari field-field yang relevan
+        String kodepeminjaman = txt_kode_peminjaman.getText();
+        String nama = txt_nama.getText();
+        String username = txt_petugas.getText();
+        // Mendapatkan nilai dari semua spinners
+        int nilaiSpinnerBaik = (int) spinner_baik.getValue();
+        int nilaiSpinnerRusak = (int) spinner_rusak.getValue();
 
 // Menghitung total pinjaman
-int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
+        int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
 
-    String statuskembali = "Kembali"; // Mengatur status menjadi "Kembali" untuk semua data
+        String statuskembali = "Kembali"; // Mengatur status menjadi "Kembali" untuk semua data
 
-    // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
-    Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
-    Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
+        // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
+        Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
+        Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
 
 // Mendapatkan status waktu kembali berdasarkan perbandingan tanggal
-    String waktupengembalian;
-    if (tanggalKembaliAwal != null && tanggalKembaliAkhir != null) {
-        // Mengubah tanggal menjadi string hanya dengan format tanggal (tanpa jam)
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String tanggalAwal = sdf.format(tanggalKembaliAwal);
-        String tanggalAkhir = sdf.format(tanggalKembaliAkhir);
+        String waktupengembalian;
+        if (tanggalKembaliAwal != null && tanggalKembaliAkhir != null) {
+            // Mengubah tanggal menjadi string hanya dengan format tanggal (tanpa jam)
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String tanggalAwal = sdf.format(tanggalKembaliAwal);
+            String tanggalAkhir = sdf.format(tanggalKembaliAkhir);
 
-        if (tanggalAwal.equals(tanggalAkhir)) {
-            waktupengembalian = "Tepat Waktu";
-        } else if (tanggalKembaliAkhir.after(tanggalKembaliAwal)) {
-            waktupengembalian = "Telat";
+            if (tanggalAwal.equals(tanggalAkhir)) {
+                waktupengembalian = "Tepat Waktu";
+            } else if (tanggalKembaliAkhir.after(tanggalKembaliAwal)) {
+                waktupengembalian = "Telat";
+            } else {
+                waktupengembalian = "Tepat Waktu";
+            }
         } else {
-            waktupengembalian = "Tepat Waktu";
+            waktupengembalian = "Tidak Diketahui";
         }
-    } else {
-        waktupengembalian = "Tidak Diketahui";
+
+        String kodebuku = txt_kode_buku.getText();
+        String judulbuku = txt_judul_buku.getText();
+        String kondisikembali;
+
+        // Mengganti kondisikembali sesuai dengan nilai spinner_baik, spinner_rusak, atau spinner_hilang
+        if (spinner_baik.isEnabled()) {
+            kondisikembali = "Baik";
+        } else if (spinner_rusak.isEnabled()) {
+            kondisikembali = "Rusak";
+        } else {
+            kondisikembali = "Hilang";
+        }
+
+        String denda = txt_denda_total.getText();
+
+        // Tambahkan baris baru ke dalam tabel
+        Object[] row = {kodepeminjaman, nama, username, totalPeminjaman, statuskembali, waktupengembalian, kodebuku, judulbuku, kondisikembali, denda};
+        model.addRow(row);
     }
-
-
-    String kodebuku = txt_kode_buku.getText();
-    String judulbuku = txt_judul_buku.getText();
-    String kondisikembali;
-
-    // Mengganti kondisikembali sesuai dengan nilai spinner_baik, spinner_rusak, atau spinner_hilang
-    if (spinner_baik.isEnabled()) {
-        kondisikembali = "Baik";
-    } else if (spinner_rusak.isEnabled()) {
-        kondisikembali = "Rusak";
-    } else {
-        kondisikembali = "Hilang";
-    }
-
-    String denda = txt_denda_total.getText();
-
-    // Tambahkan baris baru ke dalam tabel
-    Object[] row = {kodepeminjaman, nama, username, totalPeminjaman, statuskembali, waktupengembalian, kodebuku, judulbuku, kondisikembali, denda};
-    model.addRow(row);
-}
-
 
     private void tambahStokBuku(Connection con, int jumlahPengembalian, String kodeBuku) throws SQLException {
         String sql = "UPDATE buku SET jumlah_stock = jumlah_stock + ? WHERE No_buku = (SELECT No_buku FROM buku WHERE judul_buku = ?)";
@@ -416,37 +415,42 @@ int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
             }
         }
     }
+
+    private void updateTotalDenda() {
+        // Mendapatkan nilai dari JTextField baik, rusak, dan hilang
+        int dendaBaik = Integer.parseInt(baik.getText());
+        int dendaRusak = Integer.parseInt(rusak.getText());
+        int dendaHilang = Integer.parseInt(hilang.getText());
+
+        // Menjumlahkan total denda dari JTextField baik, rusak, dan hilang
+        int totalDendaTextField = dendaBaik + dendaRusak + dendaHilang;
+
+        // Mendapatkan nilai dari JTextField kondisi_rusak dan telat_rusak
+        int dendaKondisi = 0;
+        int dendaTelat = 0;
+        try {
+            dendaKondisi = kondisi_rusak.getText().isEmpty() ? 0 : Integer.parseInt(kondisi_rusak.getText());
+            dendaTelat = telat_rusak.getText().isEmpty() ? 0 : Integer.parseInt(telat_rusak.getText());
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+
+        // Menjumlahkan total denda dari JTextField kondisi_rusak dan telat_rusak
+        int totalDendaKondisiTelat = dendaKondisi + dendaTelat;
+
+        // Menentukan total denda akhir dengan mengambil nilai maksimum dari total denda dari kedua sumber
+        int totalDenda = Math.max(totalDendaTextField, totalDendaKondisiTelat);
+
+        // Mengatur nilai JTextField txt_denda_total dengan total denda
+        txt_denda_total.setText(Integer.toString(totalDenda));
+    }
     
-   private void updateTotalDenda() {
-    // Mendapatkan nilai dari JTextField baik, rusak, dan hilang
-    int dendaBaik = Integer.parseInt(baik.getText());
-    int dendaRusak = Integer.parseInt(rusak.getText());
-    int dendaHilang = Integer.parseInt(hilang.getText());
-
-    // Menjumlahkan total denda dari JTextField baik, rusak, dan hilang
-    int totalDendaTextField = dendaBaik + dendaRusak + dendaHilang;
-
-    // Mendapatkan nilai dari JTextField kondisi_rusak dan telat_rusak
-    int dendaKondisi = 0;
-    int dendaTelat = 0;
-    try {
-        dendaKondisi = kondisi_rusak.getText().isEmpty() ? 0 : Integer.parseInt(kondisi_rusak.getText());
-        dendaTelat = telat_rusak.getText().isEmpty() ? 0 : Integer.parseInt(telat_rusak.getText());
-    } catch (NumberFormatException e) {
-        e.printStackTrace();
+    private void clear(){
+    txt_search.setText("");
+    txt_search1.setText("");
     }
 
-    // Menjumlahkan total denda dari JTextField kondisi_rusak dan telat_rusak
-    int totalDendaKondisiTelat = dendaKondisi + dendaTelat;
-
-    // Menentukan total denda akhir dengan mengambil nilai maksimum dari total denda dari kedua sumber
-    int totalDenda = Math.max(totalDendaTextField, totalDendaKondisiTelat);
-
-    // Mengatur nilai JTextField txt_denda_total dengan total denda
-    txt_denda_total.setText(Integer.toString(totalDenda));
-}
-    
-@Override
+    @Override
     public void setVisible(boolean visible) {
         super.setVisible(visible);
         // Memindahkan fokus kursor ke txt_search saat frame terlihat
@@ -512,6 +516,7 @@ int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
         jPanel2 = new javax.swing.JPanel();
         txt_search = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
+        btn_clear = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jLabel21 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
@@ -519,6 +524,7 @@ int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
         jPanel3 = new javax.swing.JPanel();
         txt_search1 = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
+        btn_clear2 = new javax.swing.JButton();
 
         jDialog1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jDialog1.setUndecorated(true);
@@ -759,9 +765,7 @@ int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
                                         .addComponent(telat_hilang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(btn_tambah, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(pengembalianLayout.createSequentialGroup()
-                                        .addComponent(rusak, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(rusak, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(pengembalianLayout.createSequentialGroup()
                                         .addComponent(kondisi_rusak, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(18, 18, 18)
@@ -997,6 +1001,9 @@ int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
             }
         });
         txt_search.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_searchKeyPressed(evt);
+            }
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txt_searchKeyReleased(evt);
             }
@@ -1006,6 +1013,14 @@ int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-search-18.png"))); // NOI18N
         jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 10, 20, 20));
 
+        btn_clear.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_clear.setText("Clear (F9)");
+        btn_clear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_clearActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -1013,11 +1028,13 @@ int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1359, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1375, Short.MAX_VALUE)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel20)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_clear)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -1025,9 +1042,11 @@ int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btn_clear))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(68, 68, 68))
@@ -1080,6 +1099,9 @@ int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txt_search1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_search1KeyPressed(evt);
+            }
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txt_search1KeyReleased(evt);
             }
@@ -1089,6 +1111,14 @@ int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-search-18.png"))); // NOI18N
         jPanel3.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 10, 20, 20));
 
+        btn_clear2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_clear2.setText("Clear (F10)");
+        btn_clear2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_clear2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -1096,11 +1126,13 @@ int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 1359, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 1375, Short.MAX_VALUE)
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel21)
                         .addGap(18, 18, 18)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_clear2)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -1108,9 +1140,11 @@ int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jLabel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btn_clear2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
                 .addContainerGap())
@@ -1213,14 +1247,14 @@ int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
 
         String kondisikembali;
 
-    // Mengganti kondisikembali sesuai dengan nilai spinner_baik, spinner_rusak, atau spinner_hilang
-    if (spinner_baik.isEnabled()) {
-        kondisikembali = "Baik";
-    } else if (spinner_rusak.isEnabled()) {
-        kondisikembali = "Rusak";
-    } else {
-        kondisikembali = "Hilang";
-    }
+        // Mengganti kondisikembali sesuai dengan nilai spinner_baik, spinner_rusak, atau spinner_hilang
+        if (spinner_baik.isEnabled()) {
+            kondisikembali = "Baik";
+        } else if (spinner_rusak.isEnabled()) {
+            kondisikembali = "Rusak";
+        } else {
+            kondisikembali = "Hilang";
+        }
         // Mendapatkan nilai dari semua spinners
         int nilaiSpinnerBaik = (int) spinner_baik.getValue();
         int nilaiSpinnerRusak = (int) spinner_rusak.getValue();
@@ -1285,8 +1319,6 @@ int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
                 } else {
                     waktupengembalian = "Tidak Diketahui";
                 }
-
-
 
                 pstInsertDetailPengembalian.setString(1, kodepengembalian);
                 pstInsertDetailPengembalian.setString(2, statusDetailPengembalian);
@@ -1356,35 +1388,32 @@ int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
                 System.out.println("sat" + e);
             }
             // Mendapatkan nilai dari spinner_hilang
-int nilaiSpinnerHilang1 = (int) spinner_hilang.getValue();
+            int nilaiSpinnerHilang1 = (int) spinner_hilang.getValue();
 
 // Menghitung total buku yang dikembalikan (baik dan rusak)
-int totalBukuKembali = nilaiSpinnerBaik + nilaiSpinnerRusak;
+            int totalBukuKembali = nilaiSpinnerBaik + nilaiSpinnerRusak;
 
 // Menambahkan stok buku dengan jumlah buku yang dikembalikan tanpa memperhatikan buku yang hilang
-tambahStokBuku(con, totalBukuKembali, kodebuku);
-
-
-
+            tambahStokBuku(con, totalBukuKembali, kodebuku);
 
             // Selesai transaksi
             con.commit();
-            } catch (SQLException e) {
-        // Tangani kesalahan dengan membatalkan transaksi jika terjadi kesalahan
-        try {
-            con.rollback();
-        } catch (SQLException rollbackException) {
-            rollbackException.printStackTrace();
-        }
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Gagal: " + e.getMessage());
-    } finally {
-        // Pastikan untuk mengatur ulang otomatis commit ke true setelah transaksi selesai atau gagal
-        try {
-            con.setAutoCommit(true);
-        } catch (SQLException autoCommitException) {
-            autoCommitException.printStackTrace();
-        }
+        } catch (SQLException e) {
+            // Tangani kesalahan dengan membatalkan transaksi jika terjadi kesalahan
+            try {
+                con.rollback();
+            } catch (SQLException rollbackException) {
+                rollbackException.printStackTrace();
+            }
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Gagal: " + e.getMessage());
+        } finally {
+            // Pastikan untuk mengatur ulang otomatis commit ke true setelah transaksi selesai atau gagal
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException autoCommitException) {
+                autoCommitException.printStackTrace();
+            }
             JOptionPane.showMessageDialog(null, "Update berhasil");
             masuktabelreturn();
             id_autoincrement();
@@ -1529,7 +1558,7 @@ tambahStokBuku(con, totalBukuKembali, kodebuku);
     }//GEN-LAST:event_txt_search1KeyReleased
 
     private void txt_denda_totalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_denda_totalActionPerformed
- 
+
     }//GEN-LAST:event_txt_denda_totalActionPerformed
 
     private void txt_denda_totalAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_txt_denda_totalAncestorAdded
@@ -1543,150 +1572,149 @@ tambahStokBuku(con, totalBukuKembali, kodebuku);
     private void spinner_baikStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spinner_baikStateChanged
         // TODO add your handling code here:  
         // Mendapatkan nilai spinner_baik yang baru
-    int nilaiSpinnerBaikBaru = (int) spinner_baik.getValue();
+        int nilaiSpinnerBaikBaru = (int) spinner_baik.getValue();
 
-    // Menghitung perubahan nilai spinner_baik
-    int perubahanNilai = nilaiSpinnerBaikBaru - nilaiSpinnerBaikSebelumnya;
+        // Menghitung perubahan nilai spinner_baik
+        int perubahanNilai = nilaiSpinnerBaikBaru - nilaiSpinnerBaikSebelumnya;
 
-    // Mendapatkan nilai spinner_pinjam
-    int nilaiSpinnerPinjam = (int) spinner_pinjam.getValue();
+        // Mendapatkan nilai spinner_pinjam
+        int nilaiSpinnerPinjam = (int) spinner_pinjam.getValue();
 
-    // Menyesuaikan nilai spinner_pinjam berdasarkan perubahan nilai spinner_baik
-    spinner_pinjam.setValue(nilaiSpinnerPinjam - perubahanNilai);
+        // Menyesuaikan nilai spinner_pinjam berdasarkan perubahan nilai spinner_baik
+        spinner_pinjam.setValue(nilaiSpinnerPinjam - perubahanNilai);
 
-    // Memperbarui nilai spinner_baik yang lama
-    nilaiSpinnerBaikSebelumnya = nilaiSpinnerBaikBaru;
+        // Memperbarui nilai spinner_baik yang lama
+        nilaiSpinnerBaikSebelumnya = nilaiSpinnerBaikBaru;
 
-    // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
-    Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
-    Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
+        // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
+        Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
+        Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
 
-    // Menghitung status waktu pengembalian
-    String waktupengembalian = "Tepat Waktu"; // Default: tepat waktu
+        // Menghitung status waktu pengembalian
+        String waktupengembalian = "Tepat Waktu"; // Default: tepat waktu
 
-    // Jika tanggal_kembali_akhir sebelum atau sama dengan tanggal_kembali_awal
-     if (tanggalKembaliAwal != null && tanggalKembaliAkhir != null) {
-                    // Mengubah tanggal menjadi string hanya dengan format tanggal (tanpa jam)
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    String tanggalAwal = sdf.format(tanggalKembaliAwal);
-                    String tanggalAkhir = sdf.format(tanggalKembaliAkhir);
-        // Tidak terlambat, nilai txt_baik diisi dengan 0
-        baik.setText("0");
-    } else {
-        // Jika terlambat, nilai txt_baik diisi dengan nilai spinner_baik dikali 1000
-        baik.setText(String.valueOf(nilaiSpinnerBaikBaru * 1000));
-    }
-     updateTotalDenda();
+        // Jika tanggal_kembali_akhir sebelum atau sama dengan tanggal_kembali_awal
+        if (tanggalKembaliAwal != null && tanggalKembaliAkhir != null) {
+            // Mengubah tanggal menjadi string hanya dengan format tanggal (tanpa jam)
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String tanggalAwal = sdf.format(tanggalKembaliAwal);
+            String tanggalAkhir = sdf.format(tanggalKembaliAkhir);
+            // Tidak terlambat, nilai txt_baik diisi dengan 0
+            baik.setText("0");
+        } else {
+            // Jika terlambat, nilai txt_baik diisi dengan nilai spinner_baik dikali 1000
+            baik.setText(String.valueOf(nilaiSpinnerBaikBaru * 1000));
+        }
+        updateTotalDenda();
     }//GEN-LAST:event_spinner_baikStateChanged
 
     private void spinner_rusakStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spinner_rusakStateChanged
         // TODO add your handling code here:
-       // Mendapatkan nilai spinner_rusak yang baru
-    int nilaiSpinnerRusakBaru = (int) spinner_rusak.getValue();
+        // Mendapatkan nilai spinner_rusak yang baru
+        int nilaiSpinnerRusakBaru = (int) spinner_rusak.getValue();
 
-    // Menghitung perubahan nilai spinner_rusak
-    int perubahanNilai = nilaiSpinnerRusakBaru - nilaiSpinnerRusakSebelumnya;
+        // Menghitung perubahan nilai spinner_rusak
+        int perubahanNilai = nilaiSpinnerRusakBaru - nilaiSpinnerRusakSebelumnya;
 
-    // Mendapatkan nilai spinner_pinjam
-    int nilaiSpinnerPinjam = (int) spinner_pinjam.getValue();
+        // Mendapatkan nilai spinner_pinjam
+        int nilaiSpinnerPinjam = (int) spinner_pinjam.getValue();
 
-    // Menyesuaikan nilai spinner_pinjam berdasarkan perubahan nilai spinner_rusak
-    spinner_pinjam.setValue(nilaiSpinnerPinjam - perubahanNilai);
+        // Menyesuaikan nilai spinner_pinjam berdasarkan perubahan nilai spinner_rusak
+        spinner_pinjam.setValue(nilaiSpinnerPinjam - perubahanNilai);
 
-    // Memperbarui nilai spinner_rusak yang lama
-    nilaiSpinnerRusakSebelumnya = nilaiSpinnerRusakBaru;
+        // Memperbarui nilai spinner_rusak yang lama
+        nilaiSpinnerRusakSebelumnya = nilaiSpinnerRusakBaru;
 
-    // Mendapatkan judul buku
-    String judulBuku = txt_judul_buku.getText();
+        // Mendapatkan judul buku
+        String judulBuku = txt_judul_buku.getText();
 
-    // Mendapatkan harga buku dari metode getHargaBuku
-    int hargaBuku = getHargaBuku(judulBuku);
+        // Mendapatkan harga buku dari metode getHargaBuku
+        int hargaBuku = getHargaBuku(judulBuku);
 
-    // Menghitung total denda
-    int totalDenda = (int) (0.5 * nilaiSpinnerRusakBaru * hargaBuku);
-    
-    // Mengatur nilai txt_denda dengan total denda
-    kondisi_rusak.setText(Integer.toString(totalDenda));
-    
-    
-    // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
-    Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
-    Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
+        // Menghitung total denda
+        int totalDenda = (int) (0.5 * nilaiSpinnerRusakBaru * hargaBuku);
 
-    // Menghitung status waktu pengembalian
-    String waktupengembalian = "Tepat Waktu"; // Default: tepat waktu
+        // Mengatur nilai txt_denda dengan total denda
+        kondisi_rusak.setText(Integer.toString(totalDenda));
 
-    // Jika tanggal_kembali_akhir sebelum atau sama dengan tanggal_kembali_awal
-     if (tanggalKembaliAwal != null && tanggalKembaliAkhir != null) {
-                    // Mengubah tanggal menjadi string hanya dengan format tanggal (tanpa jam)
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    String tanggalAwal = sdf.format(tanggalKembaliAwal);
-                    String tanggalAkhir = sdf.format(tanggalKembaliAkhir);
-         // Tidak terlambat, nilai txt_rusak diisi dengan kondisi_rusak
-        rusak.setText(kondisi_rusak.getText());
-    } else {
-        // Jika terlambat, nilai txt_rusak diisi dengan jumlah kondisi_rusak dan telat_rusak
-        int dendaTelat = Integer.parseInt(telat_rusak.getText());
-        int dendaKondisi = Integer.parseInt(kondisi_rusak.getText());
-        int totalDendaRusak = dendaTelat + dendaKondisi;
-        rusak.setText(String.valueOf(totalDendaRusak));
-    }
-     updateTotalDenda();
+        // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
+        Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
+        Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
+
+        // Menghitung status waktu pengembalian
+        String waktupengembalian = "Tepat Waktu"; // Default: tepat waktu
+
+        // Jika tanggal_kembali_akhir sebelum atau sama dengan tanggal_kembali_awal
+        if (tanggalKembaliAwal != null && tanggalKembaliAkhir != null) {
+            // Mengubah tanggal menjadi string hanya dengan format tanggal (tanpa jam)
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String tanggalAwal = sdf.format(tanggalKembaliAwal);
+            String tanggalAkhir = sdf.format(tanggalKembaliAkhir);
+            // Tidak terlambat, nilai txt_rusak diisi dengan kondisi_rusak
+            rusak.setText(kondisi_rusak.getText());
+        } else {
+            // Jika terlambat, nilai txt_rusak diisi dengan jumlah kondisi_rusak dan telat_rusak
+            int dendaTelat = Integer.parseInt(telat_rusak.getText());
+            int dendaKondisi = Integer.parseInt(kondisi_rusak.getText());
+            int totalDendaRusak = dendaTelat + dendaKondisi;
+            rusak.setText(String.valueOf(totalDendaRusak));
+        }
+        updateTotalDenda();
     }//GEN-LAST:event_spinner_rusakStateChanged
 
     private void spinner_hilangStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spinner_hilangStateChanged
         // TODO add your handling code here:
-       // Mendapatkan nilai spinner_hilang yang baru
-    int nilaiSpinnerHilangBaru = (int) spinner_hilang.getValue();
+        // Mendapatkan nilai spinner_hilang yang baru
+        int nilaiSpinnerHilangBaru = (int) spinner_hilang.getValue();
 
-    // Menghitung perubahan nilai spinner_hilang
-    int perubahanNilai = nilaiSpinnerHilangBaru - nilaiSpinnerHilangSebelumnya;
+        // Menghitung perubahan nilai spinner_hilang
+        int perubahanNilai = nilaiSpinnerHilangBaru - nilaiSpinnerHilangSebelumnya;
 
-    // Mendapatkan nilai spinner_pinjam
-    int nilaiSpinnerPinjam = (int) spinner_pinjam.getValue();
+        // Mendapatkan nilai spinner_pinjam
+        int nilaiSpinnerPinjam = (int) spinner_pinjam.getValue();
 
-    // Menyesuaikan nilai spinner_pinjam berdasarkan perubahan nilai spinner_hilang
-    spinner_pinjam.setValue(nilaiSpinnerPinjam - perubahanNilai);
+        // Menyesuaikan nilai spinner_pinjam berdasarkan perubahan nilai spinner_hilang
+        spinner_pinjam.setValue(nilaiSpinnerPinjam - perubahanNilai);
 
-    // Memperbarui nilai spinner_hilang yang lama
-    nilaiSpinnerHilangSebelumnya = nilaiSpinnerHilangBaru;
+        // Memperbarui nilai spinner_hilang yang lama
+        nilaiSpinnerHilangSebelumnya = nilaiSpinnerHilangBaru;
 
-    // Mendapatkan judul buku
-    String judulBuku = txt_judul_buku.getText();
+        // Mendapatkan judul buku
+        String judulBuku = txt_judul_buku.getText();
 
-    // Mendapatkan harga buku dari metode getHargaBuku
-    int hargaBuku = getHargaBuku(judulBuku);
+        // Mendapatkan harga buku dari metode getHargaBuku
+        int hargaBuku = getHargaBuku(judulBuku);
 
-    // Menghitung total denda (harga buku dikali jumlah buku yang hilang)
-    int totalDenda = nilaiSpinnerHilangBaru * hargaBuku;
+        // Menghitung total denda (harga buku dikali jumlah buku yang hilang)
+        int totalDenda = nilaiSpinnerHilangBaru * hargaBuku;
 
-    // Mengatur nilai txt_denda dengan total denda
-    kondisi_hilang.setText(Integer.toString(totalDenda));
-    
-    // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
-    Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
-    Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
+        // Mengatur nilai txt_denda dengan total denda
+        kondisi_hilang.setText(Integer.toString(totalDenda));
 
-    // Menghitung status waktu pengembalian
-    String waktupengembalian = "Tepat Waktu"; // Default: tepat waktu
+        // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
+        Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
+        Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
 
-    // Jika tanggal_kembali_akhir sebelum atau sama dengan tanggal_kembali_awal
-     if (tanggalKembaliAwal != null && tanggalKembaliAkhir != null) {
-                    // Mengubah tanggal menjadi string hanya dengan format tanggal (tanpa jam)
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    String tanggalAwal = sdf.format(tanggalKembaliAwal);
-                    String tanggalAkhir = sdf.format(tanggalKembaliAkhir);
-        // Tidak terlambat, nilai txt_rusak diisi dengan 0
-        // Tidak terlambat, nilai txt_rusak diisi dengan kondisi_rusak
-        hilang.setText(kondisi_hilang.getText());
-    } else {
-        // Jika terlambat, nilai txt_rusak diisi dengan jumlah kondisi_rusak dan telat_rusak
-        int dendaTelat = Integer.parseInt(telat_hilang.getText());
-        int dendaKondisi = Integer.parseInt(kondisi_hilang.getText());
-        int totalDendaRusak = dendaTelat + dendaKondisi;
-        hilang.setText(String.valueOf(totalDendaRusak));
-    }
-     updateTotalDenda();
+        // Menghitung status waktu pengembalian
+        String waktupengembalian = "Tepat Waktu"; // Default: tepat waktu
+
+        // Jika tanggal_kembali_akhir sebelum atau sama dengan tanggal_kembali_awal
+        if (tanggalKembaliAwal != null && tanggalKembaliAkhir != null) {
+            // Mengubah tanggal menjadi string hanya dengan format tanggal (tanpa jam)
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String tanggalAwal = sdf.format(tanggalKembaliAwal);
+            String tanggalAkhir = sdf.format(tanggalKembaliAkhir);
+            // Tidak terlambat, nilai txt_rusak diisi dengan 0
+            // Tidak terlambat, nilai txt_rusak diisi dengan kondisi_rusak
+            hilang.setText(kondisi_hilang.getText());
+        } else {
+            // Jika terlambat, nilai txt_rusak diisi dengan jumlah kondisi_rusak dan telat_rusak
+            int dendaTelat = Integer.parseInt(telat_hilang.getText());
+            int dendaKondisi = Integer.parseInt(kondisi_hilang.getText());
+            int totalDendaRusak = dendaTelat + dendaKondisi;
+            hilang.setText(String.valueOf(totalDendaRusak));
+        }
+        updateTotalDenda();
     }//GEN-LAST:event_spinner_hilangStateChanged
 
     private void spinner_baikAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_spinner_baikAncestorAdded
@@ -1705,12 +1733,38 @@ tambahStokBuku(con, totalBukuKembali, kodebuku);
 
     }//GEN-LAST:event_txt_searchActionPerformed
 
+    private void txt_searchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_searchKeyPressed
+        // TODO add your handling code here:
+         if (evt.getKeyCode() == KeyEvent.VK_F9) {
+            // Jika tombol Enter ditekan, tekan tombol jButton2
+            btn_clear.doClick();
+        }
+    }//GEN-LAST:event_txt_searchKeyPressed
+
+    private void btn_clearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_clearActionPerformed
+        // TODO add your handling code here:
+        clear();
+    }//GEN-LAST:event_btn_clearActionPerformed
+
+    private void btn_clear2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_clear2ActionPerformed
+        // TODO add your handling code here:
+        clear();
+    }//GEN-LAST:event_btn_clear2ActionPerformed
+
+    private void txt_search1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_search1KeyPressed
+        // TODO add your handling code here:
+         if (evt.getKeyCode() == KeyEvent.VK_F10) {
+            // Jika tombol Enter ditekan, tekan tombol jButton2
+            btn_clear2.doClick();
+        }
+    }//GEN-LAST:event_txt_search1KeyPressed
+
     DefaultTableModel model = new DefaultTableModel() {
         public boolean isCellEditable(int row, int column) {
             return false;
         }
     };
-    
+
     // Main method
     public static void main(String args[]) {
         // Set look and feel
@@ -1738,6 +1792,8 @@ tambahStokBuku(con, totalBukuKembali, kodebuku);
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField baik;
+    private javax.swing.JButton btn_clear;
+    private javax.swing.JButton btn_clear2;
     private javax.swing.JButton btn_tambah;
     private javax.swing.JTextField hilang;
     private javax.swing.JButton jButton1;
