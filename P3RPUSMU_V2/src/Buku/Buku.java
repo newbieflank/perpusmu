@@ -21,16 +21,17 @@ import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-
+import Buku.BukuMain;
 
 public class Buku extends javax.swing.JPanel {
+
     private Connection con;
     private PreparedStatement pst, pst1;
     private ResultSet rs;
     private String kode_buku;
     private String No_buku;
     private int noBukuEdit = -1;
-    
+
     public Buku() throws SQLException {
         con = koneksi.Koneksi();
         initComponents();
@@ -45,20 +46,20 @@ public class Buku extends javax.swing.JPanel {
         JTabel1.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         Jdialog.setSize(570, 514);
     }
-    
-    private void Jdialog () {
+
+    private void Jdialog() {
         Jdialog.setLocationRelativeTo(null);
         Jdialog.setBackground(Color.white);
         Jdialog.getRootPane().setOpaque(false);
         Jdialog.getContentPane().setBackground(new Color(0, 0, 0, 0));
         Jdialog.setBackground(new Color(0, 0, 0, 0));
     }
+
     private void jcombo() {
         if (dial_kategori.getSelectedItem() == null) {
             dial_kategori.setSelectedItem("Kategori Buku");
         }
     }
-    
 
     private void loadTabel() throws SQLException {
         JTabel1.clearSelection();
@@ -71,13 +72,14 @@ public class Buku extends javax.swing.JPanel {
         };
         model.addColumn("No");
         model.addColumn("Kode Buku");
+        model.addColumn("No Referensi");
         model.addColumn("Judul Buku");
         model.addColumn("Jilid");
         model.addColumn("Kategori ");
         model.addColumn("Pengarang");
         model.addColumn("Lokasi");
         model.addColumn("Kondisi");
-        model.addColumn("Tahun Terbit");  
+        model.addColumn("Tahun Terbit");
         model.addColumn("Asal Buku");
         model.addColumn("Harga");
         model.addColumn("Stock");
@@ -86,7 +88,7 @@ public class Buku extends javax.swing.JPanel {
             pst = con.prepareStatement("SELECT * FROM buku");
             rs = pst.executeQuery();
             while (rs.next()) {
-                model.addRow(new Object[]{rs.getString("No_buku"), rs.getString("kode_buku"), rs.getString("judul_buku"), rs.getString("jilid"), rs.getString("kategori"), rs.getString("pengarang"), rs.getString("lokasi"),rs.getString("kondisi_buku"),rs.getInt("tahun_terbit"),rs.getString("asal_buku"),rs.getInt("harga"),rs.getInt("jumlah_stock")});
+                model.addRow(new Object[]{rs.getString("No_buku"), rs.getString("kode_buku"), rs.getString("referensi"), rs.getString("judul_buku"), rs.getString("jilid"), rs.getString("kategori"), rs.getString("pengarang"), rs.getString("lokasi"), rs.getString("kondisi_buku"), rs.getInt("tahun_terbit"), rs.getString("asal_buku"), rs.getInt("harga"), rs.getInt("jumlah_stock")});
             }
             JTabel1.setModel(model);
         } catch (Exception e) {
@@ -131,6 +133,36 @@ public class Buku extends javax.swing.JPanel {
         dial_stock = new javax.swing.JTextField();
         btn_cancel = new javax.swing.JButton();
         dial_kategori = new javax.swing.JComboBox<>();
+        jLabel7 = new javax.swing.JLabel();
+        dial_referensi = new javax.swing.JTextField();
+        Jdialog1 = new javax.swing.JDialog();
+        jPanel4 = new javax.swing.JPanel();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        dial_kode1 = new javax.swing.JTextField();
+        jLabel23 = new javax.swing.JLabel();
+        dial_judul1 = new javax.swing.JTextField();
+        jLabel25 = new javax.swing.JLabel();
+        dial_jilid1 = new javax.swing.JTextField();
+        jLabel26 = new javax.swing.JLabel();
+        dial_pengarang1 = new javax.swing.JTextField();
+        jLabel27 = new javax.swing.JLabel();
+        jLabel28 = new javax.swing.JLabel();
+        dial_lokasi1 = new javax.swing.JTextField();
+        jLabel29 = new javax.swing.JLabel();
+        jLabel30 = new javax.swing.JLabel();
+        dial_tahun1 = new javax.swing.JTextField();
+        jLabel31 = new javax.swing.JLabel();
+        dial_asal1 = new javax.swing.JTextField();
+        jLabel32 = new javax.swing.JLabel();
+        dial_harga1 = new javax.swing.JTextField();
+        dial_kondisi1 = new javax.swing.JComboBox<>();
+        btn_simpan1 = new javax.swing.JButton();
+        jLabel33 = new javax.swing.JLabel();
+        dial_stock1 = new javax.swing.JTextField();
+        btn_cancel1 = new javax.swing.JButton();
+        dial_kategori1 = new javax.swing.JComboBox<>();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         txt_search = new javax.swing.JTextField();
@@ -283,6 +315,9 @@ public class Buku extends javax.swing.JPanel {
             }
         });
 
+        jLabel7.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel7.setText("No Referensi");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -290,26 +325,34 @@ public class Buku extends javax.swing.JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(238, 238, 238)
-                        .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(dial_jilid)
-                            .addComponent(dial_judul)
-                            .addComponent(dial_pengarang)
-                            .addComponent(dial_kode, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                    .addGap(14, 14, 14)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                    .addContainerGap()
+                                    .addComponent(dial_kode, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(6, 6, 6)
+                                .addContainerGap()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(8, 8, 8)
-                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(dial_kategori, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                                        .addGap(6, 6, 6)
+                                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                            .addComponent(jLabel17, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                            .addComponent(jLabel16, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                            .addComponent(jLabel15, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                            .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                    .addComponent(dial_judul, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addComponent(dial_jilid, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addComponent(dial_kategori, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(dial_pengarang, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(dial_referensi, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
@@ -328,18 +371,17 @@ public class Buku extends javax.swing.JPanel {
                                             .addComponent(dial_asal, javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(dial_tahun, javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(dial_kondisi, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(dial_lokasi, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                            .addComponent(dial_lokasi, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(dial_stock, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGap(59, 59, 59)
                                 .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(199, 199, 199)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(btn_cancel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btn_simpan))
-                            .addComponent(dial_stock, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(btn_cancel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btn_simpan)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -359,41 +401,47 @@ public class Buku extends javax.swing.JPanel {
                     .addComponent(dial_lokasi, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, 0)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(dial_judul, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dial_kondisi, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(dial_jilid, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dial_tahun, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, 0)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(dial_asal, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dial_kategori, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, 0)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(dial_pengarang, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dial_harga, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(dial_stock, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(dial_referensi, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dial_kondisi, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(dial_tahun, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)
+                        .addComponent(dial_asal, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)
+                        .addComponent(dial_harga, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(dial_stock, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)
+                        .addComponent(dial_judul, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(dial_jilid, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)
+                        .addComponent(dial_kategori, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)
+                        .addComponent(dial_pengarang, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(12, 12, 12)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_simpan, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -409,6 +457,276 @@ public class Buku extends javax.swing.JPanel {
         JdialogLayout.setVerticalGroup(
             JdialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 514, Short.MAX_VALUE)
+        );
+
+        Jdialog1.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        Jdialog1.setUndecorated(true);
+        Jdialog1.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                Jdialog1FocusLost(evt);
+            }
+        });
+        Jdialog1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                Jdialog1KeyPressed(evt);
+            }
+        });
+
+        jPanel4.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel4.setMaximumSize(new java.awt.Dimension(649, 649));
+        jPanel4.setMinimumSize(new java.awt.Dimension(649, 649));
+
+        jPanel5.setBackground(new java.awt.Color(63, 148, 105));
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel5.setText("EDIT BUKU");
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel5)
+                .addContainerGap(389, Short.MAX_VALUE))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel5)
+                .addContainerGap(10, Short.MAX_VALUE))
+        );
+
+        jLabel6.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel6.setText("Kode Buku");
+
+        dial_kode1.setMaximumSize(new java.awt.Dimension(570, 73));
+        dial_kode1.setMinimumSize(new java.awt.Dimension(570, 73));
+
+        jLabel23.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel23.setText("Judul Buku");
+
+        jLabel25.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel25.setText("Jilid");
+
+        dial_jilid1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dial_jilid1ActionPerformed(evt);
+            }
+        });
+
+        jLabel26.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel26.setText("Kategori");
+
+        jLabel27.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel27.setText("Pengarang");
+
+        jLabel28.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel28.setText("Lokasi");
+
+        dial_lokasi1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dial_lokasi1ActionPerformed(evt);
+            }
+        });
+
+        jLabel29.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel29.setText("Kondisi");
+
+        jLabel30.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel30.setText("Tahun Terbit");
+
+        jLabel31.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel31.setText("Asal Buku");
+
+        dial_asal1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dial_asal1ActionPerformed(evt);
+            }
+        });
+
+        jLabel32.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel32.setText("Harga");
+
+        dial_harga1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dial_harga1ActionPerformed(evt);
+            }
+        });
+
+        dial_kondisi1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Baik", "Rusak", "Hilang" }));
+        dial_kondisi1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dial_kondisi1ActionPerformed(evt);
+            }
+        });
+
+        btn_simpan1.setBackground(new java.awt.Color(63, 148, 105));
+        btn_simpan1.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        btn_simpan1.setForeground(new java.awt.Color(255, 255, 255));
+        btn_simpan1.setText("SIMPAN");
+        btn_simpan1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_simpan1ActionPerformed(evt);
+            }
+        });
+
+        jLabel33.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel33.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel33.setText("Stock");
+
+        dial_stock1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dial_stock1ActionPerformed(evt);
+            }
+        });
+
+        btn_cancel1.setBackground(new java.awt.Color(204, 0, 51));
+        btn_cancel1.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        btn_cancel1.setForeground(new java.awt.Color(255, 255, 255));
+        btn_cancel1.setText("CANCEL");
+        btn_cancel1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_cancel1ActionPerformed(evt);
+            }
+        });
+
+        dial_kategori1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pendidikan", "Non Pendidikan" }));
+        dial_kategori1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dial_kategori1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(238, 238, 238)
+                        .addComponent(jLabel33, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(dial_jilid1)
+                            .addComponent(dial_judul1)
+                            .addComponent(dial_pengarang1)
+                            .addComponent(dial_kode1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGap(8, 8, 8)
+                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(dial_kategori1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGap(51, 51, 51)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addGap(6, 6, 6)
+                                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel30, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel32, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel31, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel29, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(dial_harga1, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                            .addComponent(dial_asal1, javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(dial_tahun1, javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(dial_kondisi1, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(dial_lokasi1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGap(59, 59, 59)
+                                .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(199, 199, 199)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addComponent(btn_cancel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btn_simpan1))
+                            .addComponent(dial_stock1, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, 0)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(dial_kode1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dial_lokasi1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel29, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, 0)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(dial_judul1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dial_kondisi1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel30, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(dial_jilid1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dial_tahun1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel31, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, 0)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(dial_asal1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dial_kategori1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel32, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, 0)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(dial_pengarang1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dial_harga1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel33, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(dial_stock1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_simpan1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_cancel1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout Jdialog1Layout = new javax.swing.GroupLayout(Jdialog1.getContentPane());
+        Jdialog1.getContentPane().setLayout(Jdialog1Layout);
+        Jdialog1Layout.setHorizontalGroup(
+            Jdialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 570, Short.MAX_VALUE)
+        );
+        Jdialog1Layout.setVerticalGroup(
+            Jdialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 514, Short.MAX_VALUE)
         );
 
         setBackground(new java.awt.Color(204, 204, 204));
@@ -463,14 +781,14 @@ public class Buku extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "No", "Kode Buku", "Judul Buku", "Jilid", "Kategori", "Pengarang", "Lokasi", "Kondisi ", "Tahun Terbit", "Asal Buku", "Harga", "Stock"
+                "No", "Kode Buku", "No Referensi", "Judul Buku", "Jilid", "Kategori", "Pengarang", "Lokasi", "Kondisi ", "Tahun Terbit", "Asal Buku", "Harga"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, true, true, true, true, true, true
+                false, false, true, false, false, false, false, true, true, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -493,14 +811,14 @@ public class Buku extends javax.swing.JPanel {
         if (JTabel1.getColumnModel().getColumnCount() > 0) {
             JTabel1.getColumnModel().getColumn(0).setResizable(false);
             JTabel1.getColumnModel().getColumn(1).setResizable(false);
-            JTabel1.getColumnModel().getColumn(2).setResizable(false);
             JTabel1.getColumnModel().getColumn(3).setResizable(false);
             JTabel1.getColumnModel().getColumn(4).setResizable(false);
             JTabel1.getColumnModel().getColumn(5).setResizable(false);
+            JTabel1.getColumnModel().getColumn(6).setResizable(false);
         }
 
         btn_tambah.setBackground(new java.awt.Color(63, 148, 105));
-        btn_tambah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/+.png"))); // NOI18N
+        btn_tambah.setIcon(new javax.swing.ImageIcon("D:\\perpusmu\\P3RPUSMU_V2\\src\\img_15\\image_button\\+.png")); // NOI18N
         btn_tambah.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_tambahActionPerformed(evt);
@@ -508,7 +826,7 @@ public class Buku extends javax.swing.JPanel {
         });
 
         btn_edit.setBackground(new java.awt.Color(255, 227, 130));
-        btn_edit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/edit_1160515 3.png"))); // NOI18N
+        btn_edit.setIcon(new javax.swing.ImageIcon("D:\\perpusmu\\P3RPUSMU_V2\\src\\img_15\\image_button\\edit_1160515 3.png")); // NOI18N
         btn_edit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_editActionPerformed(evt);
@@ -516,7 +834,7 @@ public class Buku extends javax.swing.JPanel {
         });
 
         btn_hapus.setBackground(new java.awt.Color(255, 145, 66));
-        btn_hapus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/trash-can_7343703 2.png"))); // NOI18N
+        btn_hapus.setIcon(new javax.swing.ImageIcon("D:\\perpusmu\\P3RPUSMU_V2\\src\\img_15\\image_button\\trash-can_7343703 2.png")); // NOI18N
         btn_hapus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_hapusActionPerformed(evt);
@@ -588,6 +906,7 @@ public class Buku extends javax.swing.JPanel {
     private void btn_tambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tambahActionPerformed
         dial_kode.setText(null);
         dial_judul.setText(null);
+        dial_referensi.setText(null);
         dial_jilid.setText(null);
         dial_kategori.setSelectedItem(null);
         dial_pengarang.setText(null);
@@ -598,29 +917,30 @@ public class Buku extends javax.swing.JPanel {
         dial_harga.setText(String.valueOf(""));
         dial_stock.setText(String.valueOf(""));
         dial_kode.setEnabled(true);
-        noBukuEdit=-1;
-        
+        noBukuEdit = -1;
+
         Jdialog.setVisible(true);
     }//GEN-LAST:event_btn_tambahActionPerformed
 
     private void btn_editActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editActionPerformed
 //        get index table selected
         int row = JTabel1.getSelectedRow();
-        System.out.println("index "+row);
+        System.out.println("index " + row);
 //        cek jika tidak ada row yang diselect
         if (row < 0) {
-            JOptionPane.showMessageDialog(jPanel2, "Pilih Dahulu Data Yang Akan Di Ubah");
+            JOptionPane.showMessageDialog(jPanel4, "Pilih Dahulu Data Yang Akan Di Ubah");
         }
         try {
             //get data dari table  berdasarkan row index dan colom keberapa
             //0 index colom no buku
             int noBuku = Integer.parseInt((String) JTabel1.getValueAt(row, 0));
-            pst = con.prepareStatement("SELECT * FROM buku WHERE No_buku = '"+noBuku+"'");
+            pst = con.prepareStatement("SELECT * FROM buku WHERE No_buku = '" + noBuku + "'");
             rs = pst.executeQuery();
             rs.next();
             System.out.println(noBuku);
             String kode_buku = rs.getString("kode_buku");
             String judul_buku = rs.getString("judul_buku");
+            String referensi = rs.getString("referensi");
             String jilid = rs.getString("jilid");
             String kategori = rs.getString("kategori");
             String pengarang = rs.getString("pengarang");
@@ -635,6 +955,7 @@ public class Buku extends javax.swing.JPanel {
 
             dial_kode.setText(kode_buku);
             dial_judul.setText(judul_buku);
+            dial_referensi.setText(referensi);
             dial_jilid.setText(jilid);
             dial_kategori.setSelectedItem(kategori);
             dial_pengarang.setText(pengarang);
@@ -649,7 +970,7 @@ public class Buku extends javax.swing.JPanel {
             Jdialog.setVisible(true);
         } catch (Exception e) {
             System.out.println("click" + e.getMessage());
-            JOptionPane.showMessageDialog(jPanel2, "Pilih Dahulu Data Yang Akan Di Ubah");
+            JOptionPane.showMessageDialog(jPanel4, "Pilih Dahulu Data Yang Akan Di Ubah");
         }
     }//GEN-LAST:event_btn_editActionPerformed
 
@@ -666,7 +987,7 @@ public class Buku extends javax.swing.JPanel {
             if (dialogResult == JOptionPane.YES_OPTION) {
                 try {
                     // Buat koneksi ke database
-                    Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3307/perpusmu", "root", "");
+                    Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/perpusmu", "root", "");
 
                     // Buat pernyataan SQL DELETE
                     String sql = "DELETE FROM buku WHERE No_buku = ?";
@@ -679,9 +1000,9 @@ public class Buku extends javax.swing.JPanel {
                     // Hapus baris dari model tabel
                     model.removeRow(selectedRowIndex);
                 } catch (Exception e) {
-            System.out.println("click" + e);
-            JOptionPane.showMessageDialog(jPanel2, "Pilih Dahulu Data Yang Akan Di Hapus");
-        }
+                    System.out.println("click" + e);
+                    JOptionPane.showMessageDialog(jPanel2, "Pilih Dahulu Data Yang Akan Di Hapus");
+                }
             }
         }
     }//GEN-LAST:event_btn_hapusActionPerformed
@@ -689,6 +1010,7 @@ public class Buku extends javax.swing.JPanel {
     private void btn_simpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_simpanActionPerformed
         String kode_buku = dial_kode.getText();
         String judul_buku = dial_judul.getText();
+        String referensi = dial_referensi.getText();
         String jilid = dial_jilid.getText();
         Object kategori = dial_kategori.getSelectedItem();
         String pengarang = dial_pengarang.getText();
@@ -699,7 +1021,7 @@ public class Buku extends javax.swing.JPanel {
         int harga = Integer.parseInt(dial_harga.getText());
         int jumlah_stock = Integer.parseInt(dial_stock.getText());
 
-        if (kode_buku == null || judul_buku == null || jilid == null || kategori == null || pengarang == null || lokasi == null || kondisi_buku == null || tahun_terbit == -1 || asal_buku == null || harga == -1 || jumlah_stock == -1) {
+        if (kode_buku == null || referensi == null || judul_buku == null || jilid == null || kategori == null || pengarang == null || lokasi == null || kondisi_buku == null || tahun_terbit == -1 || asal_buku == null || harga == -1 || jumlah_stock == -1) {
             JOptionPane.showMessageDialog(Jdialog, "Anda Harus Mengisi Semua Data Terlebih Dahulu");
         } else {
             int result = JOptionPane.showConfirmDialog(Jdialog, "Apakah Anda Ingin Menyimpan?", "Konfirmasi",
@@ -711,55 +1033,57 @@ public class Buku extends javax.swing.JPanel {
                     pst.setString(1, String.valueOf(noBukuEdit));
                     rs = pst.executeQuery();
                     if (rs.next()) {
-                        pst = con.prepareStatement("UPDATE buku SET kode_buku = ?, judul_buku = ?, jilid = ?, kategori = ?, pengarang = ?, lokasi = ?, kondisi_buku = ?, tahun_terbit = ?, asal_buku = ?, harga =?, jumlah_stock = ? WHERE No_buku = ?");
+                        pst = con.prepareStatement("UPDATE buku SET kode_buku = ?, referensi = ?, judul_buku = ?, jilid = ?, kategori = ?, pengarang = ?, lokasi = ?, kondisi_buku = ?, tahun_terbit = ?, asal_buku = ?, harga =?, jumlah_stock = ? WHERE No_buku = ?");
                         pst.setString(1, kode_buku);
-                        pst.setString(2, judul_buku);
-                        pst.setString(3, jilid);
-                        pst.setString(4, (String) kategori);
-                        pst.setString(5, pengarang);
-                        pst.setString(6, lokasi);
-                        pst.setString(7, (String) kondisi_buku);
+                        pst.setString(2, referensi);
+                        pst.setString(3, judul_buku);
+                        pst.setString(4, jilid);
+                        pst.setString(5, (String) kategori);
+                        pst.setString(6, pengarang);
+                        pst.setString(7, lokasi);
+                        pst.setString(8, (String) kondisi_buku);
                         if (tahun_terbit != 0) {
-                            pst.setInt(8, tahun_terbit);
+                            pst.setInt(9, tahun_terbit);
                         } else {
-                            pst.setNull(8, java.sql.Types.INTEGER);
+                            pst.setNull(9, java.sql.Types.INTEGER);
                         }
-                        pst.setString(9, asal_buku);
+                        pst.setString(10, asal_buku);
                         if (harga != 0) {
-                            pst.setInt(10, harga);
-                        } else {
-                            pst.setNull(10, java.sql.Types.INTEGER);
-                        }
-                        if (jumlah_stock != 0) {
-                            pst.setInt(11, jumlah_stock);
+                            pst.setInt(11, harga);
                         } else {
                             pst.setNull(11, java.sql.Types.INTEGER);
                         }
-                        
-                          pst.setInt(12, noBukuEdit);
+                        if (jumlah_stock != 0) {
+                            pst.setInt(12, jumlah_stock);
+                        } else {
+                            pst.setNull(12, java.sql.Types.INTEGER);
+                        }
+
+                        pst.setInt(13, noBukuEdit);
                         pst.executeUpdate();
-                        noBukuEdit=-1;
+                        noBukuEdit = -1;
 
                     } else {
                         try {
-                            pst1 = con.prepareStatement("Insert into buku (kode_buku, judul_buku, jilid, kategori, pengarang, lokasi, kondisi_buku, tahun_terbit, asal_buku, harga, jumlah_stock) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                            pst1 = con.prepareStatement("Insert into buku (kode_buku, referensi, judul_buku, jilid, kategori, pengarang, lokasi, kondisi_buku, tahun_terbit, asal_buku, harga, jumlah_stock) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                             pst1.setString(1, kode_buku);
-                            pst1.setString(2, judul_buku);
-                            pst1.setString(3, jilid);
-                            pst1.setString(4, (String) kategori);
-                            pst1.setString(5, pengarang);
-                            pst1.setString(6, lokasi);
-                            pst1.setString(7, (String) kondisi_buku);
-                            pst1.setInt(8, tahun_terbit);
-                            pst1.setString(9, asal_buku);
-                            pst1.setInt(10, harga);
-                            pst1.setInt(11, jumlah_stock);
+                            pst1.setString(2, referensi);
+                            pst1.setString(3, judul_buku);
+                            pst1.setString(4, jilid);
+                            pst1.setString(5, (String) kategori);
+                            pst1.setString(6, pengarang);
+                            pst1.setString(7, lokasi);
+                            pst1.setString(8, (String) kondisi_buku);
+                            pst1.setInt(9, tahun_terbit);
+                            pst1.setString(10, asal_buku);
+                            pst1.setInt(11, harga);
+                            pst1.setInt(12, jumlah_stock);
                             pst1.executeUpdate();
                         } catch (Exception r) {
-                            System.out.println("insert simpan " + r); 
+                            System.out.println("insert simpan " + r);
                         }
                     }
-                    
+
                     loadTabel();
                 } catch (Exception e) {
                     System.out.println("No_buku buku" + e.getMessage());
@@ -793,7 +1117,7 @@ public class Buku extends javax.swing.JPanel {
     }//GEN-LAST:event_dial_asalActionPerformed
 
     private void btn_cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancelActionPerformed
-      Jdialog.dispose();
+        Jdialog.dispose();
     }//GEN-LAST:event_btn_cancelActionPerformed
 
     private void dial_kategoriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dial_kategoriActionPerformed
@@ -904,26 +1228,85 @@ public class Buku extends javax.swing.JPanel {
 
     }//GEN-LAST:event_txt_searchKeyReleased
 
+    private void dial_jilid1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dial_jilid1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dial_jilid1ActionPerformed
+
+    private void dial_lokasi1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dial_lokasi1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dial_lokasi1ActionPerformed
+
+    private void dial_asal1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dial_asal1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dial_asal1ActionPerformed
+
+    private void dial_harga1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dial_harga1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dial_harga1ActionPerformed
+
+    private void dial_kondisi1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dial_kondisi1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dial_kondisi1ActionPerformed
+
+    private void btn_simpan1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_simpan1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_simpan1ActionPerformed
+
+    private void dial_stock1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dial_stock1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dial_stock1ActionPerformed
+
+    private void btn_cancel1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancel1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_cancel1ActionPerformed
+
+    private void dial_kategori1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dial_kategori1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dial_kategori1ActionPerformed
+
+    private void Jdialog1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_Jdialog1FocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_Jdialog1FocusLost
+
+    private void Jdialog1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_Jdialog1KeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_Jdialog1KeyPressed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable JTabel1;
     private javax.swing.JDialog Jdialog;
+    private javax.swing.JDialog Jdialog1;
     private javax.swing.JButton btn_cancel;
+    private javax.swing.JButton btn_cancel1;
     private javax.swing.JButton btn_edit;
     private javax.swing.JButton btn_hapus;
     private javax.swing.JButton btn_simpan;
+    private javax.swing.JButton btn_simpan1;
     private javax.swing.JButton btn_tambah;
     private javax.swing.JTextField dial_asal;
+    private javax.swing.JTextField dial_asal1;
     private javax.swing.JTextField dial_harga;
+    private javax.swing.JTextField dial_harga1;
     private javax.swing.JTextField dial_jilid;
+    private javax.swing.JTextField dial_jilid1;
     private javax.swing.JTextField dial_judul;
+    private javax.swing.JTextField dial_judul1;
     private javax.swing.JComboBox<String> dial_kategori;
+    private javax.swing.JComboBox<String> dial_kategori1;
     private javax.swing.JTextField dial_kode;
+    private javax.swing.JTextField dial_kode1;
     private javax.swing.JComboBox<String> dial_kondisi;
+    private javax.swing.JComboBox<String> dial_kondisi1;
     private javax.swing.JTextField dial_lokasi;
+    private javax.swing.JTextField dial_lokasi1;
     private javax.swing.JTextField dial_pengarang;
+    private javax.swing.JTextField dial_pengarang1;
+    private javax.swing.JTextField dial_referensi;
     private javax.swing.JTextField dial_stock;
+    private javax.swing.JTextField dial_stock1;
     private javax.swing.JTextField dial_tahun;
+    private javax.swing.JTextField dial_tahun1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
@@ -935,12 +1318,27 @@ public class Buku extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel28;
+    private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel30;
+    private javax.swing.JLabel jLabel31;
+    private javax.swing.JLabel jLabel32;
+    private javax.swing.JLabel jLabel33;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField txt_search;
     // End of variables declaration//GEN-END:variables
