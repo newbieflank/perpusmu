@@ -26,6 +26,14 @@ public class Dashboard1 extends javax.swing.JPanel {
     /**
      * Creates new form Dashboard
      */
+    
+      public static void resetcomponen() {
+        jumlahanggota();
+        jumlahbuku();
+        jumlahpetugas();
+        jumlahtransaksihariini();
+    }
+    
     private Connection con;
 
     public Dashboard1() {
@@ -84,7 +92,7 @@ public class Dashboard1 extends javax.swing.JPanel {
         return lists;
     }
 
-    private void jumlahbuku() {
+    private static void jumlahbuku() {
         try {
             String sql = "SELECT SUM(jumlah_stock) AS total_stock FROM buku";
             java.sql.Connection con = (Connection) Config.configDB();
@@ -101,7 +109,7 @@ public class Dashboard1 extends javax.swing.JPanel {
         }
     }
 
-    private void jumlahanggota() {
+    private static void jumlahanggota() {
         try {
             String sql = "SELECT COUNT(nama) AS total_anggota FROM anggota;";
             java.sql.Connection con = (Connection) Config.configDB();
@@ -118,7 +126,7 @@ public class Dashboard1 extends javax.swing.JPanel {
         }
     }
 
-    private void jumlahpetugas() {
+    private static void jumlahpetugas() {
         try {
             String sql = "SELECT COUNT(username) AS total_petugas FROM users;";
             java.sql.Connection con = (Connection) Config.configDB();
@@ -135,7 +143,7 @@ public class Dashboard1 extends javax.swing.JPanel {
         }
     }
 
-    private void jumlahtransaksihariini() {
+    private static void jumlahtransaksihariini() {
         try {
             String sql = "SELECT COUNT(kode_peminjaman) AS jumlah_transaksi_hari_ini FROM detail_peminjaman WHERE DATE(tanggal_peminjaman) = CURDATE();";
             java.sql.Connection con = (Connection) Config.configDB();
@@ -430,7 +438,7 @@ public class Dashboard1 extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel Label_petugas;
+    private static javax.swing.JLabel Label_petugas;
     private raven.chart.CurveLineChart chart;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -449,9 +457,9 @@ public class Dashboard1 extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JLabel label_anggota;
-    private javax.swing.JLabel label_buku;
-    private javax.swing.JLabel label_transaksi;
+    private static javax.swing.JLabel label_anggota;
+    private static javax.swing.JLabel label_buku;
+    private static javax.swing.JLabel label_transaksi;
     private raven.panel.PanelShadow panelShadow1;
     // End of variables declaration//GEN-END:variables
 }

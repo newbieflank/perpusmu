@@ -15,6 +15,7 @@ import Transaksi.Transaksi;
 //import Buku.Utama;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.FlatLightLaf;
+import dashboard.Dashboard;
 import denda.Denda;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -323,6 +324,7 @@ public class Navbar extends javax.swing.JFrame {
 
     private void dashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dashboardActionPerformed
         // TODO add your handling code here:
+        Dashboard1.resetcomponen();
         card.show(main, "Dashboard");
     }//GEN-LAST:event_dashboardActionPerformed
 
