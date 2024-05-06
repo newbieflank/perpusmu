@@ -147,7 +147,7 @@ public class Dashboard1 extends javax.swing.JPanel {
 
     private static void jumlahtransaksihariini() {
         try {
-            String sql = "SELECT COUNT(kode_peminjaman) AS jumlah_transaksi_hari_ini FROM detail_peminjaman WHERE DATE(tanggal_peminjaman) = CURDATE();";
+            String sql = "SELECT COUNT(DISTINCT kode_peminjaman) AS jumlah_transaksi_hari_ini FROM detail_peminjaman WHERE DATE(tanggal_peminjaman) = CURDATE();";
             java.sql.Connection con = (Connection) Config.configDB();
             java.sql.Statement stm = con.createStatement();
             java.sql.ResultSet res = stm.executeQuery(sql);
