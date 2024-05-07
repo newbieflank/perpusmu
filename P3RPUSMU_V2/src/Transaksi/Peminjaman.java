@@ -1180,7 +1180,7 @@ public class Peminjaman extends javax.swing.JPanel {
                 String tanggalkembaliFormatted = dateFormat.format(tanggalkembali);
 
                 // Tambahkan baris baru ke dalam tabel
-                Object[] row = {kodepeminjaman, tanggalpinjamFormatted, tanggalkembaliFormatted, nama, judulbuku, totalpeminjaman, username};
+                Object[] row = {kodepeminjaman, tanggalpinjamFormatted, tanggalkembaliFormatted, nama,  totalpeminjaman,judulbuku, username};
                 model.addRow(row);
                 clear();
             }
@@ -1250,10 +1250,10 @@ public class Peminjaman extends javax.swing.JPanel {
                     boolean stokCukup = true; // Menandakan apakah stok cukup untuk semua baris
                     for (int i = 0; i < model.getRowCount(); i++) {
                         String kodePeminjaman = model.getValueAt(i, 0).toString();
-                        String totalPeminjamanStr = model.getValueAt(i, 5).toString();
+                        String totalPeminjamanStr = model.getValueAt(i, 4).toString();
                         String tanggalpinjam = model.getValueAt(i, 1).toString();
                         String tanggalkembali = model.getValueAt(i, 2).toString();
-                        String kodeBuku = model.getValueAt(i, 4).toString();
+                        String kodeBuku = model.getValueAt(i, 5).toString();
 
                         // Pengecekan stok buku
                         int jumlahPeminjaman = Integer.parseInt(totalPeminjamanStr);
