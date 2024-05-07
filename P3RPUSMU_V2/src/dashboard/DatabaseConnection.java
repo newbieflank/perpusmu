@@ -23,7 +23,7 @@ public class DatabaseConnection {
     public void connectToDatabase() throws SQLException {
         String server = "localhost";
         String port = "3306";
-        String database = "perpusmu_v2";
+        String database = "perpusmu";
         connection = java.sql.DriverManager.getConnection("jdbc:mysql://" + server + ":" + port + "/" + database  );
     }
 
