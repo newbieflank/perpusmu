@@ -41,8 +41,39 @@ public class Login extends javax.swing.JFrame {
         hide.setVisible(false);
         txt_username.requestFocusInWindow();
     }
-    
-     private void readRFID() {
+
+    private void logid(String id) {
+        String sql = "select username, password, status from users where ID_users = '" + id + "'";
+        try {
+            pst = con.prepareStatement(sql);
+            rs = pst.executeQuery();
+            if (rs.next()) {
+
+                txt_username.setText(rs.getString("username"));
+                txt_password.setText(rs.getString("password"));
+
+                String status = rs.getString("status");
+                if (status.equals("admin")) {
+                    Navbar admin = new Navbar();
+                    admin.setVisible(true);
+                    this.dispose();
+                } else {
+                    Navbar admin = new Navbar();
+                    // Menonaktifkan tombol admin di Navbar
+                    Navbar.admin.setEnabled(false);
+
+                    this.dispose();
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "ID Tidak terdaftar");
+            }
+
+        } catch (Exception e) {
+            System.out.println("logID" + e);
+        }
+    }
+
+    private void readRFID() {
         // Inisialisasi context untuk Smart Card IO API
         CardTerminals terminals = TerminalFactory.getDefault().terminals();
 
@@ -155,6 +186,9 @@ public class Login extends javax.swing.JFrame {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txt_usernameKeyPressed(evt);
             }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txt_usernameKeyTyped(evt);
+            }
         });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -212,9 +246,6 @@ public class Login extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(54, 54, 54)
-                        .addComponent(btn_login, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(84, 84, 84)
                         .addComponent(jButton1))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -223,7 +254,10 @@ public class Login extends javax.swing.JFrame {
                             .addComponent(jLabel3)
                             .addComponent(jLabel4)
                             .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(54, 54, 54)
+                        .addComponent(btn_login, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -394,11 +428,11 @@ public class Login extends javax.swing.JFrame {
                     admin.setVisible(true);
                     this.dispose();
                 } else {
-                Navbar admin = new Navbar();    
+                    Navbar admin = new Navbar();
                     // Menonaktifkan tombol admin di Navbar
-                Navbar.admin.setEnabled(false);
-                
-                this.dispose();
+                    Navbar.admin.setEnabled(false);
+
+                    this.dispose();
                 }
             } else {
                 // Username atau password tidak cocok
@@ -459,11 +493,20 @@ public class Login extends javax.swing.JFrame {
 
     private void txt_passwordKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_passwordKeyPressed
         // TODO add your handling code here:
-         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             // Jika tombol Enter ditekan, tekan tombol jButton2
             btn_login.doClick();
         }
     }//GEN-LAST:event_txt_passwordKeyPressed
+
+    private void txt_usernameKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_usernameKeyTyped
+        // TODO add your handling code here:
+        String id = txt_username.getText();
+        if (id.length() == 10) {
+            logid(id);
+            System.out.println("ANj");
+        }
+    }//GEN-LAST:event_txt_usernameKeyTyped
 
     /**
      * @param args the command line arguments
@@ -501,7 +544,6 @@ public class Login extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Login().setVisible(true);
