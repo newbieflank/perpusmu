@@ -16,7 +16,7 @@ public class koneksi {
     public static Connection Koneksi(){
         try{
 //            con = DriverManager.getConnection("jdbc:mysql://localhost:3307/dashboard","admin","BlueRose12");
-           con = DriverManager.getConnection("jdbc:mysql://localhost:3306/perpusmu?zeroDateTimeBehavior=convertToNull","root",null);
+           con = DriverManager.getConnection("jdbc:mysql://localhost:3306/perpusmu","root",null);
         }catch(Exception e){
             System.out.println(e);
         }
