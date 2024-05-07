@@ -50,6 +50,7 @@ public class Login extends javax.swing.JFrame {
             if (rs.next()) {
 
                 txt_username.setText(rs.getString("username"));
+                username1 = rs.getString("username");
                 txt_password.setText(rs.getString("password"));
 
                 String status = rs.getString("status");
