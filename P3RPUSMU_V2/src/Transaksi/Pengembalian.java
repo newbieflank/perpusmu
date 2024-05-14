@@ -1233,194 +1233,223 @@ public class Pengembalian extends javax.swing.JPanel {
 
     private void btn_tambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tambahActionPerformed
         int jumlahpeminjaman = (int) spinner_pinjam.getValue();
-        String kodebuku = txt_judul_buku.getText();
-        String kodepeminjaman = txt_kode_peminjaman.getText();
-        String kodepengembalian = txt_kode_pengembalian.getText();
-        String petugas = txt_petugas.getText();
+    String kodebuku = txt_judul_buku.getText();
+    String kodepeminjaman = txt_kode_peminjaman.getText();
+    String kodepengembalian = txt_kode_pengembalian.getText();
+    String petugas = txt_petugas.getText();
 
-        String kondisiBukuStatus;
-        if (jumlahpeminjaman != 0) {
-            kondisiBukuStatus = "Dipinjam";
-        } else {
-            kondisiBukuStatus = "Kembali";
+    String kondisiBukuStatus;
+    if (jumlahpeminjaman != 0) {
+        kondisiBukuStatus = "Dipinjam";
+    } else {
+        kondisiBukuStatus = "Kembali";
+    }
+
+    String kondisikembali;
+
+    // Mengganti kondisikembali sesuai dengan nilai spinner_baik, spinner_rusak, atau spinner_hilang
+    if (spinner_baik.isEnabled()) {
+        kondisikembali = "Baik";
+    } else if (spinner_rusak.isEnabled()) {
+        kondisikembali = "Rusak";
+    } else {
+        kondisikembali = "Hilang";
+    }
+    // Mendapatkan nilai dari semua spinners
+    int nilaiSpinnerBaik = (int) spinner_baik.getValue();
+    int nilaiSpinnerRusak = (int) spinner_rusak.getValue();
+    int nilaiSpinnerHilang = (int) spinner_hilang.getValue();
+
+    // Menghitung total pinjaman
+    int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
+    String kodebuku1 = txt_judul_buku.getText();
+    String denda = txt_denda_total.getText();
+    String nama = txt_nama.getText();
+
+    try {
+        con.setAutoCommit(false); // Mulai transaksi
+
+        // Update detail peminjaman
+        String sqlUpdate = "UPDATE detail_peminjaman SET status_peminjaman = ?, jumlah_peminjaman = ? WHERE kode_peminjaman = ? AND No_buku = (SELECT No_buku FROM buku WHERE judul_buku = ?)";
+        try (PreparedStatement pstUpdate = con.prepareStatement(sqlUpdate)) {
+            pstUpdate.setString(1, kondisiBukuStatus);
+            pstUpdate.setInt(2, jumlahpeminjaman);
+            pstUpdate.setString(3, kodepeminjaman);
+            pstUpdate.setString(4, kodebuku);
+            masuktabelpending();
+            int rowsAffected = pstUpdate.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("Update gagal. Tidak ada baris yang terpengaruh.");
+            }
         }
 
-        String kondisikembali;
-
-        // Mengganti kondisikembali sesuai dengan nilai spinner_baik, spinner_rusak, atau spinner_hilang
-        if (spinner_baik.isEnabled()) {
-            kondisikembali = "Baik";
-        } else if (spinner_rusak.isEnabled()) {
-            kondisikembali = "Rusak";
-        } else {
-            kondisikembali = "Hilang";
+        // Insert data ke tabel 'pengembalian'
+        String sqlInsertPengembalian = "INSERT INTO pengembalian (kode_pengembalian, kode_peminjaman, ID_users) VALUES (?, ?, (SELECT ID_users FROM users WHERE username = ? LIMIT 1))";
+        try (PreparedStatement pstInsertPengembalian = con.prepareStatement(sqlInsertPengembalian)) {
+            pstInsertPengembalian.setString(1, kodepengembalian);
+            pstInsertPengembalian.setString(2, kodepeminjaman);
+            pstInsertPengembalian.setString(3, petugas);
+            pstInsertPengembalian.executeUpdate();
         }
-        // Mendapatkan nilai dari semua spinners
-        int nilaiSpinnerBaik = (int) spinner_baik.getValue();
-        int nilaiSpinnerRusak = (int) spinner_rusak.getValue();
 
-// Menghitung total pinjaman
-        int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
-        String kodebuku1 = txt_judul_buku.getText();
-        String denda = txt_denda_total.getText();
-        String nama = txt_nama.getText();
+        // Insert data ke tabel 'detail_pengembalian'
+        String sqlInsertDetailPengembalian = "INSERT INTO detail_pengembalian VALUES (?, ?, ?, ?, ?, ?, (SELECT No_buku FROM buku WHERE judul_buku = ? LIMIT 1), ?, (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1))";
+        try (PreparedStatement pstInsertDetailPengembalian = con.prepareStatement(sqlInsertDetailPengembalian)) {
+            // Set status menjadi "Kembali" untuk semua data yang diinsert ke detail_pengembalian
+            String statusDetailPengembalian = "Kembali";
 
-        try {
-            con.setAutoCommit(false); // Mulai transaksi
+            // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
+            Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
+            Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
 
-            // Update detail peminjaman
-            String sqlUpdate = "UPDATE detail_peminjaman SET status_peminjaman = ?, jumlah_peminjaman = ? WHERE kode_peminjaman = ? AND No_buku = (SELECT No_buku FROM buku WHERE judul_buku = ?)";
-            try (PreparedStatement pstUpdate = con.prepareStatement(sqlUpdate)) {
-                pstUpdate.setString(1, kondisiBukuStatus);
-                pstUpdate.setInt(2, jumlahpeminjaman);
-                pstUpdate.setString(3, kodepeminjaman);
-                pstUpdate.setString(4, kodebuku);
-                masuktabelpending();
-                int rowsAffected = pstUpdate.executeUpdate();
-                if (rowsAffected == 0) {
-                    throw new SQLException("Update gagal. Tidak ada baris yang terpengaruh.");
-                }
-            }
+            // Mendapatkan status waktu kembali berdasarkan perbandingan tanggal
+            String waktupengembalian;
+            if (tanggalKembaliAwal != null && tanggalKembaliAkhir != null) {
+                // Mengubah tanggal menjadi string hanya dengan format tanggal (tanpa jam)
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                String tanggalAwal = sdf.format(tanggalKembaliAwal);
+                String tanggalAkhir = sdf.format(tanggalKembaliAkhir);
 
-            // Insert data ke tabel 'pengembalian'
-            String sqlInsertPengembalian = "INSERT INTO pengembalian (kode_pengembalian, kode_peminjaman, ID_users) VALUES (?, ?, (SELECT ID_users FROM users WHERE username = ?LIMIT 1))";
-            try (PreparedStatement pstInsertPengembalian = con.prepareStatement(sqlInsertPengembalian)) {
-                pstInsertPengembalian.setString(1, kodepengembalian);
-                pstInsertPengembalian.setString(2, kodepeminjaman);
-                pstInsertPengembalian.setString(3, petugas);
-                pstInsertPengembalian.executeUpdate();
-            }
-
-            // Insert data ke tabel 'detail_pengembalian'
-            String sqlInsertDetailPengembalian = "INSERT INTO detail_pengembalian VALUES (?, ?, ?, ?, ?, ?, (SELECT No_buku FROM buku WHERE judul_buku = ? LIMIT 1), ?, (SELECT NISN FROM anggota WHERE nama = ?LIMIT 1))";
-            try (PreparedStatement pstInsertDetailPengembalian = con.prepareStatement(sqlInsertDetailPengembalian)) {
-                // Set status menjadi "Kembali" untuk semua data yang diinsert ke detail_pengembalian
-                String statusDetailPengembalian = "Kembali";
-
-                // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
-                Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
-                Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
-
-                // Mendapatkan status waktu kembali berdasarkan perbandingan tanggal
-                String waktupengembalian;
-                if (tanggalKembaliAwal != null && tanggalKembaliAkhir != null) {
-                    // Mengubah tanggal menjadi string hanya dengan format tanggal (tanpa jam)
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    String tanggalAwal = sdf.format(tanggalKembaliAwal);
-                    String tanggalAkhir = sdf.format(tanggalKembaliAkhir);
-
-                    if (tanggalAwal.equals(tanggalAkhir)) {
-                        waktupengembalian = "Tepat Waktu";
-                    } else if (tanggalKembaliAkhir.after(tanggalKembaliAwal)) {
-                        waktupengembalian = "Telat";
-                    } else {
-                        waktupengembalian = "Tepat Waktu";
-                    }
+                if (tanggalAwal.equals(tanggalAkhir)) {
+                    waktupengembalian = "Tepat Waktu";
+                } else if (tanggalKembaliAkhir.after(tanggalKembaliAwal)) {
+                    waktupengembalian = "Telat";
                 } else {
-                    waktupengembalian = "Tidak Diketahui";
+                    waktupengembalian = "Tepat Waktu";
                 }
-
-                pstInsertDetailPengembalian.setString(1, kodepengembalian);
-                pstInsertDetailPengembalian.setString(2, statusDetailPengembalian);
-                pstInsertDetailPengembalian.setString(3, waktupengembalian);
-                pstInsertDetailPengembalian.setString(4, kondisikembali);
-                java.sql.Date tanggalPinjamSQL = new java.sql.Date(tanggal_pinjam.getDate().getTime());
-                pstInsertDetailPengembalian.setDate(5, tanggalPinjamSQL);
-                pstInsertDetailPengembalian.setInt(6, totalPeminjaman);
-                pstInsertDetailPengembalian.setString(7, kodebuku1);
-                pstInsertDetailPengembalian.setString(8, denda);
-                pstInsertDetailPengembalian.setString(9, nama);
-                pstInsertDetailPengembalian.executeUpdate();
+            } else {
+                waktupengembalian = "Tidak Diketahui";
             }
 
-            // Tambahkan logika untuk memasukkan data ke tabel 'denda' jika jumlah denda tidak sama dengan nol
-            if (!denda.equals("0")) {
-                // Cek apakah ada entri denda dengan NISN yang sama
-                String sqlCheckExistingDenda = "SELECT COUNT(*) FROM denda WHERE NISN = (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1)";
-                try (PreparedStatement pstCheckExistingDenda = con.prepareStatement(sqlCheckExistingDenda)) {
-                    pstCheckExistingDenda.setString(1, nama); // Gunakan NISN atau nama sesuai kebutuhan Anda
-                    ResultSet rs = pstCheckExistingDenda.executeQuery();
-                    rs.next();
-                    int rowCount = rs.getInt(1);
-                    if (rowCount > 0) {
-                        // Jika ada, update jumlah denda yang ada dengan jumlah denda yang baru ditambahkan
-                        String sqlUpdateDenda = "UPDATE denda SET jumlah_denda = jumlah_denda + ? WHERE NISN = (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1)";
-                        try (PreparedStatement pstUpdateDenda = con.prepareStatement(sqlUpdateDenda)) {
-                            pstUpdateDenda.setString(1, denda);
-                            pstUpdateDenda.setString(2, nama); // Gunakan NISN atau nama sesuai kebutuhan Anda
-                            pstUpdateDenda.executeUpdate();
-                        }
-                    } else {
-                        // Jika tidak ada, masukkan data baru ke tabel 'denda'
-                        String sqlInsertDenda = "INSERT INTO denda (jumlah_denda, status_denda, total_pembayaran, NISN, No_buku, kode_pengembalian) VALUES (?, ?, ?, (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1), (SELECT No_buku FROM buku WHERE judul_buku = ? LIMIT 1), ?)";
-                        try (PreparedStatement pstInsertDenda = con.prepareStatement(sqlInsertDenda)) {
-                            pstInsertDenda.setString(1, denda);
-                            pstInsertDenda.setString(2, "Belum Lunas"); // Mengasumsikan status awal adalah 'Belum Lunas'
-                            pstInsertDenda.setString(3, "0"); // Mengasumsikan total_pembayaran awal sama dengan jumlah_denda
-                            pstInsertDenda.setString(4, nama);
-                            pstInsertDenda.setString(5, kodebuku1);
-                            pstInsertDenda.setString(6, kodepengembalian);
-                            pstInsertDenda.executeUpdate();
-                        }
-                    }
-                }
-            }
+            pstInsertDetailPengembalian.setString(1, kodepengembalian);
+            pstInsertDetailPengembalian.setString(2, statusDetailPengembalian);
+            pstInsertDetailPengembalian.setString(3, waktupengembalian);
+            pstInsertDetailPengembalian.setString(4, kondisikembali);
+            java.sql.Date tanggalPinjamSQL = new java.sql.Date(tanggal_pinjam.getDate().getTime());
+            pstInsertDetailPengembalian.setDate(5, tanggalPinjamSQL);
+            pstInsertDetailPengembalian.setInt(6, totalPeminjaman);
+            pstInsertDetailPengembalian.setString(7, kodebuku1);
+            pstInsertDetailPengembalian.setString(8, denda);
+            pstInsertDetailPengembalian.setString(9, nama);
+            pstInsertDetailPengembalian.executeUpdate();
+        }
 
-            // Jika tabel 'denda' kosong, atur ID_denda ke 1
-            String sqlCheckEmptyDenda = "SELECT COUNT(*) FROM denda";
-            try (PreparedStatement pstCheckEmptyDenda = con.prepareStatement(sqlCheckEmptyDenda)) {
-                ResultSet rs = pstCheckEmptyDenda.executeQuery();
+        // Tambahkan logika untuk memasukkan data ke tabel 'denda' jika jumlah denda tidak sama dengan nol
+        if (!denda.equals("0")) {
+            // Cek apakah ada entri denda dengan NISN yang sama
+            String sqlCheckExistingDenda = "SELECT COUNT(*) FROM denda WHERE NISN = (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1)";
+            try (PreparedStatement pstCheckExistingDenda = con.prepareStatement(sqlCheckExistingDenda)) {
+                pstCheckExistingDenda.setString(1, nama); // Gunakan NISN atau nama sesuai kebutuhan Anda
+                ResultSet rs = pstCheckExistingDenda.executeQuery();
                 rs.next();
                 int rowCount = rs.getInt(1);
-                if (rowCount == 0) {
-                    // Tabel 'denda' kosong, atur ID_denda ke 1
-                    String sqlResetID = "ALTER TABLE denda AUTO_INCREMENT = 1";
-                    try (PreparedStatement pstResetID = con.prepareStatement(sqlResetID)) {
-                        pstResetID.executeUpdate();
+                if (rowCount > 0) {
+                    // Jika ada, update jumlah denda yang ada dengan jumlah denda yang baru ditambahkan
+                    String sqlUpdateDenda = "UPDATE denda SET jumlah_denda = jumlah_denda + ? WHERE NISN = (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1)";
+                    try (PreparedStatement pstUpdateDenda = con.prepareStatement(sqlUpdateDenda)) {
+                        pstUpdateDenda.setString(1, denda);
+                        pstUpdateDenda.setString(2, nama); // Gunakan NISN atau nama sesuai kebutuhan Anda
+                        pstUpdateDenda.executeUpdate();
+                    }
+                } else {
+                    // Jika tidak ada, masukkan data baru ke tabel 'denda'
+                    String sqlInsertDenda = "INSERT INTO denda (jumlah_denda, status_denda, total_pembayaran, NISN, No_buku, kode_pengembalian) VALUES (?, ?, ?, (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1), (SELECT No_buku FROM buku WHERE judul_buku = ? LIMIT 1), ?)";
+                    try (PreparedStatement pstInsertDenda = con.prepareStatement(sqlInsertDenda)) {
+                        pstInsertDenda.setString(1, denda);
+                        pstInsertDenda.setString(2, "Belum Lunas"); // Mengasumsikan status awal adalah 'Belum Lunas'
+                        pstInsertDenda.setString(3, "0"); // Mengasumsikan total_pembayaran awal sama dengan jumlah_denda
+                        pstInsertDenda.setString(4, nama);
+                        pstInsertDenda.setString(5, kodebuku1);
+                        pstInsertDenda.setString(6, kodepengembalian);
+                        pstInsertDenda.executeUpdate();
                     }
                 }
             }
-
-            try {
-                pst = con.prepareStatement("DELETE FROM denda WHERE jumlah_denda = 0");
-                pst.execute();
-            } catch (Exception e) {
-                System.out.println("sat" + e);
-            }
-            // Mendapatkan nilai dari spinner_hilang
-            int nilaiSpinnerHilang1 = (int) spinner_hilang.getValue();
-
-// Menghitung total buku yang dikembalikan (baik dan rusak)
-            int totalBukuKembali = nilaiSpinnerBaik + nilaiSpinnerRusak;
-
-// Menambahkan stok buku dengan jumlah buku yang dikembalikan tanpa memperhatikan buku yang hilang
-            tambahStokBuku(con, totalBukuKembali, kodebuku);
-
-            // Selesai transaksi
-            con.commit();
-        } catch (SQLException e) {
-            // Tangani kesalahan dengan membatalkan transaksi jika terjadi kesalahan
-            try {
-                con.rollback();
-            } catch (SQLException rollbackException) {
-                rollbackException.printStackTrace();
-            }
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Gagal: " + e.getMessage());
-        } finally {
-            // Pastikan untuk mengatur ulang otomatis commit ke true setelah transaksi selesai atau gagal
-            try {
-                con.setAutoCommit(true);
-            } catch (SQLException autoCommitException) {
-                autoCommitException.printStackTrace();
-            }
-            JOptionPane.showMessageDialog(null, "Update berhasil");
-            masuktabelreturn();
-            id_autoincrement();
-            jDialog1.dispose();
-            load_table();
-            txt_denda_total.setText("0");
         }
+
+        // Jika tabel 'denda' kosong, atur ID_denda ke 1
+        String sqlCheckEmptyDenda = "SELECT COUNT(*) FROM denda";
+        try (PreparedStatement pstCheckEmptyDenda = con.prepareStatement(sqlCheckEmptyDenda)) {
+            ResultSet rs = pstCheckEmptyDenda.executeQuery();
+            rs.next();
+            int rowCount = rs.getInt(1);
+            if (rowCount == 0) {
+                // Tabel 'denda' kosong, atur ID_denda ke 1
+                String sqlResetID = "ALTER TABLE denda AUTO_INCREMENT = 1";
+                try (PreparedStatement pstResetID = con.prepareStatement(sqlResetID)) {
+                    pstResetID.executeUpdate();
+                }
+            }
+        }
+
+        try {
+            pst = con.prepareStatement("DELETE FROM denda WHERE jumlah_denda = 0");
+            pst.execute();
+        } catch (Exception e) {
+            System.out.println("sat" + e);
+        }
+
+        // Insert data ke tabel 'history' jika ada buku yang hilang
+        if (nilaiSpinnerHilang > 0) {
+            String sqlInsertHistory = "INSERT INTO history (id_history, id_buku, peristiwa, tanggal, harga_buku, keterangan) VALUES (?, ?, ?, ?, ?, ?)";
+            try (PreparedStatement pstInsertHistory = con.prepareStatement(sqlInsertHistory)) {
+                // Generate a random 10-digit number for id_history
+                long idHistory = (long) (Math.random() * 100000L);
+                // Get the current date
+                java.sql.Date currentDate = new java.sql.Date(System.currentTimeMillis());
+
+                // Retrieve the id_buku (No_buku) and harga from the 'buku' table based on judul_buku
+                String sqlSelectBuku = "SELECT No_buku, harga FROM buku WHERE judul_buku = ? LIMIT 1";
+                try (PreparedStatement pstSelectBuku = con.prepareStatement(sqlSelectBuku)) {
+                    pstSelectBuku.setString(1, kodebuku1);
+                    ResultSet rsBuku = pstSelectBuku.executeQuery();
+                    if (rsBuku.next()) {
+                        int noBuku = rsBuku.getInt("No_buku");
+                        int hargaBuku = rsBuku.getInt("harga");
+
+                        pstInsertHistory.setLong(1, idHistory);
+                        pstInsertHistory.setInt(2, noBuku);
+                        pstInsertHistory.setString(3, "Hilang");
+                        pstInsertHistory.setDate(4, currentDate);
+                        pstInsertHistory.setInt(5, hargaBuku);
+                        pstInsertHistory.setString(6, "Buku hilang");
+                        pstInsertHistory.executeUpdate();
+                    }
+                }
+            }
+        }
+
+        // Menghitung total buku yang dikembalikan (baik dan rusak)
+        int totalBukuKembali = nilaiSpinnerBaik + nilaiSpinnerRusak;
+
+        // Menambahkan stok buku dengan jumlah buku yang dikembalikan tanpa memperhatikan buku yang hilang
+        tambahStokBuku(con, totalBukuKembali, kodebuku);
+
+        // Selesai transaksi
+        con.commit();
+    } catch (SQLException e) {
+        // Tangani kesalahan dengan membatalkan transaksi jika terjadi kesalahan
+        try {
+            con.rollback();
+        } catch (SQLException rollbackException) {
+            rollbackException.printStackTrace();
+        }
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Gagal: " + e.getMessage());
+    } finally {
+        // Pastikan untuk mengatur ulang otomatis commit ke true setelah transaksi selesai atau gagal
+        try {
+            con.setAutoCommit(true);
+        } catch (SQLException autoCommitException) {
+            autoCommitException.printStackTrace();
+        }
+        JOptionPane.showMessageDialog(null, "Update berhasil");
+        masuktabelreturn();
+        id_autoincrement();
+        jDialog1.dispose();
+        load_table();
+        txt_denda_total.setText("0");
+    }
     }//GEN-LAST:event_btn_tambahActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
