@@ -8,62 +8,30 @@ package Transaksi;
 import Login.Config;
 import Login.Login;
 import Navbar.koneksi;
-import com.lowagie.text.pdf.Barcode;
 import java.awt.Color;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.im.InputContext;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRResultSetDataSource;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.design.JRDesignQuery;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.util.JRLoader;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.view.JasperViewer;
-import net.sourceforge.barbecue.BarcodeFactory;
-import net.sourceforge.barbecue.BarcodeImageHandler;
-import com.toedter.calendar.JDateChooser;
-import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JPanel;
 
 /**
  *
@@ -489,6 +457,11 @@ public class Peminjaman extends javax.swing.JPanel {
         tabel_anggota.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tabel_anggotaMouseClicked(evt);
+            }
+        });
+        tabel_anggota.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tabel_anggotaKeyPressed(evt);
             }
         });
         jScrollPane2.setViewportView(tabel_anggota);
@@ -1446,6 +1419,10 @@ public class Peminjaman extends javax.swing.JPanel {
     private void kd_peminjamanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_kd_peminjamanActionPerformed
 
     }//GEN-LAST:event_kd_peminjamanActionPerformed
+
+    private void tabel_anggotaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tabel_anggotaKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tabel_anggotaKeyPressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
