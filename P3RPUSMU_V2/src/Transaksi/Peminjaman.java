@@ -1194,8 +1194,8 @@ public class Peminjaman extends javax.swing.JPanel {
         // Memastikan baris yang diklik valid
         if (selectedRow != -1) {
             // Mengambil nilai dari kolom-kolom yang sesuai dari baris yang diklik
-            String judulBuku = tabel_peminjaman.getValueAt(selectedRow, 4).toString();
-            String jumlahPinjam = tabel_peminjaman.getValueAt(selectedRow, 5).toString();
+            String judulBuku = tabel_peminjaman.getValueAt(selectedRow, 5).toString();
+            String jumlahPinjam = tabel_peminjaman.getValueAt(selectedRow, 4).toString();
             String tanggalKembali = tabel_peminjaman.getValueAt(selectedRow, 2).toString();
 
             // Menetapkan nilai-nilai yang diambil ke dalam komponen-komponen yang sesuai
