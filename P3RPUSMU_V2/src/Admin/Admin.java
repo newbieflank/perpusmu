@@ -119,6 +119,22 @@ public class Admin extends javax.swing.JPanel {
             System.out.println("searchTable" + e);
         }
     }
+    
+    // Method untuk memeriksa apakah sudah ada pengguna dengan status admin
+private boolean alreadyHasAdmin() {
+    boolean hasAdmin = false;
+    try {
+        pst = con.prepareStatement("SELECT COUNT(*) FROM users WHERE status = 'Admin'");
+        rs = pst.executeQuery();
+        if (rs.next()) {
+            int adminCount = rs.getInt(1);
+            hasAdmin = (adminCount > 0);
+        }
+    } catch (SQLException e) {
+        System.out.println("Error while checking admin status: " + e);
+    }
+    return hasAdmin;
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -478,12 +494,19 @@ public class Admin extends javax.swing.JPanel {
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         // TODO add your handling code here:
         dial_id.setText(null);
-        dial_username.setText(null);
-        dial_password.setText(null);
-        dial_status.setSelectedItem(this);
+    dial_username.setText(null);
+    dial_password.setText(null);
+    
+    // Menghapus semua item sebelum menambahkan "Petugas" jika sudah ada admin
+    if (alreadyHasAdmin()) {
+        dial_status.removeAllItems();
+        dial_status.addItem("Petugas");
+    } else {
+        dial_status.setSelectedItem(null); // Atau tidak mengatur apa-apa jika tidak ada admin
+    }
 
-        dial_id.setEnabled(true);
-        jDialog1.setVisible(true);
+    dial_id.setEnabled(true);
+    jDialog1.setVisible(true);
     }//GEN-LAST:event_addButtonActionPerformed
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
