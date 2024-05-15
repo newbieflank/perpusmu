@@ -185,13 +185,12 @@ public class Pengembalian extends javax.swing.JPanel {
         model.addColumn("Jumlah Pinjam");
         model.addColumn("Kode Buku");
         model.addColumn("Judul Buku");
-        model.addColumn("Status Peminjaman");
 
         try {
             loadtable2();
             pst = con.prepareStatement("delete from detail_peminjaman where jumlah_peminjaman = 0");
             pst.execute();
-            String sql = "SELECT peminjaman.kode_peminjaman, anggota.nama, users.username, detail_peminjaman.tanggal_peminjaman, detail_peminjaman.tanggal_kembali, detail_peminjaman.jumlah_peminjaman, buku.kode_buku, buku.judul_buku, detail_peminjaman.status_peminjaman FROM peminjaman JOIN users ON peminjaman.id_users = users.id_users JOIN detail_peminjaman ON peminjaman.kode_peminjaman = detail_peminjaman.kode_peminjaman JOIN buku ON detail_peminjaman.No_buku = buku.No_buku JOIN anggota ON peminjaman.NISN = anggota.NISN;";
+            String sql = "SELECT peminjaman.kode_peminjaman, anggota.nama, users.username, detail_peminjaman.tanggal_peminjaman, detail_peminjaman.tanggal_kembali, detail_peminjaman.jumlah_peminjaman, buku.kode_buku, buku.judul_buku FROM peminjaman JOIN users ON peminjaman.id_users = users.id_users JOIN detail_peminjaman ON peminjaman.kode_peminjaman = detail_peminjaman.kode_peminjaman JOIN buku ON detail_peminjaman.No_buku = buku.No_buku JOIN anggota ON peminjaman.NISN = anggota.NISN;";
 
             Statement stm = con.createStatement();
             ResultSet res = stm.executeQuery(sql);
@@ -214,7 +213,7 @@ public class Pengembalian extends javax.swing.JPanel {
                     res.getString("jumlah_peminjaman"), // Pastikan nama kolom sesuai dengan hasil query
                     res.getString("kode_buku"),
                     res.getString("judul_buku"),
-                    res.getString("status_peminjaman"),});
+                    });
             }
 
             // Set model untuk tabel_pengembalian
@@ -1259,6 +1258,11 @@ public class Pengembalian extends javax.swing.JPanel {
     int nilaiSpinnerBaik = (int) spinner_baik.getValue();
     int nilaiSpinnerRusak = (int) spinner_rusak.getValue();
     int nilaiSpinnerHilang = (int) spinner_hilang.getValue();
+     // Periksa apakah salah satu dari spinner_baik, spinner_rusak, atau spinner_hilang kosong
+    if (nilaiSpinnerBaik == 0 && nilaiSpinnerRusak == 0 && nilaiSpinnerHilang == 0) {
+        JOptionPane.showMessageDialog(null, "Harap isi jumlah pengembalian terlebih dahulu.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        return; // Menghentikan eksekusi metode jika salah satu spinner kosong
+    }
 
     // Menghitung total pinjaman
     int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
@@ -1449,6 +1453,7 @@ public class Pengembalian extends javax.swing.JPanel {
         jDialog1.dispose();
         load_table();
         txt_denda_total.setText("0");
+        txt_search.requestFocusInWindow();
     }
     }//GEN-LAST:event_btn_tambahActionPerformed
 
@@ -1460,6 +1465,7 @@ public class Pengembalian extends javax.swing.JPanel {
 
         jDialog1.dispose();
         load_table();
+        txt_search.requestFocusInWindow();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void txt_judul_bukuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_judul_bukuActionPerformed
@@ -1484,7 +1490,7 @@ public class Pengembalian extends javax.swing.JPanel {
 
     private void txt_searchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_searchKeyReleased
         String keyword = txt_search.getText().trim();
-        String sql = "SELECT peminjaman.kode_peminjaman,anggota.nama,users.username,detail_peminjaman.tanggal_peminjaman,detail_peminjaman.tanggal_kembali, detail_peminjaman.jumlah_peminjaman, buku.kode_buku,buku.judul_buku FROM peminjaman LEFT JOIN detail_peminjaman ON peminjaman.kode_peminjaman = detail_peminjaman.kode_peminjaman LEFT JOIN anggota ON peminjaman.NISN = anggota.NISN LEFT JOIN buku ON detail_peminjaman.No_buku = buku.No_buku LEFT JOIN users ON peminjaman.ID_users = users.ID_users WHERE peminjaman.kode_peminjaman LIKE '%" + keyword + "%'";
+        String sql = "SELECT peminjaman.kode_peminjaman, anggota.nama, users.username, detail_peminjaman.tanggal_peminjaman, detail_peminjaman.tanggal_kembali, detail_peminjaman.jumlah_peminjaman, buku.kode_buku, buku.judul_buku FROM peminjaman INNER JOIN detail_peminjaman ON peminjaman.kode_peminjaman = detail_peminjaman.kode_peminjaman LEFT JOIN anggota ON peminjaman.NISN = anggota.NISN LEFT JOIN buku ON detail_peminjaman.No_buku = buku.No_buku LEFT JOIN users ON peminjaman.ID_users = users.ID_users WHERE peminjaman.kode_peminjaman LIKE '%" + keyword + "%'";
 
         try {
 //            java.sql.Connection con = (java.sql.Connection) Config.configDB();
@@ -1776,7 +1782,7 @@ public class Pengembalian extends javax.swing.JPanel {
     }//GEN-LAST:event_spinner_hilangAncestorAdded
 
     private void txt_searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_searchActionPerformed
-
+txt_search.requestFocusInWindow();
     }//GEN-LAST:event_txt_searchActionPerformed
 
     private void txt_searchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_searchKeyPressed

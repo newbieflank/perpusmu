@@ -782,6 +782,11 @@ private boolean judulBukuSudahDipinjam(String judulBuku) {
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
             }
         });
+        tanggal_kembali.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tanggal_kembaliMouseClicked(evt);
+            }
+        });
 
         jLabel1.setText("F2");
 
@@ -1177,6 +1182,7 @@ private boolean judulBukuSudahDipinjam(String judulBuku) {
             Object[] row = {kodepeminjaman, tanggalpinjamFormatted, tanggalkembaliFormatted, nama,  totalpeminjaman,judulbuku, username};
             model.addRow(row);
             clear();
+            txt_kode_buku.requestFocusInWindow();
         }
     }
     }//GEN-LAST:event_jButton20ActionPerformed
@@ -1283,6 +1289,7 @@ private boolean judulBukuSudahDipinjam(String judulBuku) {
                         kosong();
                         refresh();
                         clear3();
+                        txt_nisn.requestFocusInWindow();
                         // Tampilkan panel cetak
                         panel_print1.setVisible(true);
                         conn.close(); // Menutup koneksi setelah selesai menggunakan
@@ -1425,7 +1432,13 @@ private boolean judulBukuSudahDipinjam(String judulBuku) {
 
     private void tanggal_kembaliAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_tanggal_kembaliAncestorAdded
         // TODO add your handling code here:
+         if (!txt_nisn.getText().isEmpty()) {
+        // Jika txt_nisn sudah memiliki nilai, pindahkan fokus ke txt_kode_buku
+        txt_kode_buku.requestFocusInWindow();
+    } else {
+        // Jika txt_nisn belum memiliki nilai, biarkan fokus tetap pada txt_nisn
         txt_nisn.requestFocusInWindow();
+    }
     }//GEN-LAST:event_tanggal_kembaliAncestorAdded
 
     private void jButton5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton5MouseClicked
@@ -1456,6 +1469,10 @@ private boolean judulBukuSudahDipinjam(String judulBuku) {
         JOptionPane.showMessageDialog(null, "Hanya Bisa di isi dengan Angka");
     }
     }//GEN-LAST:event_txt_jumlah_pinjamKeyTyped
+
+    private void tanggal_kembaliMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tanggal_kembaliMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tanggal_kembaliMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
