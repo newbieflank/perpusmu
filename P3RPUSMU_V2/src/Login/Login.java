@@ -432,9 +432,12 @@ public class Login extends javax.swing.JFrame {
                     Navbar admin = new Navbar();
                     // Menonaktifkan tombol admin di Navbar
                     Navbar.admin.setEnabled(false);
+                    // Mengubah teks label menjadi "PETUGAS"
+                    admin.setIconText("Petugas");
 
                     this.dispose();
                 }
+
             } else {
                 // Username atau password tidak cocok
                 failedAttempts++; // Tambahkan jumlah percobaan gagal

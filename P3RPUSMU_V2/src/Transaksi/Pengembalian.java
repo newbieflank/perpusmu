@@ -1284,7 +1284,7 @@ public class Pengembalian extends javax.swing.JPanel {
         }
 
         // Insert data ke tabel 'pengembalian'
-        String sqlInsertPengembalian = "INSERT INTO pengembalian (kode_pengembalian, kode_peminjaman, ID_users) VALUES (?, ?, (SELECT ID_users FROM users WHERE username = ? LIMIT 1))";
+        String sqlInsertPengembalian = "INSERT INTO pengembalian (kode_pengembalian, kode_peminjaman, ID_users) VALUES (?, ?, (SELECT ID_users FROM users WHERE username = ?LIMIT 1))";
         try (PreparedStatement pstInsertPengembalian = con.prepareStatement(sqlInsertPengembalian)) {
             pstInsertPengembalian.setString(1, kodepengembalian);
             pstInsertPengembalian.setString(2, kodepeminjaman);
@@ -1293,7 +1293,7 @@ public class Pengembalian extends javax.swing.JPanel {
         }
 
         // Insert data ke tabel 'detail_pengembalian'
-        String sqlInsertDetailPengembalian = "INSERT INTO detail_pengembalian VALUES (?, ?, ?, ?, ?, ?, (SELECT No_buku FROM buku WHERE judul_buku = ? LIMIT 1), ?, (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1))";
+        String sqlInsertDetailPengembalian = "INSERT INTO detail_pengembalian VALUES (?, ?, ?, ?, ?, ?, (SELECT No_buku FROM buku WHERE judul_buku = ? LIMIT 1), ?, (SELECT NISN FROM anggota WHERE nama = ?LIMIT 1))";
         try (PreparedStatement pstInsertDetailPengembalian = con.prepareStatement(sqlInsertDetailPengembalian)) {
             // Set status menjadi "Kembali" untuk semua data yang diinsert ke detail_pengembalian
             String statusDetailPengembalian = "Kembali";
@@ -1601,14 +1601,19 @@ public class Pengembalian extends javax.swing.JPanel {
     private void spinner_baikStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spinner_baikStateChanged
         // TODO add your handling code here:  
         // Mendapatkan nilai spinner_baik yang baru
-        int nilaiSpinnerBaikBaru = (int) spinner_baik.getValue();
+    int nilaiSpinnerBaikBaru = (int) spinner_baik.getValue();
 
-        // Menghitung perubahan nilai spinner_baik
-        int perubahanNilai = nilaiSpinnerBaikBaru - nilaiSpinnerBaikSebelumnya;
+    // Menghitung perubahan nilai spinner_baik
+    int perubahanNilai = nilaiSpinnerBaikBaru - nilaiSpinnerBaikSebelumnya;
 
-        // Mendapatkan nilai spinner_pinjam
-        int nilaiSpinnerPinjam = (int) spinner_pinjam.getValue();
+    // Mendapatkan nilai spinner_pinjam
+    int nilaiSpinnerPinjam = (int) spinner_pinjam.getValue();
 
+    // Jika nilai spinner_pinjam adalah 0, maka spinner_baik tidak bisa naik lagi
+    if (nilaiSpinnerPinjam == 0 && perubahanNilai > 0) {
+        // Mengembalikan nilai spinner_baik ke nilai sebelumnya
+        spinner_baik.setValue(nilaiSpinnerBaikSebelumnya);
+    } else {
         // Menyesuaikan nilai spinner_pinjam berdasarkan perubahan nilai spinner_baik
         spinner_pinjam.setValue(nilaiSpinnerPinjam - perubahanNilai);
 
@@ -1635,19 +1640,25 @@ public class Pengembalian extends javax.swing.JPanel {
             baik.setText(String.valueOf(nilaiSpinnerBaikBaru * 1000));
         }
         updateTotalDenda();
+    }
     }//GEN-LAST:event_spinner_baikStateChanged
 
     private void spinner_rusakStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spinner_rusakStateChanged
         // TODO add your handling code here:
         // Mendapatkan nilai spinner_rusak yang baru
-        int nilaiSpinnerRusakBaru = (int) spinner_rusak.getValue();
+    int nilaiSpinnerRusakBaru = (int) spinner_rusak.getValue();
 
-        // Menghitung perubahan nilai spinner_rusak
-        int perubahanNilai = nilaiSpinnerRusakBaru - nilaiSpinnerRusakSebelumnya;
+    // Menghitung perubahan nilai spinner_rusak
+    int perubahanNilai = nilaiSpinnerRusakBaru - nilaiSpinnerRusakSebelumnya;
 
-        // Mendapatkan nilai spinner_pinjam
-        int nilaiSpinnerPinjam = (int) spinner_pinjam.getValue();
+    // Mendapatkan nilai spinner_pinjam
+    int nilaiSpinnerPinjam = (int) spinner_pinjam.getValue();
 
+    // Jika nilai spinner_pinjam adalah 0, maka spinner_rusak tidak bisa naik lagi
+    if (nilaiSpinnerPinjam == 0 && perubahanNilai > 0) {
+        // Mengembalikan nilai spinner_rusak ke nilai sebelumnya
+        spinner_rusak.setValue(nilaiSpinnerRusakSebelumnya);
+    } else {
         // Menyesuaikan nilai spinner_pinjam berdasarkan perubahan nilai spinner_rusak
         spinner_pinjam.setValue(nilaiSpinnerPinjam - perubahanNilai);
 
@@ -1689,19 +1700,25 @@ public class Pengembalian extends javax.swing.JPanel {
             rusak.setText(String.valueOf(totalDendaRusak));
         }
         updateTotalDenda();
+    }
     }//GEN-LAST:event_spinner_rusakStateChanged
 
     private void spinner_hilangStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spinner_hilangStateChanged
         // TODO add your handling code here:
         // Mendapatkan nilai spinner_hilang yang baru
-        int nilaiSpinnerHilangBaru = (int) spinner_hilang.getValue();
+    int nilaiSpinnerHilangBaru = (int) spinner_hilang.getValue();
 
-        // Menghitung perubahan nilai spinner_hilang
-        int perubahanNilai = nilaiSpinnerHilangBaru - nilaiSpinnerHilangSebelumnya;
+    // Menghitung perubahan nilai spinner_hilang
+    int perubahanNilai = nilaiSpinnerHilangBaru - nilaiSpinnerHilangSebelumnya;
 
-        // Mendapatkan nilai spinner_pinjam
-        int nilaiSpinnerPinjam = (int) spinner_pinjam.getValue();
+    // Mendapatkan nilai spinner_pinjam
+    int nilaiSpinnerPinjam = (int) spinner_pinjam.getValue();
 
+    // Jika nilai spinner_pinjam adalah 0, maka spinner_hilang tidak bisa naik lagi
+    if (nilaiSpinnerPinjam == 0 && perubahanNilai > 0) {
+        // Mengembalikan nilai spinner_hilang ke nilai sebelumnya
+        spinner_hilang.setValue(nilaiSpinnerHilangSebelumnya);
+    } else {
         // Menyesuaikan nilai spinner_pinjam berdasarkan perubahan nilai spinner_hilang
         spinner_pinjam.setValue(nilaiSpinnerPinjam - perubahanNilai);
 
@@ -1733,17 +1750,17 @@ public class Pengembalian extends javax.swing.JPanel {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             String tanggalAwal = sdf.format(tanggalKembaliAwal);
             String tanggalAkhir = sdf.format(tanggalKembaliAkhir);
-            // Tidak terlambat, nilai txt_rusak diisi dengan 0
-            // Tidak terlambat, nilai txt_rusak diisi dengan kondisi_rusak
+            // Tidak terlambat, nilai txt_hilang diisi dengan kondisi_hilang
             hilang.setText(kondisi_hilang.getText());
         } else {
-            // Jika terlambat, nilai txt_rusak diisi dengan jumlah kondisi_rusak dan telat_rusak
+            // Jika terlambat, nilai txt_hilang diisi dengan jumlah kondisi_hilang dan telat_hilang
             int dendaTelat = Integer.parseInt(telat_hilang.getText());
             int dendaKondisi = Integer.parseInt(kondisi_hilang.getText());
-            int totalDendaRusak = dendaTelat + dendaKondisi;
-            hilang.setText(String.valueOf(totalDendaRusak));
+            int totalDendaHilang = dendaTelat + dendaKondisi;
+            hilang.setText(String.valueOf(totalDendaHilang));
         }
         updateTotalDenda();
+    }
     }//GEN-LAST:event_spinner_hilangStateChanged
 
     private void spinner_baikAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_spinner_baikAncestorAdded

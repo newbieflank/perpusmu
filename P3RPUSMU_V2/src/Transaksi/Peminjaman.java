@@ -705,6 +705,9 @@ public class Peminjaman extends javax.swing.JPanel {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txt_jumlah_pinjamKeyPressed(evt);
             }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txt_jumlah_pinjamKeyTyped(evt);
+            }
         });
 
         txt_kode_buku.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
@@ -1055,6 +1058,9 @@ public class Peminjaman extends javax.swing.JPanel {
         txt_nisn.setText(nama);
         txt_anggota.setText(nisn);
         menu.setVisible(false);
+        
+        // Menjadikan txt_kode_buku memiliki fokus
+        txt_kode_buku.requestFocus();
     }//GEN-LAST:event_tabel_anggotaMouseClicked
 
     private void tabel_bukuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabel_bukuMouseClicked
@@ -1066,6 +1072,7 @@ public class Peminjaman extends javax.swing.JPanel {
         txt_kode_buku.setText(kode_buku);
         txt_judul_buku.setText(judul_buku);
         menu2.setVisible(false);
+        txt_jumlah_pinjam.requestFocus();
     }//GEN-LAST:event_tabel_bukuMouseClicked
 
     private void txt_kode_bukuKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_kode_bukuKeyReleased
@@ -1423,6 +1430,18 @@ public class Peminjaman extends javax.swing.JPanel {
     private void tabel_anggotaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tabel_anggotaKeyPressed
         // TODO add your handling code here:
     }//GEN-LAST:event_tabel_anggotaKeyPressed
+
+    private void txt_jumlah_pinjamKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_jumlah_pinjamKeyTyped
+        // TODO add your handling code here:
+        // Hanya mengizinkan input angka
+    char inputChar = evt.getKeyChar();
+    
+    // Jika karakter yang dimasukkan bukan angka, tolak input kecuali backspace atau delete
+    if (!Character.isDigit(inputChar) && inputChar != KeyEvent.VK_BACK_SPACE && inputChar != KeyEvent.VK_DELETE && inputChar != KeyEvent.VK_ENTER) {
+        evt.consume(); // Abaikan input
+        JOptionPane.showMessageDialog(null, "Hanya Bisa di isi dengan Angka");
+    }
+    }//GEN-LAST:event_txt_jumlah_pinjamKeyTyped
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

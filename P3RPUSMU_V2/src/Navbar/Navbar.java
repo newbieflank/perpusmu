@@ -85,6 +85,10 @@ public class Navbar extends javax.swing.JFrame {
         UIManager.put("OptionPane.yesButtonText", "Ya");
         UIManager.put("OptionPane.noButtonText", "Tidak");
     }
+    
+    public void setIconText(String text) {
+    icon.setText(text);
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -107,7 +111,7 @@ public class Navbar extends javax.swing.JFrame {
         admin = new javax.swing.JButton();
         denda = new javax.swing.JButton();
         Logout = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
+        icon = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(153, 153, 153));
@@ -233,11 +237,11 @@ public class Navbar extends javax.swing.JFrame {
             }
         });
 
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/icons1.png"))); // NOI18N
-        jLabel3.setText("Admin");
-        jLabel3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel3.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        icon.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        icon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/icons1.png"))); // NOI18N
+        icon.setText("Admin");
+        icon.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        icon.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
 
         javax.swing.GroupLayout navbarLayout = new javax.swing.GroupLayout(navbar);
         navbar.setLayout(navbarLayout);
@@ -263,7 +267,7 @@ public class Navbar extends javax.swing.JFrame {
                 .addGap(25, 25, 25)
                 .addComponent(Logout, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(25, 25, 25)
-                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
+                .addComponent(icon, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
                 .addGap(26, 26, 26))
         );
         navbarLayout.setVerticalGroup(
@@ -272,7 +276,7 @@ public class Navbar extends javax.swing.JFrame {
                 .addGroup(navbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(navbarLayout.createSequentialGroup()
                         .addGap(16, 16, 16)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(icon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, navbarLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(navbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -425,8 +429,8 @@ public class Navbar extends javax.swing.JFrame {
     private javax.swing.JButton buku;
     private javax.swing.JButton dashboard;
     private javax.swing.JButton denda;
+    private javax.swing.JLabel icon;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JButton laporan;
     private javax.swing.JPanel main;
