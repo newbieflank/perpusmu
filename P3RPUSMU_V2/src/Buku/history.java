@@ -47,6 +47,7 @@ public class history extends javax.swing.JPanel {
     }
 
     private void JcomboTahun() {
+        tahun.removeAllItems();
         try {
 
             pst = con.prepareStatement("SELECT DISTINCT Year(tanggal) as tahun FROM data_history;");
@@ -228,6 +229,11 @@ public class history extends javax.swing.JPanel {
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
             }
         });
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -385,7 +391,13 @@ public class history extends javax.swing.JPanel {
     private void formAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_formAncestorAdded
         // TODO add your handling code here:
         loadTabel2();
+        JcomboTahun();
     }//GEN-LAST:event_formAncestorAdded
+
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        // TODO add your handling code here:
+        loadTabel2();
+    }//GEN-LAST:event_formComponentShown
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
