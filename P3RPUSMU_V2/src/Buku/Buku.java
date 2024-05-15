@@ -19,6 +19,7 @@ import java.util.logging.Level;
 import javax.swing.JOptionPane;
 import javax.swing.table.TableModel;
 import com.mysql.cj.jdbc.result.ResultSetMetaData;
+import java.awt.event.KeyEvent;
 
 public class Buku extends javax.swing.JPanel {
 
@@ -43,6 +44,7 @@ public class Buku extends javax.swing.JPanel {
         JTabel1.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         Tambah.setSize(570, 514);
         Edit.setSize(570, 514);
+
     }
 
     private void addHistory(int harga, String kondisi) {
@@ -112,7 +114,7 @@ public class Buku extends javax.swing.JPanel {
         DefaultTableModel model = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
-                //all cells false
+                // all cells false
                 return false;
             }
         };
@@ -127,10 +129,22 @@ public class Buku extends javax.swing.JPanel {
             }
 
             // Add rows to the DefaultTableModel
+            SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
+
             while (rs.next()) {
                 Object[] rowData = new Object[columnCount];
                 for (int i = 1; i <= columnCount; i++) {
-                    rowData[i - 1] = rs.getObject(i);
+                    if (rsmd.getColumnName(i).equalsIgnoreCase("tahun_terbit")) {
+                        // Assuming 'tahun_terbit' is a Date or Timestamp type
+                        java.util.Date date = rs.getDate(i);
+                        if (date != null) {
+                            rowData[i - 1] = yearFormat.format(date);
+                        } else {
+                            rowData[i - 1] = null;
+                        }
+                    } else {
+                        rowData[i - 1] = rs.getObject(i);
+                    }
                 }
                 model.addRow(rowData);
             }
@@ -271,7 +285,7 @@ public class Buku extends javax.swing.JPanel {
         int harga = Integer.parseInt(dial_harga.getText());
         int jumlah_stock = Integer.parseInt(dial_stock.getText());
 
-        if (kode_buku == null || referensi == null || judul_buku == null || jilid == null || kategori == null || pengarang == null || lokasi == null || kondisi_buku == null || tahun_terbit == -1 || asal_buku == null || harga == -1 || jumlah_stock == -1) {
+        if (kode_buku.equals("") || referensi.equals("") || judul_buku.equals("") || jilid.equals("") || kategori.equals("") || pengarang.equals("") || lokasi.equals("") || kondisi_buku.equals("") || tahun_terbit == -1 || asal_buku.equals("") || harga == -1 || jumlah_stock == -1) {
             JOptionPane.showMessageDialog(Tambah, "Anda Harus Mengisi Semua Data Terlebih Dahulu");
         } else {
             int result = JOptionPane.showConfirmDialog(Tambah, "Apakah Anda Ingin Menyimpan?", "Konfirmasi",
@@ -315,7 +329,7 @@ public class Buku extends javax.swing.JPanel {
                             pst1.setInt(11, harga);
                             pst1.setInt(12, jumlah_stock);
                             pst1.executeUpdate();
-                            addHistory(harga, (String)kondisi_buku);
+                            addHistory(harga, (String) kondisi_buku);
                             JOptionPane.showMessageDialog(null, "Data berhasil di Tambahkan");
                         } catch (Exception r) {
                             JOptionPane.showMessageDialog(null, "Data Gagal di Tambahkan");
@@ -396,22 +410,35 @@ public class Buku extends javax.swing.JPanel {
                     // Buat koneksi ke database
                     Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/perpusmu", "root", "");
 
-                    // Buat pernyataan SQL DELETE
-                    String sql = "DELETE FROM buku WHERE No_buku = ?";
-                    PreparedStatement pst = con.prepareStatement(sql);
-                    pst.setInt(1, No_buku);
+                    // Cek apakah buku sedang dipinjam
+                    String cekPeminjaman = "SELECT COUNT(*) FROM detail_peminjaman WHERE No_buku = ? AND status_peminjaman = 'Dipinjam'";
+                    PreparedStatement pstCek = conn.prepareStatement(cekPeminjaman);
+                    pstCek.setInt(1, No_buku);
+                    ResultSet rsCek = pstCek.executeQuery();
 
-                    // Eksekusi pernyataan DELETE
-                    pst.executeUpdate();
+                    if (rsCek.next() && rsCek.getInt(1) > 0) {
+                        // Jika buku sedang dipinjam, tampilkan pesan dan batalkan penghapusan
+                        JOptionPane.showMessageDialog(null, "Buku sedang dipinjam dan tidak bisa dihapus");
+                    } else {
+                        // Buat pernyataan SQL DELETE
+                        String sql = "DELETE FROM buku WHERE No_buku = ?";
+                        PreparedStatement pstDelete = conn.prepareStatement(sql);
+                        pstDelete.setInt(1, No_buku);
 
-                    // Hapus baris dari model tabel
-                    model.removeRow(selectedRowIndex);
-                    loadTabel();
+                        // Eksekusi pernyataan DELETE
+                        pstDelete.executeUpdate();
+
+                        // Hapus baris dari model tabel
+                        model.removeRow(selectedRowIndex);
+                        loadTabel();
+                    }
                 } catch (Exception e) {
                     System.out.println("click" + e);
-                    JOptionPane.showMessageDialog(jPanel2, "Pilih Dahulu Data Yang Akan Di Hapus");
+                    JOptionPane.showMessageDialog(null, "Gagal menghapus buku: " + e.getMessage());
                 }
             }
+        } else {
+            JOptionPane.showMessageDialog(null, "Pilih baris data yang ingin dihapus terlebih dahulu");
         }
     }
 
@@ -530,6 +557,16 @@ public class Buku extends javax.swing.JPanel {
 
         dial_kode.setMaximumSize(new java.awt.Dimension(570, 73));
         dial_kode.setMinimumSize(new java.awt.Dimension(570, 73));
+        dial_kode.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dial_kodeActionPerformed(evt);
+            }
+        });
+        dial_kode.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                dial_kodeKeyTyped(evt);
+            }
+        });
 
         jLabel14.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel14.setText("Judul Buku");
@@ -588,6 +625,12 @@ public class Buku extends javax.swing.JPanel {
 
         jLabel7.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel7.setText("No Referensi");
+
+        dial_referensi.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                dial_referensiKeyTyped(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -766,6 +809,11 @@ public class Buku extends javax.swing.JPanel {
 
         edit_kode.setMaximumSize(new java.awt.Dimension(570, 73));
         edit_kode.setMinimumSize(new java.awt.Dimension(570, 73));
+        edit_kode.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                edit_kodeKeyTyped(evt);
+            }
+        });
 
         jLabel23.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel23.setText("Judul Buku");
@@ -823,10 +871,15 @@ public class Buku extends javax.swing.JPanel {
         edit_kategori.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pendidikan", "Non Pendidikan" }));
 
         jLabel8.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
-        jLabel8.setText("Kode Buku");
+        jLabel8.setText("Referensi");
 
         edit_referensi.setMaximumSize(new java.awt.Dimension(570, 73));
         edit_referensi.setMinimumSize(new java.awt.Dimension(570, 73));
+        edit_referensi.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                edit_referensiKeyTyped(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -1066,6 +1119,7 @@ public class Buku extends javax.swing.JPanel {
         }
 
         btn_tambah.setBackground(new java.awt.Color(63, 148, 105));
+        btn_tambah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/+.png"))); // NOI18N
         btn_tambah.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_tambahActionPerformed(evt);
@@ -1073,6 +1127,7 @@ public class Buku extends javax.swing.JPanel {
         });
 
         btn_edit.setBackground(new java.awt.Color(255, 227, 130));
+        btn_edit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/edit_1160515 3.png"))); // NOI18N
         btn_edit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_editActionPerformed(evt);
@@ -1080,6 +1135,7 @@ public class Buku extends javax.swing.JPanel {
         });
 
         btn_hapus.setBackground(new java.awt.Color(255, 145, 66));
+        btn_hapus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/trash-can_7343703 2.png"))); // NOI18N
         btn_hapus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_hapusActionPerformed(evt);
@@ -1233,6 +1289,109 @@ public class Buku extends javax.swing.JPanel {
         clearEdit();
         Edit.dispose();
     }//GEN-LAST:event_btn_cancel1ActionPerformed
+
+    private void dial_kodeKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dial_kodeKeyTyped
+
+        String batas = dial_kode.getText();
+        int batasan = batas.length();
+
+        // Dapatkan karakter yang diketik
+        char c = evt.getKeyChar();
+
+        // Izinkan "Backspace" dan "Delete"
+        if (c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE) {
+            return;
+        }
+
+        // Cek panjang input
+        if (batasan >= 5) {
+            JOptionPane.showMessageDialog(Tambah, "Hanya bisa 5 karakter");
+            evt.consume();
+        }
+
+        // Cek apakah karakter adalah huruf atau angka
+        if (!(Character.isLetterOrDigit(c))) {
+            JOptionPane.showMessageDialog(Tambah, "Hanya boleh huruf dan angka");
+            evt.consume();
+        }
+
+    }//GEN-LAST:event_dial_kodeKeyTyped
+
+    private void dial_referensiKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dial_referensiKeyTyped
+        String batas = dial_referensi.getText();
+        int batasan = batas.length();
+
+        // Dapatkan karakter yang diketik
+        char c = evt.getKeyChar();
+        if (c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE) {
+            return;
+        }
+
+        // Cek panjang input
+        if (batasan >= 13) {
+            JOptionPane.showMessageDialog(Tambah, "Tidak boleh lebih dari 13 angka");
+            evt.consume();
+        }
+
+        // Cek apakah karakter adalah angka
+        if (!Character.isDigit(c)) {
+            JOptionPane.showMessageDialog(Tambah, "Hanya boleh diisi angka");
+            evt.consume();
+        }
+    }//GEN-LAST:event_dial_referensiKeyTyped
+
+    private void dial_kodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dial_kodeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dial_kodeActionPerformed
+
+    private void edit_kodeKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_edit_kodeKeyTyped
+        String batas = edit_kode.getText();
+        int batasan = batas.length();
+
+        // Dapatkan karakter yang diketik
+        char c = evt.getKeyChar();
+
+        // Izinkan "Backspace" dan "Delete"
+        if (c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE) {
+            return;
+        }
+
+        // Cek panjang input
+        if (batasan >= 5) {
+            JOptionPane.showMessageDialog(Tambah, "Hanya bisa 5 karakter");
+            evt.consume();
+        }
+
+        // Cek apakah karakter adalah huruf atau angka
+        if (!(Character.isLetterOrDigit(c))) {
+            JOptionPane.showMessageDialog(Tambah, "Hanya boleh huruf dan angka");
+            evt.consume();
+        }
+
+    }//GEN-LAST:event_edit_kodeKeyTyped
+
+    private void edit_referensiKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_edit_referensiKeyTyped
+        String batas = edit_referensi.getText();
+        int batasan = batas.length();
+
+        // Dapatkan karakter yang diketik
+        char c = evt.getKeyChar();
+        if (c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE) {
+            return;
+        }
+
+        // Cek panjang input
+        if (batasan >= 13) {
+            JOptionPane.showMessageDialog(Tambah, "Tidak boleh lebih dari 13 angka");
+            evt.consume();
+        }
+
+        // Cek apakah karakter adalah angka
+        if (!Character.isDigit(c)) {
+            JOptionPane.showMessageDialog(Tambah, "Hanya boleh diisi angka");
+            evt.consume();
+        }
+    }//GEN-LAST:event_edit_referensiKeyTyped
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
