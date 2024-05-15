@@ -13,7 +13,6 @@ import javax.swing.table.DefaultTableModel;
 import Navbar.koneksi;
 import com.mysql.cj.jdbc.result.ResultSetMetaData;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
@@ -23,7 +22,6 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import javax.swing.plaf.FontUIResource;
 import javax.swing.table.TableModel;
 
 /**
@@ -37,7 +35,7 @@ public class Anggota extends javax.swing.JPanel {
      */
     private Connection con;
     private PreparedStatement pst, pst1;
-    private ResultSet rs;
+    private ResultSet rs, rs1;
     private String nisn, kelamin;
 
     public Anggota() throws SQLException {
@@ -79,7 +77,7 @@ public class Anggota extends javax.swing.JPanel {
         };
 
         try {
-            pst = con.prepareStatement("select * from anggota");
+            pst = con.prepareStatement("select * from view_anggota");
             rs = pst.executeQuery();
             ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
             int columnCount = rsmd.getColumnCount();
@@ -114,7 +112,7 @@ public class Anggota extends javax.swing.JPanel {
 
         if (kelamin.equals("Semua")) {
             try {
-                pst = con.prepareStatement("select * from anggota");
+                pst = con.prepareStatement("select * from view_anggota");
                 rs = pst.executeQuery();
                 ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
                 int columnCount = rsmd.getColumnCount();
@@ -136,7 +134,7 @@ public class Anggota extends javax.swing.JPanel {
             }
         } else {
             try {
-                pst = con.prepareStatement("select * from anggota where jenis_kelamin='" + kelamin + "'");
+                pst = con.prepareStatement("select * from view_anggota where jenis_kelamin='" + kelamin + "'");
                 rs = pst.executeQuery();
                 ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
                 int columnCount = rsmd.getColumnCount();
@@ -170,7 +168,7 @@ public class Anggota extends javax.swing.JPanel {
         String cari = search.getText();
         if (!cari.equals(" ")) {
             try {
-                pst = con.prepareStatement("select * from anggota where nama Like '%" + search.getText() + "%' or NISN Like '%" + search.getText() + "%' "
+                pst = con.prepareStatement("select * from view_anggota where nama Like '%" + search.getText() + "%' or NISN Like '%" + search.getText() + "%' "
                         + "or jurusan Like '%" + search.getText() + "%'");
                 rs = pst.executeQuery();
                 ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
@@ -643,7 +641,7 @@ public class Anggota extends javax.swing.JPanel {
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
         // TODO add your handling code here:
         try {
-            pst = con.prepareStatement("select * from anggota where NISN = " + nisn);
+            pst = con.prepareStatement("select * from view_anggota where NISN = " + nisn);
             rs = pst.executeQuery();
             rs.next();
             String ag_nama = rs.getString("nama");
@@ -679,11 +677,38 @@ public class Anggota extends javax.swing.JPanel {
                     JOptionPane.QUESTION_MESSAGE);
             if (result == JOptionPane.YES_OPTION) {
                 try {
-                    pst = con.prepareStatement("delete from anggota where NISN = " + nisn);
-                    pst.execute();
-                    loadTabel();
-                    JOptionPane.showMessageDialog(jDialog1, "Data Berhasil di hapus");
+                    pst = con.prepareStatement("select peminjaman.NISN, detail_peminjaman.jumlah_peminjaman from "
+                            + "peminjaman Join detail_peminjaman on detail_peminjaman.kode_peminjaman = peminjaman.kode_peminjaman "
+                            + "where peminjaman.NISN =  " + nisn);
+                    rs = pst.executeQuery();
+                    if (rs.next()) {
+                        JOptionPane.showMessageDialog(jDialog1, "Anggota Sedang Meminjam Buku");
+                    } else {
+                        try {
+                            pst = con.prepareStatement("select jumlah_denda, status_denda from denda where NISN = " + nisn);
+                            rs = pst.executeQuery();
+                            rs.next();
+                            String SD = rs.getString("status_denda");
+                            int jumlha = rs.getInt("jumlah_denda");
+                            if (SD.equalsIgnoreCase("Belum Lunas")) {
+                                JOptionPane.showMessageDialog(jDialog1, "Anggota Masih Memiliki Tanggungan Denda Sebesar: Rp." + jumlha);
+                            } else {
+                                try {
+                                    pst = con.prepareStatement("delete from anggota where NISN = " + nisn);
+                                    pst.execute();
+                                    loadTabel();
+                                    JOptionPane.showMessageDialog(jDialog1, "Data Berhasil di hapus");
+                                } catch (Exception e) {
+                                    JOptionPane.showMessageDialog(jDialog1, "Data Gagal di hapus");
+                                }
+                            }
+                        } catch (Exception e) {
+                            System.out.println("SD" + e);
+                        }
+                    }
                 } catch (Exception e) {
+                    System.out.println("data hapus" + e);
+                    e.printStackTrace();
                 }
             }
         } else {
