@@ -1132,7 +1132,7 @@ private boolean judulBukuSudahDipinjam(String judulBuku) {
     }//GEN-LAST:event_txt_kode_bukuMouseClicked
 
     private void jButton20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton20ActionPerformed
-        DefaultTableModel model = (DefaultTableModel) tabel_peminjaman.getModel();
+    DefaultTableModel model = (DefaultTableModel) tabel_peminjaman.getModel();
     // Mendapatkan teks dari field-field yang relevan
     String kodepeminjaman = txt_kode_peminjaman.getText();
     String nama = txt_nisn.getText();
@@ -1178,9 +1178,11 @@ private boolean judulBukuSudahDipinjam(String judulBuku) {
             String tanggalpinjamFormatted = dateFormat.format(tanggalpinjam);
             String tanggalkembaliFormatted = dateFormat.format(tanggalkembali);
 
-            // Tambahkan baris baru ke dalam tabel
-            Object[] row = {kodepeminjaman, tanggalpinjamFormatted, tanggalkembaliFormatted, nama,  totalpeminjaman,judulbuku, username};
-            model.addRow(row);
+            // Tambahkan baris baru ke dalam tabel hanya jika tidak ada notifikasi yang ditampilkan
+            if (!judulBukuSudahDipinjam(judulbuku)) {
+                Object[] row = {kodepeminjaman, tanggalpinjamFormatted, tanggalkembaliFormatted, nama,  totalpeminjaman, judulbuku, username};
+                model.addRow(row);
+            }
             clear();
             txt_kode_buku.requestFocusInWindow();
         }
@@ -1238,7 +1240,7 @@ private boolean judulBukuSudahDipinjam(String judulBuku) {
             try {
                 if (!isKodePeminjamanExists(kodePeminjamanPertama)) {
                     // Insert into tabel peminjaman
-                    String sqlPeminjaman = "INSERT INTO peminjaman (kode_peminjaman, NISN, ID_users) VALUES (?, (SELECT NISN FROM anggota WHERE nama = ?), (SELECT ID_users FROM users WHERE username = ?))";
+                    String sqlPeminjaman = "INSERT INTO peminjaman (kode_peminjaman, NISN, ID_users) VALUES (?, (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1), (SELECT ID_users FROM users WHERE username = ? LIMIT 1))";
                     try (PreparedStatement pstPeminjaman = conn.prepareStatement(sqlPeminjaman)) {
                         pstPeminjaman.setString(1, kodePeminjamanPertama);
                         pstPeminjaman.setString(2, nisnPertama);

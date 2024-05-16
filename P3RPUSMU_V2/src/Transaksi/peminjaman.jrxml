@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="226" pageHeight="425" columnWidth="198" leftMargin="14" rightMargin="14" topMargin="20" bottomMargin="20" uuid="70560ddf-2eb1-41e8-baa3-12ec132f86c3">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="161"/>
+	<property name="ireport.y" value="127"/>
 	<parameter name="kode" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
@@ -176,7 +176,7 @@ JOIN buku ON buku.No_buku = detail_peminjaman.No_buku where detail_peminjaman.ko
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="50" splitType="Stretch">
+		<band height="26" splitType="Stretch">
 			<textField>
 				<reportElement x="1" y="4" width="44" height="20" uuid="5e52e73e-4d68-4b0d-9f47-2119306c393f"/>
 				<textElement textAlignment="Center">
@@ -192,7 +192,7 @@ JOIN buku ON buku.No_buku = detail_peminjaman.No_buku where detail_peminjaman.ko
 				<textFieldExpression><![CDATA[$F{jumlah_peminjaman}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="45" y="4" width="116" height="39" uuid="1ac64c55-3d43-4913-a135-4028499a923f"/>
+				<reportElement x="45" y="4" width="116" height="20" uuid="1ac64c55-3d43-4913-a135-4028499a923f"/>
 				<textElement textAlignment="Center">
 					<font size="8" isBold="true"/>
 				</textElement>
