@@ -135,15 +135,22 @@ public class history extends javax.swing.JPanel {
             rs = pst.executeQuery();
             ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
             int columnCount = rsmd.getColumnCount();
+
+            // Add columns to the DefaultTableModel excluding 'id_history'
             for (int i = 1; i <= columnCount; i++) {
-                model.addColumn(rsmd.getColumnName(i));
+                if (!rsmd.getColumnName(i).equalsIgnoreCase("id_history")) {
+                    model.addColumn(rsmd.getColumnName(i));
+                }
             }
 
             // Add rows to the DefaultTableModel
             while (rs.next()) {
-                Object[] rowData = new Object[columnCount];
+                Object[] rowData = new Object[columnCount - 1];
+                int columnIndex = 0;
                 for (int i = 1; i <= columnCount; i++) {
-                    rowData[i - 1] = rs.getObject(i);
+                    if (!rsmd.getColumnName(i).equalsIgnoreCase("id_history")) {
+                        rowData[columnIndex++] = rs.getObject(i);
+                    }
                 }
                 model.addRow(rowData);
             }
