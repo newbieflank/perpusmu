@@ -78,7 +78,7 @@ public class Admin extends javax.swing.JPanel {
                 return false;
             }
         };
-        model.addColumn("Id");
+       
         model.addColumn("Username");
         model.addColumn("Password");
         model.addColumn("Status");
@@ -103,7 +103,7 @@ public class Admin extends javax.swing.JPanel {
                 return false;
             }
         };
-        model.addColumn("Id");
+  
         model.addColumn("Username");
         model.addColumn("Password");
         model.addColumn("Status");
