@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 package Laporan;
-
+import java.util.Date;
 import Login.Login;
 import Navbar.Navbar;
 import com.formdev.flatlaf.FlatClientProperties;
@@ -123,10 +123,10 @@ public class ptransaksi extends javax.swing.JPanel {
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.addAncestorListener(new javax.swing.event.AncestorListener() {
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
-            }
             public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
                 jPanel1AncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
             }
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
             }
@@ -195,6 +195,10 @@ public class ptransaksi extends javax.swing.JPanel {
                 jToggleButton1ActionPerformed(evt);
             }
         });
+
+        jDate.setDate(new Date());
+
+        jDate1.setDate(new Date());
 
         jButton3.setBackground(new java.awt.Color(0, 153, 51));
         jButton3.setForeground(new java.awt.Color(255, 255, 255));
