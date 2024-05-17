@@ -103,7 +103,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <Component id="txt_buku" min="-2" pref="90" max="-2" attributes="0"/>
+                          <Component id="buku" min="-2" pref="90" max="-2" attributes="0"/>
                           <EmptySpace pref="114" max="32767" attributes="0"/>
                           <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -125,7 +125,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="jLabel2" max="32767" attributes="0"/>
-                      <Component id="txt_buku" max="32767" attributes="0"/>
+                      <Component id="buku" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
                   <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
@@ -157,12 +157,15 @@
             <Property name="text" type="java.lang.String" value="Jumlah Buku"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="txt_buku">
+        <Component class="javax.swing.JLabel" name="buku">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Segoe UI" size="18" style="0"/>
             </Property>
           </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>
@@ -186,7 +189,7 @@
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="jLabel6" alignment="0" max="32767" attributes="0"/>
                       <Component id="jLabel7" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="txt_anggota" alignment="0" max="32767" attributes="0"/>
+                      <Component id="anggota" alignment="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace pref="113" max="32767" attributes="0"/>
                   <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
@@ -200,7 +203,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="jLabel5" max="32767" attributes="0"/>
-                      <Component id="txt_anggota" max="32767" attributes="0"/>
+                      <Component id="anggota" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
@@ -232,12 +235,15 @@
             <Property name="text" type="java.lang.String" value="Jumlah Anggota"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="txt_anggota">
+        <Component class="javax.swing.JLabel" name="anggota">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Segoe UI" size="18" style="0"/>
             </Property>
           </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>
@@ -260,7 +266,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <Component id="txt_petugas" min="-2" pref="90" max="-2" attributes="0"/>
+                          <Component id="petugas" min="-2" pref="90" max="-2" attributes="0"/>
                           <EmptySpace pref="114" max="32767" attributes="0"/>
                           <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -282,7 +288,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="jLabel8" max="32767" attributes="0"/>
-                      <Component id="txt_petugas" max="32767" attributes="0"/>
+                      <Component id="petugas" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
@@ -314,12 +320,15 @@
             <Property name="text" type="java.lang.String" value="Jumlah Petugas"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="txt_petugas">
+        <Component class="javax.swing.JLabel" name="petugas">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Segoe UI" size="18" style="0"/>
             </Property>
           </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>
@@ -342,7 +351,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <Component id="txt_transaksi" min="-2" pref="90" max="-2" attributes="0"/>
+                          <Component id="peminjaman" min="-2" pref="90" max="-2" attributes="0"/>
                           <EmptySpace max="32767" attributes="0"/>
                           <Component id="jLabel11" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -364,7 +373,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="jLabel11" max="32767" attributes="0"/>
-                      <Component id="txt_transaksi" max="32767" attributes="0"/>
+                      <Component id="peminjaman" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="jLabel12" min="-2" max="-2" attributes="0"/>
@@ -396,12 +405,15 @@
             <Property name="text" type="java.lang.String" value="Jumlah Peminjaman Hari ini"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="txt_transaksi">
+        <Component class="javax.swing.JLabel" name="peminjaman">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Segoe UI" size="18" style="0"/>
             </Property>
           </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>
@@ -552,7 +564,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="txt_transaksi1" min="-2" pref="90" max="-2" attributes="0"/>
+                          <Component id="pengembalian" min="-2" pref="90" max="-2" attributes="0"/>
                           <EmptySpace max="32767" attributes="0"/>
                           <Component id="jLabel14" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -574,7 +586,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="jLabel14" alignment="0" max="32767" attributes="0"/>
-                      <Component id="txt_transaksi1" alignment="0" max="32767" attributes="0"/>
+                      <Component id="pengembalian" alignment="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="jLabel15" min="-2" max="-2" attributes="0"/>
@@ -606,12 +618,15 @@
             <Property name="text" type="java.lang.String" value="Jumlah Pengembalian Hari ini"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="txt_transaksi1">
+        <Component class="javax.swing.JLabel" name="pengembalian">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Segoe UI" size="18" style="0"/>
             </Property>
           </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>

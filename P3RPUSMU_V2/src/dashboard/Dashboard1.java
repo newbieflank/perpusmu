@@ -4,6 +4,7 @@
  */
 package dashboard;
 
+import Login.Config;
 import Navbar.koneksi;
 import dashboard.Connect;
 import dashboard.DatabaseConnection;
@@ -30,6 +31,14 @@ import java.util.Locale;
  * @author Administrator
  */
 public class Dashboard1 extends javax.swing.JPanel {
+    
+    public static void resetcomponen() {
+        jumlahanggota();
+        jumlahbuku();
+        jumlahpetugas();
+        jumlahtransaksihariini();
+        jumlahkembali();
+    }
 
     private Timer timer;
     private Connection con;
@@ -109,7 +118,7 @@ public class Dashboard1 extends javax.swing.JPanel {
 
             if (res.next()) {
                 String totalJumlahStock = res.getString("total_jumlah_stock");
-                txt_buku.setText(totalJumlahStock);
+                buku.setText(totalJumlahStock);
             }
         } catch (Exception e) {
 
@@ -125,7 +134,7 @@ public class Dashboard1 extends javax.swing.JPanel {
             if (res.next()) {
                 String totalJumlahStock = res.getString("total_anggota");
                 // Tampilkan total_jumlah_stock di JTextField
-                txt_anggota.setText(totalJumlahStock);
+                anggota.setText(totalJumlahStock);
             }
         } catch (Exception e) {
             // Handle exception
@@ -141,7 +150,7 @@ public class Dashboard1 extends javax.swing.JPanel {
             if (res.next()) {
                 String totalJumlahStock = res.getString("total_pengguna");
                 // Tampilkan total_jumlah_stock di JTextField
-                txt_petugas.setText(totalJumlahStock);
+                petugas.setText(totalJumlahStock);
             }
         } catch (Exception e) {
             // Handle exception
@@ -157,7 +166,7 @@ public class Dashboard1 extends javax.swing.JPanel {
             if (res.next()) {
                 String totalJumlahStock = res.getString("jumlah_transaksi_hari_ini");
                 // Tampilkan total_jumlah_stock di JTextField
-                txt_transaksi.setText(totalJumlahStock);
+                peminjaman.setText(totalJumlahStock);
             }
         } catch (Exception e) {
             // Handle exception
@@ -188,7 +197,7 @@ public class Dashboard1 extends javax.swing.JPanel {
             if (res.next()) {
                 String totalJumlahStock = res.getString("jumlah_transaksi_hari_ini");
                 // Tampilkan total_jumlah_stock di JTextField
-                txt_transaksi1.setText(totalJumlahStock);
+                pengembalian.setText(totalJumlahStock);
             }
         } catch (Exception e) {
             // Handle exception
@@ -227,6 +236,91 @@ public class Dashboard1 extends javax.swing.JPanel {
             }
         });
     }
+    
+    private static void jumlahanggota() {
+        try {
+            String sql = "SELECT COUNT(nama) AS total_anggota FROM anggota;";
+            java.sql.Connection con = (Connection) Config.configDB();
+            java.sql.Statement stm = con.createStatement();
+            java.sql.ResultSet res = stm.executeQuery(sql);
+            if (res.next()) {
+                int totalStock = res.getInt("total_anggota");
+                // Menampilkan hasil SUM pada JLabel
+                anggota.setText(String.valueOf(totalStock));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Tambahkan penanganan kesalahan sesuai kebutuhan Anda
+        }
+    }
+
+    private static void jumlahpetugas() {
+        try {
+            String sql = "SELECT COUNT(username) AS total_petugas FROM users;";
+            java.sql.Connection con = (Connection) Config.configDB();
+            java.sql.Statement stm = con.createStatement();
+            java.sql.ResultSet res = stm.executeQuery(sql);
+            if (res.next()) {
+                int totalStock = res.getInt("total_petugas");
+                // Menampilkan hasil SUM pada JLabel
+                petugas.setText(String.valueOf(totalStock));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Tambahkan penanganan kesalahan sesuai kebutuhan Anda
+        }
+    }
+
+    private static void jumlahtransaksihariini() {
+        try {
+            String sql = "SELECT COUNT(DISTINCT kode_peminjaman) AS jumlah_transaksi_hari_ini FROM detail_peminjaman WHERE DATE(tanggal_peminjaman) = CURDATE();";
+            java.sql.Connection con = (Connection) Config.configDB();
+            java.sql.Statement stm = con.createStatement();
+            java.sql.ResultSet res = stm.executeQuery(sql);
+            if (res.next()) {
+                int totalStock = res.getInt("jumlah_transaksi_hari_ini");
+                // Menampilkan hasil SUM pada JLabel
+                peminjaman.setText(String.valueOf(totalStock));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Tambahkan penanganan kesalahan sesuai kebutuhan Anda
+        }
+    }
+    
+     private static void jumlahkembali() {
+        try {
+            String sql = "SELECT COUNT(kode_pengembalian) AS jumlah_transaksi_hari_ini FROM detail_pengembalian WHERE DATE(tanggal) = CURDATE();";
+            java.sql.Connection con = (Connection) Config.configDB();
+            java.sql.Statement stm = con.createStatement();
+            java.sql.ResultSet res = stm.executeQuery(sql);
+            if (res.next()) {
+                int totalStock = res.getInt("jumlah_transaksi_hari_ini");
+                // Menampilkan hasil SUM pada JLabel
+                pengembalian.setText(String.valueOf(totalStock));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Tambahkan penanganan kesalahan sesuai kebutuhan Anda
+        }
+    }
+     
+     private static void jumlahbuku() {
+        try {
+            String sql = "SELECT SUM(jumlah_stock) AS total_stock FROM buku";
+            java.sql.Connection con = (Connection) Config.configDB();
+            java.sql.Statement stm = con.createStatement();
+            java.sql.ResultSet res = stm.executeQuery(sql);
+            if (res.next()) {
+                int totalStock = res.getInt("total_stock");
+                // Menampilkan hasil SUM pada JLabel
+                buku.setText(String.valueOf(totalStock));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Tambahkan penanganan kesalahan sesuai kebutuhan Anda
+        }
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -237,22 +331,22 @@ public class Dashboard1 extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        txt_buku = new javax.swing.JLabel();
+        buku = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        txt_anggota = new javax.swing.JLabel();
+        anggota = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        txt_petugas = new javax.swing.JLabel();
+        petugas = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
-        txt_transaksi = new javax.swing.JLabel();
+        peminjaman = new javax.swing.JLabel();
         panelShadow1 = new raven.panel.PanelShadow();
         chart = new raven.chart.CurveLineChart();
         jPanel5 = new javax.swing.JPanel();
@@ -264,7 +358,7 @@ public class Dashboard1 extends javax.swing.JPanel {
         jLabel14 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
-        txt_transaksi1 = new javax.swing.JLabel();
+        pengembalian = new javax.swing.JLabel();
         labelTanggal = new javax.swing.JLabel();
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
@@ -280,7 +374,7 @@ public class Dashboard1 extends javax.swing.JPanel {
 
         jLabel4.setText("Jumlah Buku");
 
-        txt_buku.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        buku.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -290,7 +384,7 @@ public class Dashboard1 extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(txt_buku, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(buku, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 114, Short.MAX_VALUE)
                         .addComponent(jLabel2))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -306,7 +400,7 @@ public class Dashboard1 extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txt_buku, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(buku, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -324,7 +418,7 @@ public class Dashboard1 extends javax.swing.JPanel {
 
         jLabel7.setText("Jumlah Anggota");
 
-        txt_anggota.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        anggota.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -335,7 +429,7 @@ public class Dashboard1 extends javax.swing.JPanel {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel7)
-                    .addComponent(txt_anggota, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(anggota, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 113, Short.MAX_VALUE)
                 .addComponent(jLabel5)
                 .addContainerGap())
@@ -346,7 +440,7 @@ public class Dashboard1 extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txt_anggota, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(anggota, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -364,7 +458,7 @@ public class Dashboard1 extends javax.swing.JPanel {
 
         jLabel10.setText("Jumlah Petugas");
 
-        txt_petugas.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        petugas.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -374,7 +468,7 @@ public class Dashboard1 extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(txt_petugas, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(petugas, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 114, Short.MAX_VALUE)
                         .addComponent(jLabel8))
                     .addGroup(jPanel3Layout.createSequentialGroup()
@@ -390,7 +484,7 @@ public class Dashboard1 extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txt_petugas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(petugas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -408,7 +502,7 @@ public class Dashboard1 extends javax.swing.JPanel {
 
         jLabel13.setText("Jumlah Peminjaman Hari ini");
 
-        txt_transaksi.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        peminjaman.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -418,7 +512,7 @@ public class Dashboard1 extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(txt_transaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(peminjaman, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel11))
                     .addGroup(jPanel4Layout.createSequentialGroup()
@@ -434,7 +528,7 @@ public class Dashboard1 extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txt_transaksi, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(peminjaman, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel12)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -518,7 +612,7 @@ public class Dashboard1 extends javax.swing.JPanel {
 
         jLabel16.setText("Jumlah Pengembalian Hari ini");
 
-        txt_transaksi1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        pengembalian.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -528,7 +622,7 @@ public class Dashboard1 extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(txt_transaksi1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(pengembalian, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel14))
                     .addGroup(jPanel6Layout.createSequentialGroup()
@@ -544,7 +638,7 @@ public class Dashboard1 extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txt_transaksi1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(pengembalian, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel15)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -608,6 +702,8 @@ public class Dashboard1 extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private static javax.swing.JLabel anggota;
+    private static javax.swing.JLabel buku;
     private raven.chart.CurveLineChart chart;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -637,10 +733,8 @@ public class Dashboard1 extends javax.swing.JPanel {
     private javax.swing.JTable jTable2;
     private javax.swing.JLabel labelTanggal;
     private raven.panel.PanelShadow panelShadow1;
-    private javax.swing.JLabel txt_anggota;
-    private javax.swing.JLabel txt_buku;
-    private javax.swing.JLabel txt_petugas;
-    private javax.swing.JLabel txt_transaksi;
-    private javax.swing.JLabel txt_transaksi1;
+    private static javax.swing.JLabel peminjaman;
+    private static javax.swing.JLabel pengembalian;
+    private static javax.swing.JLabel petugas;
     // End of variables declaration//GEN-END:variables
 }

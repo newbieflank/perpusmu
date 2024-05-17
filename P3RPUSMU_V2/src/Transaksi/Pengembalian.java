@@ -212,8 +212,7 @@ public class Pengembalian extends javax.swing.JPanel {
                     res.getString("tanggal_kembali"),
                     res.getString("jumlah_peminjaman"), // Pastikan nama kolom sesuai dengan hasil query
                     res.getString("kode_buku"),
-                    res.getString("judul_buku"),
-                    });
+                    res.getString("judul_buku"),});
             }
 
             // Set model untuk tabel_pengembalian
@@ -244,40 +243,39 @@ public class Pengembalian extends javax.swing.JPanel {
         model.addColumn("Kondisi Buku");
         model.addColumn("Denda");
         try {
-    String sql = "SELECT pengembalian.kode_pengembalian, anggota.nama, users.username, detail_pengembalian.jumlah_pengembalian, detail_pengembalian.status_pengembalian, detail_pengembalian.waktu_pengembalian, buku.kode_buku, buku.judul_buku, detail_pengembalian.kondisi_buku, detail_pengembalian.denda FROM pengembalian JOIN detail_pengembalian ON pengembalian.kode_pengembalian = detail_pengembalian.kode_pengembalian JOIN buku ON detail_pengembalian.No_buku = buku.No_buku JOIN users ON pengembalian.id_users = users.id_users JOIN anggota ON detail_pengembalian.NISN = anggota.NISN;";
+            String sql = "SELECT pengembalian.kode_pengembalian, anggota.nama, users.username, detail_pengembalian.jumlah_pengembalian, detail_pengembalian.status_pengembalian, detail_pengembalian.waktu_pengembalian, buku.kode_buku, buku.judul_buku, detail_pengembalian.kondisi_buku, detail_pengembalian.denda FROM pengembalian JOIN detail_pengembalian ON pengembalian.kode_pengembalian = detail_pengembalian.kode_pengembalian JOIN buku ON detail_pengembalian.No_buku = buku.No_buku JOIN users ON pengembalian.id_users = users.id_users JOIN anggota ON detail_pengembalian.NISN = anggota.NISN;";
 
-    Statement stm = con.createStatement();
-    ResultSet res = stm.executeQuery(sql);
+            Statement stm = con.createStatement();
+            ResultSet res = stm.executeQuery(sql);
 
-    while (res.next()) {
-        String statusPengembalian;
-        int jumlahPengembalian = res.getInt("jumlah_pengembalian");
+            while (res.next()) {
+                String statusPengembalian;
+                int jumlahPengembalian = res.getInt("jumlah_pengembalian");
 
-        if (jumlahPengembalian != 0) {
-            statusPengembalian = "Kembali";
-        } else {
-            statusPengembalian = "Belum Kembali";
+                if (jumlahPengembalian != 0) {
+                    statusPengembalian = "Kembali";
+                } else {
+                    statusPengembalian = "Belum Kembali";
+                }
+                model.addRow(new Object[]{
+                    res.getString("kode_pengembalian"),
+                    res.getString("nama"),
+                    res.getString("username"),
+                    jumlahPengembalian, // Menggunakan getInt karena jumlah pengembalian merupakan nilai numerik
+                    statusPengembalian, // Menggunakan statusPengembalian yang telah disesuaikan
+                    res.getString("waktu_pengembalian"),
+                    res.getString("kode_buku"),
+                    res.getString("judul_buku"),
+                    res.getString("kondisi_buku"),
+                    res.getString("denda"),});
+            }
+
+            tabel_return.setModel(model);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
         }
-        model.addRow(new Object[]{
-            res.getString("kode_pengembalian"),
-            res.getString("nama"),
-            res.getString("username"),
-            jumlahPengembalian, // Menggunakan getInt karena jumlah pengembalian merupakan nilai numerik
-            statusPengembalian, // Menggunakan statusPengembalian yang telah disesuaikan
-            res.getString("waktu_pengembalian"),
-            res.getString("kode_buku"),
-            res.getString("judul_buku"),
-            res.getString("kondisi_buku"),
-            res.getString("denda"),
-        });
-    }
-
-    tabel_return.setModel(model);
-
-} catch (Exception e) {
-    e.printStackTrace();
-    JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
-}
 
     }
 
@@ -331,68 +329,6 @@ public class Pengembalian extends javax.swing.JPanel {
         Object[] row = {kodepeminjaman, nama, username, tanggalpinjam, tanggalkembali, totalpeminjaman, kodebuku, judulbuku, statuskembali};
         model.addRow(row);
     }
-
-    private void masuktabelreturn() {
-    DefaultTableModel model = (DefaultTableModel) tabel_return.getModel();
-    // Mendapatkan teks dari field-field yang relevan
-    String kodepeminjaman = txt_kode_peminjaman.getText();
-    String nama = txt_nama.getText();
-    String username = txt_petugas.getText();
-    // Mendapatkan nilai dari semua spinners
-    int nilaiSpinnerBaik = (int) spinner_baik.getValue();
-    int nilaiSpinnerRusak = (int) spinner_rusak.getValue();
-    int nilaiSpinnerHilang = (int) spinner_hilang.getValue();
-
-    // Menghitung total pinjaman
-    int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
-
-    String statuskembali = "Kembali"; // Mengatur status menjadi "Kembali" untuk semua data
-
-    // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
-    Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
-    Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
-
-    // Mendapatkan status waktu kembali berdasarkan perbandingan tanggal
-    String waktupengembalian;
-    if (tanggalKembaliAwal != null && tanggalKembaliAkhir != null) {
-        // Mengubah tanggal menjadi string hanya dengan format tanggal (tanpa jam)
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String tanggalAwal = sdf.format(tanggalKembaliAwal);
-        String tanggalAkhir = sdf.format(tanggalKembaliAkhir);
-
-        if (tanggalAwal.equals(tanggalAkhir)) {
-            waktupengembalian = "Tepat Waktu";
-        } else if (tanggalKembaliAkhir.after(tanggalKembaliAwal)) {
-            waktupengembalian = "Telat";
-        } else {
-            waktupengembalian = "Tepat Waktu";
-        }
-    } else {
-        waktupengembalian = "Tidak Diketahui";
-    }
-
-    String kodebuku = txt_kode_buku.getText();
-    String judulbuku = txt_judul_buku.getText();
-    String kondisikembali;
-
-    // Mengganti kondisikembali sesuai dengan nilai spinner_baik, spinner_rusak, atau spinner_hilang
-    if (nilaiSpinnerBaik > 0) {
-        kondisikembali = "Baik";
-    } else if (nilaiSpinnerRusak > 0) {
-        kondisikembali = "Rusak";
-    } else if (nilaiSpinnerHilang > 0) {
-        kondisikembali = "Hilang";
-    } else {
-        kondisikembali = "Tidak Diketahui"; // Default case if all spinners are zero
-    }
-
-    String denda = txt_denda_total.getText();
-
-    // Tambahkan baris baru ke dalam tabel
-    Object[] row = {kodepeminjaman, nama, username, totalPeminjaman, statuskembali, waktupengembalian, kodebuku, judulbuku, kondisikembali, denda};
-    model.addRow(row);
-}
-
 
     private void tambahStokBuku(Connection con, int jumlahPengembalian, String kodeBuku) throws SQLException {
         String sql = "UPDATE buku SET jumlah_stock = jumlah_stock + ? WHERE No_buku = (SELECT No_buku FROM buku WHERE judul_buku = ?)";
@@ -448,10 +384,10 @@ public class Pengembalian extends javax.swing.JPanel {
         // Mengatur nilai JTextField txt_denda_total dengan total denda
         txt_denda_total.setText(Integer.toString(totalDenda));
     }
-    
-    private void clear(){
-    txt_search.setText("");
-    txt_search1.setText("");
+
+    private void clear() {
+        txt_search.setText("");
+        txt_search1.setText("");
     }
 
     @Override
@@ -462,21 +398,22 @@ public class Pengembalian extends javax.swing.JPanel {
             txt_search.requestFocusInWindow();
         }
     }
-    
+
     private void insertDetailPengembalian(PreparedStatement pst, String kodepengembalian, String status, String waktu, String kondisi, java.sql.Date tanggalPinjam, int jumlah, String kodebuku, String denda, String nama) throws SQLException {
-    if (jumlah > 0) {
-        pst.setString(1, kodepengembalian);
-        pst.setString(2, status);
-        pst.setString(3, waktu);
-        pst.setString(4, kondisi);
-        pst.setDate(5, tanggalPinjam);
-        pst.setInt(6, jumlah);
-        pst.setString(7, kodebuku);
-        pst.setString(8, denda);
-        pst.setString(9, nama);
-        pst.executeUpdate();
+        if (jumlah > 0) {
+            pst.setString(1, kodepengembalian);
+            pst.setString(2, status);
+            pst.setString(3, waktu);
+            pst.setString(4, kondisi);
+            pst.setDate(5, tanggalPinjam);
+            pst.setInt(6, jumlah);
+            pst.setString(7, kodebuku);
+            pst.setString(8, denda);
+            pst.setString(9, nama);
+            pst.executeUpdate();
+        }
     }
-    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -1250,225 +1187,241 @@ public class Pengembalian extends javax.swing.JPanel {
     }//GEN-LAST:event_tabel_pendingMouseClicked
 
     private void btn_tambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tambahActionPerformed
-    int jumlahpeminjaman = (int) spinner_pinjam.getValue();
-    String kodebuku = txt_judul_buku.getText();
-    String kodepeminjaman = txt_kode_peminjaman.getText();
-    String kodepengembalian = txt_kode_pengembalian.getText();
-    String petugas = txt_petugas.getText();
+        int jumlahpeminjaman = (int) spinner_pinjam.getValue();
+        String kodebuku = txt_judul_buku.getText();
+        String kodepeminjaman = txt_kode_peminjaman.getText();
+        String kodepengembalian = txt_kode_pengembalian.getText();
+        String petugas = txt_petugas.getText();
 
-    String kondisiBukuStatus;
-    if (jumlahpeminjaman != 0) {
-        kondisiBukuStatus = "Dipinjam";
-    } else {
-        kondisiBukuStatus = "Kembali";
-    }
-
-    String kondisikembali;
-
-    // Mengganti kondisikembali sesuai dengan nilai spinner_baik, spinner_rusak, atau spinner_hilang
-    if (spinner_baik.isEnabled()) {
-        kondisikembali = "Baik";
-    } else if (spinner_rusak.isEnabled()) {
-        kondisikembali = "Rusak";
-    } else {
-        kondisikembali = "Hilang";
-    }
-    // Mendapatkan nilai dari semua spinners
-    int nilaiSpinnerBaik = (int) spinner_baik.getValue();
-    int nilaiSpinnerRusak = (int) spinner_rusak.getValue();
-    int nilaiSpinnerHilang = (int) spinner_hilang.getValue();
-    // Periksa apakah salah satu dari spinner_baik, spinner_rusak, atau spinner_hilang kosong
-    if (nilaiSpinnerBaik == 0 && nilaiSpinnerRusak == 0 && nilaiSpinnerHilang == 0) {
-        JOptionPane.showMessageDialog(null, "Harap isi jumlah pengembalian terlebih dahulu.", "Peringatan", JOptionPane.WARNING_MESSAGE);
-        return; // Menghentikan eksekusi metode jika salah satu spinner kosong
-    }
-
-    // Menghitung total pinjaman
-    int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
-    String kodebuku1 = txt_judul_buku.getText();
-    String denda = txt_denda_total.getText();
-    String nama = txt_nama.getText();
-
-    try {
-        con.setAutoCommit(false); // Mulai transaksi
-
-        // Update detail peminjaman
-        String sqlUpdate = "UPDATE detail_peminjaman SET status_peminjaman = ?, jumlah_peminjaman = ? WHERE kode_peminjaman = ? AND No_buku = (SELECT No_buku FROM buku WHERE judul_buku = ?)";
-        try (PreparedStatement pstUpdate = con.prepareStatement(sqlUpdate)) {
-            pstUpdate.setString(1, kondisiBukuStatus);
-            pstUpdate.setInt(2, jumlahpeminjaman);
-            pstUpdate.setString(3, kodepeminjaman);
-            pstUpdate.setString(4, kodebuku);
-            masuktabelpending();
-            int rowsAffected = pstUpdate.executeUpdate();
-            if (rowsAffected == 0) {
-                throw new SQLException("Update gagal. Tidak ada baris yang terpengaruh.");
-            }
+        String kondisiBukuStatus;
+        if (jumlahpeminjaman != 0) {
+            kondisiBukuStatus = "Dipinjam";
+        } else {
+            kondisiBukuStatus = "Kembali";
         }
 
-        // Insert data ke tabel 'pengembalian'
-        String sqlInsertPengembalian = "INSERT INTO pengembalian (kode_pengembalian, kode_peminjaman, ID_users) VALUES (?, ?, (SELECT ID_users FROM users WHERE username = ? LIMIT 1))";
-        try (PreparedStatement pstInsertPengembalian = con.prepareStatement(sqlInsertPengembalian)) {
-            pstInsertPengembalian.setString(1, kodepengembalian);
-            pstInsertPengembalian.setString(2, kodepeminjaman);
-            pstInsertPengembalian.setString(3, petugas);
-            pstInsertPengembalian.executeUpdate();
+        String kondisikembali;
+
+        // Mengganti kondisikembali sesuai dengan nilai spinner_baik, spinner_rusak, atau spinner_hilang
+        if (spinner_baik.isEnabled()) {
+            kondisikembali = "Baik";
+        } else if (spinner_rusak.isEnabled()) {
+            kondisikembali = "Rusak";
+        } else {
+            kondisikembali = "Hilang";
+        }
+        // Mendapatkan nilai dari semua spinners
+        int nilaiSpinnerBaik = (int) spinner_baik.getValue();
+        int nilaiSpinnerRusak = (int) spinner_rusak.getValue();
+        int nilaiSpinnerHilang = (int) spinner_hilang.getValue();
+        // Periksa apakah salah satu dari spinner_baik, spinner_rusak, atau spinner_hilang kosong
+        if (nilaiSpinnerBaik == 0 && nilaiSpinnerRusak == 0 && nilaiSpinnerHilang == 0) {
+            JOptionPane.showMessageDialog(null, "Harap isi jumlah pengembalian terlebih dahulu.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return; // Menghentikan eksekusi metode jika salah satu spinner kosong
         }
 
-        // Insert data ke tabel 'detail_pengembalian'
-        String sqlInsertDetailPengembalian = "INSERT INTO detail_pengembalian (kode_pengembalian, status_pengembalian, waktu_pengembalian, kondisi_buku, tanggal, jumlah_pengembalian, No_buku, denda, NISN) VALUES (?, ?, ?, ?, ?, ?, (SELECT No_buku FROM buku WHERE judul_buku = ? LIMIT 1), ?, (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1))";
-        try (PreparedStatement pstInsertDetailPengembalian = con.prepareStatement(sqlInsertDetailPengembalian)) {
-            // Set status menjadi "Kembali" untuk semua data yang diinsert ke detail_pengembalian
-            String statusDetailPengembalian = "Kembali";
+        // Menghitung total pinjaman
+        int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
+        String kodebuku1 = txt_judul_buku.getText();
+        String denda;
 
-            // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
-            Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
-            Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
+// Mendapatkan nilai dari semua JTextField
+        String nilaibaik = baik.getText();
+        String nilairusak = rusak.getText();
+        String nilaihilang = hilang.getText();
 
-            // Mendapatkan status waktu kembali berdasarkan perbandingan tanggal
-            String waktupengembalian;
-            if (tanggalKembaliAwal != null && tanggalKembaliAkhir != null) {
-                // Mengubah tanggal menjadi string hanya dengan format tanggal (tanpa jam)
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                String tanggalAwal = sdf.format(tanggalKembaliAwal);
-                String tanggalAkhir = sdf.format(tanggalKembaliAkhir);
+// Mengganti denda sesuai dengan nilai dari JTextField
+        if (!nilaibaik.isEmpty()) {
+            denda = "0";  // Jika baik ada isinya, dendanya 0
+        } else if (!nilairusak.isEmpty()) {
+            denda = rusak.getText();  // Jika rusak ada isinya, denda sesuai dengan txt_rusak
+        } else if (!nilaihilang.isEmpty()) {
+            denda = hilang.getText();  // Jika hilang ada isinya, denda sesuai dengan txt_hilang
+        } else {
+            denda = "Tidak Diketahui";  // Default case if all fields are empty
+        }
+        String nama = txt_nama.getText();
 
-                if (tanggalAwal.equals(tanggalAkhir)) {
-                    waktupengembalian = "Tepat Waktu";
-                } else if (tanggalKembaliAkhir.after(tanggalKembaliAwal)) {
-                    waktupengembalian = "Telat";
-                } else {
-                    waktupengembalian = "Tepat Waktu";
+        try {
+            con.setAutoCommit(false); // Mulai transaksi
+
+            // Update detail peminjaman
+            String sqlUpdate = "UPDATE detail_peminjaman SET status_peminjaman = ?, jumlah_peminjaman = ? WHERE kode_peminjaman = ? AND No_buku = (SELECT No_buku FROM buku WHERE judul_buku = ?)";
+            try (PreparedStatement pstUpdate = con.prepareStatement(sqlUpdate)) {
+                pstUpdate.setString(1, kondisiBukuStatus);
+                pstUpdate.setInt(2, jumlahpeminjaman);
+                pstUpdate.setString(3, kodepeminjaman);
+                pstUpdate.setString(4, kodebuku);
+                masuktabelpending();
+                int rowsAffected = pstUpdate.executeUpdate();
+                if (rowsAffected == 0) {
+                    throw new SQLException("Update gagal. Tidak ada baris yang terpengaruh.");
                 }
-            } else {
-                waktupengembalian = "Tidak Diketahui";
             }
 
-            java.sql.Date tanggalPinjamSQL = new java.sql.Date(tanggal_pinjam.getDate().getTime());
+            // Insert data ke tabel 'pengembalian'
+            String sqlInsertPengembalian = "INSERT INTO pengembalian (kode_pengembalian, kode_peminjaman, ID_users) VALUES (?, ?, (SELECT ID_users FROM users WHERE username = ? LIMIT 1))";
+            try (PreparedStatement pstInsertPengembalian = con.prepareStatement(sqlInsertPengembalian)) {
+                pstInsertPengembalian.setString(1, kodepengembalian);
+                pstInsertPengembalian.setString(2, kodepeminjaman);
+                pstInsertPengembalian.setString(3, petugas);
+                pstInsertPengembalian.executeUpdate();
+            }
 
-            // Menggunakan metode insertDetailPengembalian untuk setiap kondisi buku
-            insertDetailPengembalian(pstInsertDetailPengembalian, kodepengembalian, statusDetailPengembalian, waktupengembalian, "Baik", tanggalPinjamSQL, nilaiSpinnerBaik, kodebuku, denda, nama);
-            insertDetailPengembalian(pstInsertDetailPengembalian, kodepengembalian, statusDetailPengembalian, waktupengembalian, "Rusak", tanggalPinjamSQL, nilaiSpinnerRusak, kodebuku, denda, nama);
-            insertDetailPengembalian(pstInsertDetailPengembalian, kodepengembalian, statusDetailPengembalian, waktupengembalian, "Hilang", tanggalPinjamSQL, nilaiSpinnerHilang, kodebuku, denda, nama);
-        }
+            // Insert data ke tabel 'detail_pengembalian'
+            String sqlInsertDetailPengembalian = "INSERT INTO detail_pengembalian (kode_pengembalian, status_pengembalian, waktu_pengembalian, kondisi_buku, tanggal, jumlah_pengembalian, No_buku, denda, NISN) VALUES (?, ?, ?, ?, ?, ?, (SELECT No_buku FROM buku WHERE judul_buku = ? LIMIT 1), ?, (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1))";
+            try (PreparedStatement pstInsertDetailPengembalian = con.prepareStatement(sqlInsertDetailPengembalian)) {
+                // Set status menjadi "Kembali" untuk semua data yang diinsert ke detail_pengembalian
+                String statusDetailPengembalian = "Kembali";
 
-        // Tambahkan logika untuk memasukkan data ke tabel 'denda' jika jumlah denda tidak sama dengan nol
-        if (!denda.equals("0")) {
-            // Cek apakah ada entri denda dengan NISN yang sama
-            String sqlCheckExistingDenda = "SELECT COUNT(*) FROM denda WHERE NISN = (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1)";
-            try (PreparedStatement pstCheckExistingDenda = con.prepareStatement(sqlCheckExistingDenda)) {
-                pstCheckExistingDenda.setString(1, nama); // Gunakan NISN atau nama sesuai kebutuhan Anda
-                ResultSet rs = pstCheckExistingDenda.executeQuery();
+                // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
+                Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
+                Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
+
+                // Mendapatkan status waktu kembali berdasarkan perbandingan tanggal
+                String waktupengembalian;
+                if (tanggalKembaliAwal != null && tanggalKembaliAkhir != null) {
+                    // Mengubah tanggal menjadi string hanya dengan format tanggal (tanpa jam)
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    String tanggalAwal = sdf.format(tanggalKembaliAwal);
+                    String tanggalAkhir = sdf.format(tanggalKembaliAkhir);
+
+                    if (tanggalAwal.equals(tanggalAkhir)) {
+                        waktupengembalian = "Tepat Waktu";
+                    } else if (tanggalKembaliAkhir.after(tanggalKembaliAwal)) {
+                        waktupengembalian = "Telat";
+                    } else {
+                        waktupengembalian = "Tepat Waktu";
+                    }
+                } else {
+                    waktupengembalian = "Tidak Diketahui";
+                }
+
+                java.sql.Date tanggalPinjamSQL = new java.sql.Date(tanggal_pinjam.getDate().getTime());
+
+                // Menggunakan metode insertDetailPengembalian untuk setiap kondisi buku
+                insertDetailPengembalian(pstInsertDetailPengembalian, kodepengembalian, statusDetailPengembalian, waktupengembalian, "Baik", tanggalPinjamSQL, nilaiSpinnerBaik, kodebuku, "0", nama);
+                insertDetailPengembalian(pstInsertDetailPengembalian, kodepengembalian, statusDetailPengembalian, waktupengembalian, "Rusak", tanggalPinjamSQL, nilaiSpinnerRusak, kodebuku, rusak.getText(), nama);
+                insertDetailPengembalian(pstInsertDetailPengembalian, kodepengembalian, statusDetailPengembalian, waktupengembalian, "Hilang", tanggalPinjamSQL, nilaiSpinnerHilang, kodebuku, hilang.getText(), nama);
+            }
+
+            // Tambahkan logika untuk memasukkan data ke tabel 'denda' jika jumlah denda tidak sama dengan nol
+            if (!denda.equals("0")) {
+                // Cek apakah ada entri denda dengan NISN yang sama
+                String sqlCheckExistingDenda = "SELECT COUNT(*) FROM denda WHERE NISN = (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1)";
+                try (PreparedStatement pstCheckExistingDenda = con.prepareStatement(sqlCheckExistingDenda)) {
+                    pstCheckExistingDenda.setString(1, nama); // Gunakan NISN atau nama sesuai kebutuhan Anda
+                    ResultSet rs = pstCheckExistingDenda.executeQuery();
+                    rs.next();
+                    int rowCount = rs.getInt(1);
+                    if (rowCount > 0) {
+                        // Jika ada, update jumlah denda yang ada dengan jumlah denda yang baru ditambahkan
+                        String sqlUpdateDenda = "UPDATE denda SET jumlah_denda = jumlah_denda + ? WHERE NISN = (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1)";
+                        try (PreparedStatement pstUpdateDenda = con.prepareStatement(sqlUpdateDenda)) {
+                            pstUpdateDenda.setString(1, denda);
+                            pstUpdateDenda.setString(2, nama); // Gunakan NISN atau nama sesuai kebutuhan Anda
+                            pstUpdateDenda.executeUpdate();
+                        }
+                    } else {
+                        // Jika tidak ada, masukkan data baru ke tabel 'denda'
+                        String sqlInsertDenda = "INSERT INTO denda (jumlah_denda, status_denda, total_pembayaran, NISN, No_buku, kode_pengembalian) VALUES (?, ?, ?, (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1), (SELECT No_buku FROM buku WHERE judul_buku = ? LIMIT 1), ?)";
+                        try (PreparedStatement pstInsertDenda = con.prepareStatement(sqlInsertDenda)) {
+                            pstInsertDenda.setString(1, denda);
+                            pstInsertDenda.setString(2, "Belum Lunas"); // Mengasumsikan status awal adalah 'Belum Lunas'
+                            pstInsertDenda.setString(3, "0"); // Mengasumsikan total_pembayaran awal sama dengan jumlah_denda
+                            pstInsertDenda.setString(4, nama);
+                            pstInsertDenda.setString(5, kodebuku1);
+                            pstInsertDenda.setString(6, kodepengembalian);
+                            pstInsertDenda.executeUpdate();
+                        }
+                    }
+                }
+            }
+
+            // Jika tabel 'denda' kosong, atur ID_denda ke 1
+            String sqlCheckEmptyDenda = "SELECT COUNT(*) FROM denda";
+            try (PreparedStatement pstCheckEmptyDenda = con.prepareStatement(sqlCheckEmptyDenda)) {
+                ResultSet rs = pstCheckEmptyDenda.executeQuery();
                 rs.next();
                 int rowCount = rs.getInt(1);
-                if (rowCount > 0) {
-                    // Jika ada, update jumlah denda yang ada dengan jumlah denda yang baru ditambahkan
-                    String sqlUpdateDenda = "UPDATE denda SET jumlah_denda = jumlah_denda + ? WHERE NISN = (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1)";
-                    try (PreparedStatement pstUpdateDenda = con.prepareStatement(sqlUpdateDenda)) {
-                        pstUpdateDenda.setString(1, denda);
-                        pstUpdateDenda.setString(2, nama); // Gunakan NISN atau nama sesuai kebutuhan Anda
-                        pstUpdateDenda.executeUpdate();
-                    }
-                } else {
-                    // Jika tidak ada, masukkan data baru ke tabel 'denda'
-                    String sqlInsertDenda = "INSERT INTO denda (jumlah_denda, status_denda, total_pembayaran, NISN, No_buku, kode_pengembalian) VALUES (?, ?, ?, (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1), (SELECT No_buku FROM buku WHERE judul_buku = ? LIMIT 1), ?)";
-                    try (PreparedStatement pstInsertDenda = con.prepareStatement(sqlInsertDenda)) {
-                        pstInsertDenda.setString(1, denda);
-                        pstInsertDenda.setString(2, "Belum Lunas"); // Mengasumsikan status awal adalah 'Belum Lunas'
-                        pstInsertDenda.setString(3, "0"); // Mengasumsikan total_pembayaran awal sama dengan jumlah_denda
-                        pstInsertDenda.setString(4, nama);
-                        pstInsertDenda.setString(5, kodebuku1);
-                        pstInsertDenda.setString(6, kodepengembalian);
-                        pstInsertDenda.executeUpdate();
+                if (rowCount == 0) {
+                    // Tabel 'denda' kosong, atur ID_denda ke 1
+                    String sqlResetID = "ALTER TABLE denda AUTO_INCREMENT = 1";
+                    try (PreparedStatement pstResetID = con.prepareStatement(sqlResetID)) {
+                        pstResetID.executeUpdate();
                     }
                 }
             }
-        }
 
-        // Jika tabel 'denda' kosong, atur ID_denda ke 1
-        String sqlCheckEmptyDenda = "SELECT COUNT(*) FROM denda";
-        try (PreparedStatement pstCheckEmptyDenda = con.prepareStatement(sqlCheckEmptyDenda)) {
-            ResultSet rs = pstCheckEmptyDenda.executeQuery();
-            rs.next();
-            int rowCount = rs.getInt(1);
-            if (rowCount == 0) {
-                // Tabel 'denda' kosong, atur ID_denda ke 1
-                String sqlResetID = "ALTER TABLE denda AUTO_INCREMENT = 1";
-                try (PreparedStatement pstResetID = con.prepareStatement(sqlResetID)) {
-                    pstResetID.executeUpdate();
-                }
+            try {
+                pst = con.prepareStatement("DELETE FROM denda WHERE jumlah_denda = 0");
+                pst.execute();
+            } catch (Exception e) {
+                System.out.println("sat" + e);
             }
-        }
 
-        try {
-            pst = con.prepareStatement("DELETE FROM denda WHERE jumlah_denda = 0");
-            pst.execute();
-        } catch (Exception e) {
-            System.out.println("sat" + e);
-        }
+            // Insert data ke tabel 'history' jika ada buku yang hilang
+            if (nilaiSpinnerHilang > 0) {
+                String sqlInsertHistory = "INSERT INTO history (id_history, id_buku, peristiwa, tanggal, harga_buku, keterangan) VALUES (?, ?, ?, ?, ?, ?)";
+                try (PreparedStatement pstInsertHistory = con.prepareStatement(sqlInsertHistory)) {
+                    // Generate a random 10-digit number for id_history
+                    long idHistory = (long) (Math.random() * 100000L);
+                    // Get the current date
+                    java.sql.Date currentDate = new java.sql.Date(System.currentTimeMillis());
 
-        // Insert data ke tabel 'history' jika ada buku yang hilang
-        if (nilaiSpinnerHilang > 0) {
-            String sqlInsertHistory = "INSERT INTO history (id_history, id_buku, peristiwa, tanggal, harga_buku, keterangan) VALUES (?, ?, ?, ?, ?, ?)";
-            try (PreparedStatement pstInsertHistory = con.prepareStatement(sqlInsertHistory)) {
-                // Generate a random 10-digit number for id_history
-                long idHistory = (long) (Math.random() * 100000L);
-                // Get the current date
-                java.sql.Date currentDate = new java.sql.Date(System.currentTimeMillis());
+                    // Retrieve the id_buku (No_buku) and harga from the 'buku' table based on judul_buku
+                    String sqlSelectBuku = "SELECT No_buku, harga FROM buku WHERE judul_buku = ? LIMIT 1";
+                    try (PreparedStatement pstSelectBuku = con.prepareStatement(sqlSelectBuku)) {
+                        pstSelectBuku.setString(1, kodebuku1);
+                        ResultSet rsBuku = pstSelectBuku.executeQuery();
+                        if (rsBuku.next()) {
+                            int noBuku = rsBuku.getInt("No_buku");
+                            int hargaBuku = rsBuku.getInt("harga");
 
-                // Retrieve the id_buku (No_buku) and harga from the 'buku' table based on judul_buku
-                String sqlSelectBuku = "SELECT No_buku, harga FROM buku WHERE judul_buku = ? LIMIT 1";
-                try (PreparedStatement pstSelectBuku = con.prepareStatement(sqlSelectBuku)) {
-                    pstSelectBuku.setString(1, kodebuku1);
-                    ResultSet rsBuku = pstSelectBuku.executeQuery();
-                    if (rsBuku.next()) {
-                        int noBuku = rsBuku.getInt("No_buku");
-                        int hargaBuku = rsBuku.getInt("harga");
-
-                        pstInsertHistory.setLong(1, idHistory);
-                        pstInsertHistory.setInt(2, noBuku);
-                        pstInsertHistory.setString(3, "Hilang");
-                        pstInsertHistory.setDate(4, currentDate);
-                        pstInsertHistory.setInt(5, hargaBuku);
-                        pstInsertHistory.setString(6, "Buku hilang");
-                        pstInsertHistory.executeUpdate();
+                            pstInsertHistory.setLong(1, idHistory);
+                            pstInsertHistory.setInt(2, noBuku);
+                            pstInsertHistory.setString(3, "Hilang");
+                            pstInsertHistory.setDate(4, currentDate);
+                            pstInsertHistory.setInt(5, hargaBuku);
+                            pstInsertHistory.setString(6, "Buku hilang");
+                            pstInsertHistory.executeUpdate();
+                        }
                     }
                 }
             }
-        }
 
-        // Menghitung total buku yang dikembalikan (baik dan rusak)
-        int totalBukuKembali = nilaiSpinnerBaik + nilaiSpinnerRusak;
+            // Menghitung total buku yang dikembalikan (baik dan rusak)
+            int totalBukuKembali = nilaiSpinnerBaik + nilaiSpinnerRusak;
 
-        // Menambahkan stok buku dengan jumlah buku yang dikembalikan tanpa memperhatikan buku yang hilang
-        tambahStokBuku(con, totalBukuKembali, kodebuku);
+            // Menambahkan stok buku dengan jumlah buku yang dikembalikan tanpa memperhatikan buku yang hilang
+            tambahStokBuku(con, totalBukuKembali, kodebuku);
 
-        // Selesai transaksi
-        con.commit();
-    } catch (SQLException e) {
-        // Tangani kesalahan dengan membatalkan transaksi jika terjadi kesalahan
-        try {
-            con.rollback();
-        } catch (SQLException rollbackException) {
-            rollbackException.printStackTrace();
+            // Selesai transaksi
+            con.commit();
+        } catch (SQLException e) {
+            // Tangani kesalahan dengan membatalkan transaksi jika terjadi kesalahan
+            try {
+                con.rollback();
+            } catch (SQLException rollbackException) {
+                rollbackException.printStackTrace();
+            }
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Gagal: " + e.getMessage());
+        } finally {
+            // Pastikan untuk mengatur ulang otomatis commit ke true setelah transaksi selesai atau gagal
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException autoCommitException) {
+                autoCommitException.printStackTrace();
+            }
+            load_table1();
+            id_autoincrement();
+            jDialog1.dispose();
+            load_table();
+            txt_denda_total.setText("0");
+            txt_search.requestFocusInWindow();
         }
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Gagal: " + e.getMessage());
-    } finally {
-        // Pastikan untuk mengatur ulang otomatis commit ke true setelah transaksi selesai atau gagal
-        try {
-            con.setAutoCommit(true);
-        } catch (SQLException autoCommitException) {
-            autoCommitException.printStackTrace();
-        }
-        masuktabelreturn();
-        id_autoincrement();
-        jDialog1.dispose();
-        load_table();
-        txt_denda_total.setText("0");
-        txt_search.requestFocusInWindow();
-    }
-    JOptionPane.showMessageDialog(null, "Update berhasil");
+        JOptionPane.showMessageDialog(null, "Update berhasil");
     }//GEN-LAST:event_btn_tambahActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -1621,166 +1574,166 @@ public class Pengembalian extends javax.swing.JPanel {
     private void spinner_baikStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spinner_baikStateChanged
         // TODO add your handling code here:  
         // Mendapatkan nilai spinner_baik yang baru
-    int nilaiSpinnerBaikBaru = (int) spinner_baik.getValue();
+        int nilaiSpinnerBaikBaru = (int) spinner_baik.getValue();
 
-    // Menghitung perubahan nilai spinner_baik
-    int perubahanNilai = nilaiSpinnerBaikBaru - nilaiSpinnerBaikSebelumnya;
+        // Menghitung perubahan nilai spinner_baik
+        int perubahanNilai = nilaiSpinnerBaikBaru - nilaiSpinnerBaikSebelumnya;
 
-    // Mendapatkan nilai spinner_pinjam
-    int nilaiSpinnerPinjam = (int) spinner_pinjam.getValue();
+        // Mendapatkan nilai spinner_pinjam
+        int nilaiSpinnerPinjam = (int) spinner_pinjam.getValue();
 
-    // Jika nilai spinner_pinjam adalah 0, maka spinner_baik tidak bisa naik lagi
-    if (nilaiSpinnerPinjam == 0 && perubahanNilai > 0) {
-        // Mengembalikan nilai spinner_baik ke nilai sebelumnya
-        spinner_baik.setValue(nilaiSpinnerBaikSebelumnya);
-    } else {
-        // Menyesuaikan nilai spinner_pinjam berdasarkan perubahan nilai spinner_baik
-        spinner_pinjam.setValue(nilaiSpinnerPinjam - perubahanNilai);
-
-        // Memperbarui nilai spinner_baik yang lama
-        nilaiSpinnerBaikSebelumnya = nilaiSpinnerBaikBaru;
-
-        // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
-        Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
-        Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
-
-        // Menghitung status waktu pengembalian
-        String waktupengembalian = "Tepat Waktu"; // Default: tepat waktu
-
-        // Jika tanggal_kembali_akhir sebelum atau sama dengan tanggal_kembali_awal
-        if (tanggalKembaliAwal != null && tanggalKembaliAkhir != null) {
-            // Mengubah tanggal menjadi string hanya dengan format tanggal (tanpa jam)
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            String tanggalAwal = sdf.format(tanggalKembaliAwal);
-            String tanggalAkhir = sdf.format(tanggalKembaliAkhir);
-            // Tidak terlambat, nilai txt_baik diisi dengan 0
-            baik.setText("0");
+        // Jika nilai spinner_pinjam adalah 0, maka spinner_baik tidak bisa naik lagi
+        if (nilaiSpinnerPinjam == 0 && perubahanNilai > 0) {
+            // Mengembalikan nilai spinner_baik ke nilai sebelumnya
+            spinner_baik.setValue(nilaiSpinnerBaikSebelumnya);
         } else {
-            // Jika terlambat, nilai txt_baik diisi dengan nilai spinner_baik dikali 1000
-            baik.setText(String.valueOf(nilaiSpinnerBaikBaru * 1000));
+            // Menyesuaikan nilai spinner_pinjam berdasarkan perubahan nilai spinner_baik
+            spinner_pinjam.setValue(nilaiSpinnerPinjam - perubahanNilai);
+
+            // Memperbarui nilai spinner_baik yang lama
+            nilaiSpinnerBaikSebelumnya = nilaiSpinnerBaikBaru;
+
+            // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
+            Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
+            Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
+
+            // Menghitung status waktu pengembalian
+            String waktupengembalian = "Tepat Waktu"; // Default: tepat waktu
+
+            // Jika tanggal_kembali_akhir sebelum atau sama dengan tanggal_kembali_awal
+            if (tanggalKembaliAwal != null && tanggalKembaliAkhir != null) {
+                // Mengubah tanggal menjadi string hanya dengan format tanggal (tanpa jam)
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                String tanggalAwal = sdf.format(tanggalKembaliAwal);
+                String tanggalAkhir = sdf.format(tanggalKembaliAkhir);
+                // Tidak terlambat, nilai txt_baik diisi dengan 0
+                baik.setText("0");
+            } else {
+                // Jika terlambat, nilai txt_baik diisi dengan nilai spinner_baik dikali 1000
+                baik.setText(String.valueOf(nilaiSpinnerBaikBaru * 1000));
+            }
+            updateTotalDenda();
         }
-        updateTotalDenda();
-    }
     }//GEN-LAST:event_spinner_baikStateChanged
 
     private void spinner_rusakStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spinner_rusakStateChanged
         // TODO add your handling code here:
         // Mendapatkan nilai spinner_rusak yang baru
-    int nilaiSpinnerRusakBaru = (int) spinner_rusak.getValue();
+        int nilaiSpinnerRusakBaru = (int) spinner_rusak.getValue();
 
-    // Menghitung perubahan nilai spinner_rusak
-    int perubahanNilai = nilaiSpinnerRusakBaru - nilaiSpinnerRusakSebelumnya;
+        // Menghitung perubahan nilai spinner_rusak
+        int perubahanNilai = nilaiSpinnerRusakBaru - nilaiSpinnerRusakSebelumnya;
 
-    // Mendapatkan nilai spinner_pinjam
-    int nilaiSpinnerPinjam = (int) spinner_pinjam.getValue();
+        // Mendapatkan nilai spinner_pinjam
+        int nilaiSpinnerPinjam = (int) spinner_pinjam.getValue();
 
-    // Jika nilai spinner_pinjam adalah 0, maka spinner_rusak tidak bisa naik lagi
-    if (nilaiSpinnerPinjam == 0 && perubahanNilai > 0) {
-        // Mengembalikan nilai spinner_rusak ke nilai sebelumnya
-        spinner_rusak.setValue(nilaiSpinnerRusakSebelumnya);
-    } else {
-        // Menyesuaikan nilai spinner_pinjam berdasarkan perubahan nilai spinner_rusak
-        spinner_pinjam.setValue(nilaiSpinnerPinjam - perubahanNilai);
-
-        // Memperbarui nilai spinner_rusak yang lama
-        nilaiSpinnerRusakSebelumnya = nilaiSpinnerRusakBaru;
-
-        // Mendapatkan judul buku
-        String judulBuku = txt_judul_buku.getText();
-
-        // Mendapatkan harga buku dari metode getHargaBuku
-        int hargaBuku = getHargaBuku(judulBuku);
-
-        // Menghitung total denda
-        int totalDenda = (int) (0.5 * nilaiSpinnerRusakBaru * hargaBuku);
-
-        // Mengatur nilai txt_denda dengan total denda
-        kondisi_rusak.setText(Integer.toString(totalDenda));
-
-        // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
-        Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
-        Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
-
-        // Menghitung status waktu pengembalian
-        String waktupengembalian = "Tepat Waktu"; // Default: tepat waktu
-
-        // Jika tanggal_kembali_akhir sebelum atau sama dengan tanggal_kembali_awal
-        if (tanggalKembaliAwal != null && tanggalKembaliAkhir != null) {
-            // Mengubah tanggal menjadi string hanya dengan format tanggal (tanpa jam)
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            String tanggalAwal = sdf.format(tanggalKembaliAwal);
-            String tanggalAkhir = sdf.format(tanggalKembaliAkhir);
-            // Tidak terlambat, nilai txt_rusak diisi dengan kondisi_rusak
-            rusak.setText(kondisi_rusak.getText());
+        // Jika nilai spinner_pinjam adalah 0, maka spinner_rusak tidak bisa naik lagi
+        if (nilaiSpinnerPinjam == 0 && perubahanNilai > 0) {
+            // Mengembalikan nilai spinner_rusak ke nilai sebelumnya
+            spinner_rusak.setValue(nilaiSpinnerRusakSebelumnya);
         } else {
-            // Jika terlambat, nilai txt_rusak diisi dengan jumlah kondisi_rusak dan telat_rusak
-            int dendaTelat = Integer.parseInt(telat_rusak.getText());
-            int dendaKondisi = Integer.parseInt(kondisi_rusak.getText());
-            int totalDendaRusak = dendaTelat + dendaKondisi;
-            rusak.setText(String.valueOf(totalDendaRusak));
+            // Menyesuaikan nilai spinner_pinjam berdasarkan perubahan nilai spinner_rusak
+            spinner_pinjam.setValue(nilaiSpinnerPinjam - perubahanNilai);
+
+            // Memperbarui nilai spinner_rusak yang lama
+            nilaiSpinnerRusakSebelumnya = nilaiSpinnerRusakBaru;
+
+            // Mendapatkan judul buku
+            String judulBuku = txt_judul_buku.getText();
+
+            // Mendapatkan harga buku dari metode getHargaBuku
+            int hargaBuku = getHargaBuku(judulBuku);
+
+            // Menghitung total denda
+            int totalDenda = (int) (0.5 * nilaiSpinnerRusakBaru * hargaBuku);
+
+            // Mengatur nilai txt_denda dengan total denda
+            kondisi_rusak.setText(Integer.toString(totalDenda));
+
+            // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
+            Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
+            Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
+
+            // Menghitung status waktu pengembalian
+            String waktupengembalian = "Tepat Waktu"; // Default: tepat waktu
+
+            // Jika tanggal_kembali_akhir sebelum atau sama dengan tanggal_kembali_awal
+            if (tanggalKembaliAwal != null && tanggalKembaliAkhir != null) {
+                // Mengubah tanggal menjadi string hanya dengan format tanggal (tanpa jam)
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                String tanggalAwal = sdf.format(tanggalKembaliAwal);
+                String tanggalAkhir = sdf.format(tanggalKembaliAkhir);
+                // Tidak terlambat, nilai txt_rusak diisi dengan kondisi_rusak
+                rusak.setText(kondisi_rusak.getText());
+            } else {
+                // Jika terlambat, nilai txt_rusak diisi dengan jumlah kondisi_rusak dan telat_rusak
+                int dendaTelat = Integer.parseInt(telat_rusak.getText());
+                int dendaKondisi = Integer.parseInt(kondisi_rusak.getText());
+                int totalDendaRusak = dendaTelat + dendaKondisi;
+                rusak.setText(String.valueOf(totalDendaRusak));
+            }
+            updateTotalDenda();
         }
-        updateTotalDenda();
-    }
     }//GEN-LAST:event_spinner_rusakStateChanged
 
     private void spinner_hilangStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spinner_hilangStateChanged
         // TODO add your handling code here:
         // Mendapatkan nilai spinner_hilang yang baru
-    int nilaiSpinnerHilangBaru = (int) spinner_hilang.getValue();
+        int nilaiSpinnerHilangBaru = (int) spinner_hilang.getValue();
 
-    // Menghitung perubahan nilai spinner_hilang
-    int perubahanNilai = nilaiSpinnerHilangBaru - nilaiSpinnerHilangSebelumnya;
+        // Menghitung perubahan nilai spinner_hilang
+        int perubahanNilai = nilaiSpinnerHilangBaru - nilaiSpinnerHilangSebelumnya;
 
-    // Mendapatkan nilai spinner_pinjam
-    int nilaiSpinnerPinjam = (int) spinner_pinjam.getValue();
+        // Mendapatkan nilai spinner_pinjam
+        int nilaiSpinnerPinjam = (int) spinner_pinjam.getValue();
 
-    // Jika nilai spinner_pinjam adalah 0, maka spinner_hilang tidak bisa naik lagi
-    if (nilaiSpinnerPinjam == 0 && perubahanNilai > 0) {
-        // Mengembalikan nilai spinner_hilang ke nilai sebelumnya
-        spinner_hilang.setValue(nilaiSpinnerHilangSebelumnya);
-    } else {
-        // Menyesuaikan nilai spinner_pinjam berdasarkan perubahan nilai spinner_hilang
-        spinner_pinjam.setValue(nilaiSpinnerPinjam - perubahanNilai);
-
-        // Memperbarui nilai spinner_hilang yang lama
-        nilaiSpinnerHilangSebelumnya = nilaiSpinnerHilangBaru;
-
-        // Mendapatkan judul buku
-        String judulBuku = txt_judul_buku.getText();
-
-        // Mendapatkan harga buku dari metode getHargaBuku
-        int hargaBuku = getHargaBuku(judulBuku);
-
-        // Menghitung total denda (harga buku dikali jumlah buku yang hilang)
-        int totalDenda = nilaiSpinnerHilangBaru * hargaBuku;
-
-        // Mengatur nilai txt_denda dengan total denda
-        kondisi_hilang.setText(Integer.toString(totalDenda));
-
-        // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
-        Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
-        Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
-
-        // Menghitung status waktu pengembalian
-        String waktupengembalian = "Tepat Waktu"; // Default: tepat waktu
-
-        // Jika tanggal_kembali_akhir sebelum atau sama dengan tanggal_kembali_awal
-        if (tanggalKembaliAwal != null && tanggalKembaliAkhir != null) {
-            // Mengubah tanggal menjadi string hanya dengan format tanggal (tanpa jam)
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            String tanggalAwal = sdf.format(tanggalKembaliAwal);
-            String tanggalAkhir = sdf.format(tanggalKembaliAkhir);
-            // Tidak terlambat, nilai txt_hilang diisi dengan kondisi_hilang
-            hilang.setText(kondisi_hilang.getText());
+        // Jika nilai spinner_pinjam adalah 0, maka spinner_hilang tidak bisa naik lagi
+        if (nilaiSpinnerPinjam == 0 && perubahanNilai > 0) {
+            // Mengembalikan nilai spinner_hilang ke nilai sebelumnya
+            spinner_hilang.setValue(nilaiSpinnerHilangSebelumnya);
         } else {
-            // Jika terlambat, nilai txt_hilang diisi dengan jumlah kondisi_hilang dan telat_hilang
-            int dendaTelat = Integer.parseInt(telat_hilang.getText());
-            int dendaKondisi = Integer.parseInt(kondisi_hilang.getText());
-            int totalDendaHilang = dendaTelat + dendaKondisi;
-            hilang.setText(String.valueOf(totalDendaHilang));
+            // Menyesuaikan nilai spinner_pinjam berdasarkan perubahan nilai spinner_hilang
+            spinner_pinjam.setValue(nilaiSpinnerPinjam - perubahanNilai);
+
+            // Memperbarui nilai spinner_hilang yang lama
+            nilaiSpinnerHilangSebelumnya = nilaiSpinnerHilangBaru;
+
+            // Mendapatkan judul buku
+            String judulBuku = txt_judul_buku.getText();
+
+            // Mendapatkan harga buku dari metode getHargaBuku
+            int hargaBuku = getHargaBuku(judulBuku);
+
+            // Menghitung total denda (harga buku dikali jumlah buku yang hilang)
+            int totalDenda = nilaiSpinnerHilangBaru * hargaBuku;
+
+            // Mengatur nilai txt_denda dengan total denda
+            kondisi_hilang.setText(Integer.toString(totalDenda));
+
+            // Mendapatkan tanggal kembali awal dan tanggal kembali akhir
+            Date tanggalKembaliAwal = tanggal_kembali_awal.getDate();
+            Date tanggalKembaliAkhir = tanggal_kembali_akhir.getDate();
+
+            // Menghitung status waktu pengembalian
+            String waktupengembalian = "Tepat Waktu"; // Default: tepat waktu
+
+            // Jika tanggal_kembali_akhir sebelum atau sama dengan tanggal_kembali_awal
+            if (tanggalKembaliAwal != null && tanggalKembaliAkhir != null) {
+                // Mengubah tanggal menjadi string hanya dengan format tanggal (tanpa jam)
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                String tanggalAwal = sdf.format(tanggalKembaliAwal);
+                String tanggalAkhir = sdf.format(tanggalKembaliAkhir);
+                // Tidak terlambat, nilai txt_hilang diisi dengan kondisi_hilang
+                hilang.setText(kondisi_hilang.getText());
+            } else {
+                // Jika terlambat, nilai txt_hilang diisi dengan jumlah kondisi_hilang dan telat_hilang
+                int dendaTelat = Integer.parseInt(telat_hilang.getText());
+                int dendaKondisi = Integer.parseInt(kondisi_hilang.getText());
+                int totalDendaHilang = dendaTelat + dendaKondisi;
+                hilang.setText(String.valueOf(totalDendaHilang));
+            }
+            updateTotalDenda();
         }
-        updateTotalDenda();
-    }
     }//GEN-LAST:event_spinner_hilangStateChanged
 
     private void spinner_baikAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_spinner_baikAncestorAdded
@@ -1796,12 +1749,12 @@ public class Pengembalian extends javax.swing.JPanel {
     }//GEN-LAST:event_spinner_hilangAncestorAdded
 
     private void txt_searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_searchActionPerformed
-txt_search.requestFocusInWindow();
+        txt_search.requestFocusInWindow();
     }//GEN-LAST:event_txt_searchActionPerformed
 
     private void txt_searchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_searchKeyPressed
         // TODO add your handling code here:
-         if (evt.getKeyCode() == KeyEvent.VK_F9) {
+        if (evt.getKeyCode() == KeyEvent.VK_F9) {
             // Jika tombol Enter ditekan, tekan tombol jButton2
             btn_clear.doClick();
         }
@@ -1819,7 +1772,7 @@ txt_search.requestFocusInWindow();
 
     private void txt_search1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_search1KeyPressed
         // TODO add your handling code here:
-         if (evt.getKeyCode() == KeyEvent.VK_F10) {
+        if (evt.getKeyCode() == KeyEvent.VK_F10) {
             // Jika tombol Enter ditekan, tekan tombol jButton2
             btn_clear2.doClick();
         }
