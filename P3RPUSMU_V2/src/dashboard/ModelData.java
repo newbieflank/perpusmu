@@ -15,11 +15,11 @@ public class ModelData {
     }
 
     public double getAmount() {
-        return amount;
+        return Am;
     }
 
-    public void setAmount(double amount) {
-        this.amount = amount;
+    public void setAmount(double Am) {
+        this.Am = Am;
     }
 
     public double getCost() {
@@ -30,26 +30,27 @@ public class ModelData {
         this.cost = cost;
     }
 
-    public double getProfit() {
+/*    public double getProfit() {
         return profit;
     }
 
     public void setProfit(double profit) {
         this.profit = profit;
-    }
+    }*/
 
-    public ModelData(String month, double amount, double cost, double profit) {
+    public ModelData(String month, double Am, double cost) {
         this.month = month;
-        this.amount = amount;
+        this.Am = Am;
         this.cost = cost;
-        this.profit = profit;
+    //    this.profit = profit;
     }
 
     public ModelData() {
     }
 
     private String month;
-    private double amount;
+    private double Am;
     private double cost;
-    private double profit;
+   // private double profit;
 }
+//, double profit

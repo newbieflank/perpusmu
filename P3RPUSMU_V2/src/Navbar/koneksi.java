@@ -12,17 +12,14 @@ import java.sql.DriverManager;
  * @author Septian Galoh P
  */
 public class koneksi {
-      private static Connection con;
-    public static Connection Koneksi(){
-        try{
 
-            
-//            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/dashboard","admin","BlueRose12");
+    private static Connection con;
 
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/perpusmu?zeroDateTimeBehavior=convertToNull","root",null);
+    public static Connection Koneksi() {
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/perpusmu", "root", "");
 
-
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println(e);
         }
         return con;
