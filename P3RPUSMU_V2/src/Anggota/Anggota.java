@@ -12,6 +12,7 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import Navbar.koneksi;
 import com.mysql.cj.jdbc.result.ResultSetMetaData;
+import com.sun.org.apache.bcel.internal.generic.IFEQ;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
@@ -36,17 +37,19 @@ public class Anggota extends javax.swing.JPanel {
     private Connection con;
     private PreparedStatement pst, pst1;
     private ResultSet rs, rs1;
-    private String nisn, kelamin;
+    private String nisn, kelamin, jurusan;
 
     public Anggota() throws SQLException {
         con = koneksi.Koneksi();
         initComponents();
-        loadTabel();
+        JCombo();
+        loadTable2();
         Jdialog();
         jPanel1.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         popup.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         popup2.putClientProperty(FlatClientProperties.STYLE, "arc:20");
         f_gender.putClientProperty(FlatClientProperties.STYLE, "arc:20");
+        J_jurusan.putClientProperty(FlatClientProperties.STYLE, "arc:20");
         search.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Cari Anggota");
 
         UIManager.put("Button.arc", 15);
@@ -57,6 +60,24 @@ public class Anggota extends javax.swing.JPanel {
         jDialog1.setSize(658, 395);
     }
 
+    private void JCombo() {
+        J_jurusan.removeAllItems();
+        try {
+            pst = con.prepareStatement("select jurusan from anggota");
+            rs = pst.executeQuery();
+
+            J_jurusan.addItem("Semua");
+            f_gender.setSelectedItem("Semua");
+            while (rs.next()) {
+                String jurs = rs.getString("jurusan");
+                J_jurusan.addItem(jurs);
+            }
+
+        } catch (Exception e) {
+            System.out.println("Jcombo" + e);
+        }
+    }
+
     private void Jdialog() {
         jDialog1.setLocationRelativeTo(null);
         jDialog1.setBackground(Color.white);
@@ -65,7 +86,23 @@ public class Anggota extends javax.swing.JPanel {
         jDialog1.setBackground(new Color(0, 0, 0, 0));
     }
 
-    private void loadTabel() throws SQLException {
+    private void getJK() {
+        if (f_gender.getSelectedIndex() != 0) {
+            kelamin = (String) f_gender.getSelectedItem();
+        } else {
+            kelamin = "";
+        }
+    }
+
+    private void getJR() {
+        if (J_jurusan.getSelectedIndex() != 0) {
+            jurusan = (String) J_jurusan.getSelectedItem();
+        } else {
+            jurusan = "";
+        }
+    }
+
+    private void loadTable2() {
         tabel.clearSelection();
         tabel.getTableHeader().setReorderingAllowed(false);
         tabel.getTableHeader().setResizingAllowed(false);
@@ -75,9 +112,21 @@ public class Anggota extends javax.swing.JPanel {
                 return false;
             }
         };
+        getJK();
+        getJR();
+        String sql;
 
+        if (kelamin.equals("") && jurusan.equals("")) {
+            sql = "select * from view_anggota";
+        } else if (!kelamin.equals("") && jurusan.equals("")) {
+            sql = "select * from view_anggota where jenis_kelamin = '" + kelamin + "'";
+        } else if (kelamin.equals("") && !jurusan.equals("")) {
+            sql = "select * from view_anggota where jurusan= '" + jurusan + "'";
+        } else {
+            sql = "select * from view_anggota where jenis_kelamin= '" + kelamin + "' and jurusan= '" + jurusan + "'";
+        }
         try {
-            pst = con.prepareStatement("select * from view_anggota");
+            pst = con.prepareStatement(sql);
             rs = pst.executeQuery();
             ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
             int columnCount = rsmd.getColumnCount();
@@ -92,69 +141,12 @@ public class Anggota extends javax.swing.JPanel {
                     rowData[i - 1] = rs.getObject(i);
                 }
                 model.addRow(rowData);
-                tabel.setModel(model);
             }
+            tabel.setModel(model);
         } catch (Exception e) {
             System.out.println("loadTable = " + e);
         }
-    }
 
-    private void loadTable2() {
-        tabel.clearSelection();
-        tabel.getTableHeader().setReorderingAllowed(false);
-        tabel.getTableHeader().setResizingAllowed(false);
-        DefaultTableModel model = new DefaultTableModel() {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
-        if (kelamin.equals("Semua")) {
-            try {
-                pst = con.prepareStatement("select * from view_anggota");
-                rs = pst.executeQuery();
-                ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
-                int columnCount = rsmd.getColumnCount();
-                for (int i = 1; i <= columnCount; i++) {
-                    model.addColumn(rsmd.getColumnName(i));
-                }
-
-                // Add rows to the DefaultTableModel
-                while (rs.next()) {
-                    Object[] rowData = new Object[columnCount];
-                    for (int i = 1; i <= columnCount; i++) {
-                        rowData[i - 1] = rs.getObject(i);
-                    }
-                    model.addRow(rowData);
-                    tabel.setModel(model);
-                }
-            } catch (Exception e) {
-                System.out.println("loadTable = " + e);
-            }
-        } else {
-            try {
-                pst = con.prepareStatement("select * from view_anggota where jenis_kelamin='" + kelamin + "'");
-                rs = pst.executeQuery();
-                ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
-                int columnCount = rsmd.getColumnCount();
-                for (int i = 1; i <= columnCount; i++) {
-                    model.addColumn(rsmd.getColumnName(i));
-                }
-
-                // Add rows to the DefaultTableModel
-                while (rs.next()) {
-                    Object[] rowData = new Object[columnCount];
-                    for (int i = 1; i <= columnCount; i++) {
-                        rowData[i - 1] = rs.getObject(i);
-                    }
-                    model.addRow(rowData);
-                    tabel.setModel(model);
-                }
-            } catch (Exception e) {
-                System.out.println("loadTable = " + e);
-            }
-        }
     }
 
     private void searchList() throws SQLException {
@@ -166,10 +158,19 @@ public class Anggota extends javax.swing.JPanel {
             }
         };
         String cari = search.getText();
-        if (!cari.equals(" ")) {
+        if (!cari.equals("")) {
+            String query;
             try {
-                pst = con.prepareStatement("select * from view_anggota where nama Like '%" + search.getText() + "%' or NISN Like '%" + search.getText() + "%' "
-                        + "or jurusan Like '%" + search.getText() + "%'");
+                if (kelamin.equals("") && jurusan.equals("")) {
+                    query = "select * from view_anggota where nama Like '%" + cari + "%'";
+                } else if (!kelamin.equals("") && jurusan.equals("")) {
+                    query = "select * from view_anggota where jenis_kelamin = '" + kelamin + "' and nama Like '%" + cari + "%'";
+                } else if (kelamin.equals("") && !jurusan.equals("")) {
+                    query = "select * from view_anggota where jurusan= '" + jurusan + "' and nama Like '%" + cari + "%'";
+                } else {
+                    query = "select * from view_anggota where jenis_kelamin= '" + kelamin + "' and jurusan= '" + jurusan + "' and nama Like '%" + cari + "%'";
+                }
+                pst = con.prepareStatement(query);
                 rs = pst.executeQuery();
                 ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
                 int columnCount = rsmd.getColumnCount();
@@ -184,14 +185,14 @@ public class Anggota extends javax.swing.JPanel {
                         rowData[i - 1] = rs.getObject(i);
                     }
                     model.addRow(rowData);
-                    tabel.setModel(model);
                 }
+                tabel.setModel(model);
             } catch (Exception e) {
                 System.out.println("data cari" + e);
             }
         } else {
             try {
-                loadTabel();
+                loadTable2();
             } catch (Exception e) {
                 System.out.println(e);
             }
@@ -234,6 +235,9 @@ public class Anggota extends javax.swing.JPanel {
         editButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
         f_gender = new javax.swing.JComboBox<>();
+        J_jurusan = new javax.swing.JComboBox<>();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
 
         jDialog1.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         jDialog1.setBackground(new java.awt.Color(255, 255, 255));
@@ -450,6 +454,11 @@ public class Anggota extends javax.swing.JPanel {
                 formMouseClicked(evt);
             }
         });
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setToolTipText("");
@@ -564,6 +573,33 @@ public class Anggota extends javax.swing.JPanel {
             }
         });
 
+        J_jurusan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        J_jurusan.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                J_jurusanItemStateChanged(evt);
+            }
+        });
+        J_jurusan.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
+            public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
+            }
+            public void popupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {
+                J_jurusanPopupMenuWillBecomeInvisible(evt);
+            }
+            public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {
+            }
+        });
+        J_jurusan.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                J_jurusanMouseClicked(evt);
+            }
+        });
+
+        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel9.setText("Jurusan :");
+
+        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel10.setText("Jenis Kelamin :");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -578,7 +614,13 @@ public class Anggota extends javax.swing.JPanel {
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(30, 30, 30)
+                                .addComponent(jLabel9)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(J_jurusan, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
+                                .addComponent(jLabel10)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(f_gender, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(editButton, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -599,9 +641,12 @@ public class Anggota extends javax.swing.JPanel {
                         .addComponent(editButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(f_gender, javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(search, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel9)
+                        .addComponent(J_jurusan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel10)
+                        .addComponent(f_gender, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(9, 9, 9)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 507, Short.MAX_VALUE)
                 .addContainerGap())
@@ -696,7 +741,7 @@ public class Anggota extends javax.swing.JPanel {
                                 try {
                                     pst = con.prepareStatement("delete from anggota where NISN = " + nisn);
                                     pst.execute();
-                                    loadTabel();
+                                    loadTable2();
                                     JOptionPane.showMessageDialog(jDialog1, "Data Berhasil di hapus");
                                 } catch (Exception e) {
                                     JOptionPane.showMessageDialog(jDialog1, "Data Gagal di hapus");
@@ -732,13 +777,9 @@ public class Anggota extends javax.swing.JPanel {
     }//GEN-LAST:event_jDialog1KeyPressed
 
     private void jPanel1AncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_jPanel1AncestorAdded
-        try {
-            // TODO add your handling code here:
-            loadTabel();
-            Jdialog();
-        } catch (SQLException ex) {
-            Logger.getLogger(Anggota.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        // TODO add your handling code here:
+        loadTable2();
+        Jdialog();
     }//GEN-LAST:event_jPanel1AncestorAdded
 
     private void dial_batalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dial_batalActionPerformed
@@ -796,7 +837,7 @@ public class Anggota extends javax.swing.JPanel {
                         }
                     }
 
-                    loadTabel();
+                    loadTable2();
                 } catch (Exception e) {
                     System.out.println("nisn anggota" + e);
                 }
@@ -807,12 +848,9 @@ public class Anggota extends javax.swing.JPanel {
     }//GEN-LAST:event_dial_simpanActionPerformed
 
     private void formAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_formAncestorAdded
-        try {
-            // TODO add your handling code here:
-            loadTabel();
-        } catch (SQLException ex) {
-            Logger.getLogger(Anggota.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        // TODO add your handling code here:
+        loadTable2();
+        JCombo();
     }//GEN-LAST:event_formAncestorAdded
 
     private void searchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchKeyPressed
@@ -877,16 +915,32 @@ public class Anggota extends javax.swing.JPanel {
 
     private void f_genderItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_f_genderItemStateChanged
         // TODO add your handling code here:
-        kelamin = (String) (f_gender.getSelectedItem());
-        try {
-            loadTable2();
-        } catch (Exception e) {
-            System.out.println("Gender event" + e);
-        }
+        loadTable2();
     }//GEN-LAST:event_f_genderItemStateChanged
+
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        // TODO add your handling code here:
+        JCombo();
+    }//GEN-LAST:event_formComponentShown
+
+    private void J_jurusanItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_J_jurusanItemStateChanged
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_J_jurusanItemStateChanged
+
+    private void J_jurusanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_J_jurusanMouseClicked
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_J_jurusanMouseClicked
+
+    private void J_jurusanPopupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_J_jurusanPopupMenuWillBecomeInvisible
+        // TODO add your handling code here:
+        loadTable2();
+    }//GEN-LAST:event_J_jurusanPopupMenuWillBecomeInvisible
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> J_jurusan;
     private javax.swing.JButton addButton;
     private javax.swing.JButton deleteButton;
     private javax.swing.JTextField dial_angkatan;
@@ -901,6 +955,7 @@ public class Anggota extends javax.swing.JPanel {
     private javax.swing.JComboBox<String> f_gender;
     private javax.swing.JDialog jDialog1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -908,6 +963,7 @@ public class Anggota extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel popup;
