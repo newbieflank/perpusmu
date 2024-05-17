@@ -102,7 +102,7 @@ public class Anggota extends javax.swing.JPanel {
         }
     }
 
-    private void loadTable2() {
+    private void loadTable2() throws SQLException {
         tabel.clearSelection();
         tabel.getTableHeader().setReorderingAllowed(false);
         tabel.getTableHeader().setResizingAllowed(false);
@@ -115,36 +115,43 @@ public class Anggota extends javax.swing.JPanel {
         getJK();
         getJR();
         String sql;
+        String cari = search.getText();
 
-        if (kelamin.equals("") && jurusan.equals("")) {
-            sql = "select * from view_anggota";
-        } else if (!kelamin.equals("") && jurusan.equals("")) {
-            sql = "select * from view_anggota where jenis_kelamin = '" + kelamin + "'";
-        } else if (kelamin.equals("") && !jurusan.equals("")) {
-            sql = "select * from view_anggota where jurusan= '" + jurusan + "'";
+        if (!cari.equals("")) {
+            searchList();
         } else {
-            sql = "select * from view_anggota where jenis_kelamin= '" + kelamin + "' and jurusan= '" + jurusan + "'";
-        }
-        try {
-            pst = con.prepareStatement(sql);
-            rs = pst.executeQuery();
-            ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
-            int columnCount = rsmd.getColumnCount();
-            for (int i = 1; i <= columnCount; i++) {
-                model.addColumn(rsmd.getColumnName(i));
+
+            if (kelamin.equals("") && jurusan.equals("")) {
+                sql = "select * from view_anggota";
+            } else if (!kelamin.equals("") && jurusan.equals("")) {
+                sql = "select * from view_anggota where jenis_kelamin = '" + kelamin + "'";
+            } else if (kelamin.equals("") && !jurusan.equals("")) {
+                sql = "select * from view_anggota where jurusan= '" + jurusan + "'";
+            } else {
+                sql = "select * from view_anggota where jenis_kelamin= '" + kelamin + "' and jurusan= '" + jurusan + "'";
+            }
+            try {
+                pst = con.prepareStatement(sql);
+                rs = pst.executeQuery();
+                ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
+                int columnCount = rsmd.getColumnCount();
+                for (int i = 1; i <= columnCount; i++) {
+                    model.addColumn(rsmd.getColumnName(i));
+                }
+
+                // Add rows to the DefaultTableModel
+                while (rs.next()) {
+                    Object[] rowData = new Object[columnCount];
+                    for (int i = 1; i <= columnCount; i++) {
+                        rowData[i - 1] = rs.getObject(i);
+                    }
+                    model.addRow(rowData);
+                }
+                tabel.setModel(model);
+            } catch (Exception e) {
+                System.out.println("loadTable = " + e);
             }
 
-            // Add rows to the DefaultTableModel
-            while (rs.next()) {
-                Object[] rowData = new Object[columnCount];
-                for (int i = 1; i <= columnCount; i++) {
-                    rowData[i - 1] = rs.getObject(i);
-                }
-                model.addRow(rowData);
-            }
-            tabel.setModel(model);
-        } catch (Exception e) {
-            System.out.println("loadTable = " + e);
         }
 
     }
@@ -158,6 +165,8 @@ public class Anggota extends javax.swing.JPanel {
             }
         };
         String cari = search.getText();
+        
+        
         if (!cari.equals("")) {
             String query;
             try {
@@ -246,11 +255,6 @@ public class Anggota extends javax.swing.JPanel {
         jDialog1.setMinimumSize(new java.awt.Dimension(658, 395));
         jDialog1.setUndecorated(true);
         jDialog1.setResizable(false);
-        jDialog1.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jDialog1FocusLost(evt);
-            }
-        });
         jDialog1.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 jDialog1KeyPressed(evt);
@@ -454,11 +458,6 @@ public class Anggota extends javax.swing.JPanel {
                 formMouseClicked(evt);
             }
         });
-        addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentShown(java.awt.event.ComponentEvent evt) {
-                formComponentShown(evt);
-            }
-        });
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setToolTipText("");
@@ -574,11 +573,6 @@ public class Anggota extends javax.swing.JPanel {
         });
 
         J_jurusan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        J_jurusan.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                J_jurusanItemStateChanged(evt);
-            }
-        });
         J_jurusan.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
             public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
             }
@@ -586,11 +580,6 @@ public class Anggota extends javax.swing.JPanel {
                 J_jurusanPopupMenuWillBecomeInvisible(evt);
             }
             public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {
-            }
-        });
-        J_jurusan.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                J_jurusanMouseClicked(evt);
             }
         });
 
@@ -761,10 +750,6 @@ public class Anggota extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_deleteButtonActionPerformed
 
-    private void jDialog1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jDialog1FocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jDialog1FocusLost
-
     private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_formMouseClicked
@@ -777,8 +762,12 @@ public class Anggota extends javax.swing.JPanel {
     }//GEN-LAST:event_jDialog1KeyPressed
 
     private void jPanel1AncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_jPanel1AncestorAdded
-        // TODO add your handling code here:
-        loadTable2();
+        try {
+            // TODO add your handling code here:
+            loadTable2();
+        } catch (SQLException ex) {
+            Logger.getLogger(Anggota.class.getName()).log(Level.SEVERE, null, ex);
+        }
         Jdialog();
     }//GEN-LAST:event_jPanel1AncestorAdded
 
@@ -848,9 +837,13 @@ public class Anggota extends javax.swing.JPanel {
     }//GEN-LAST:event_dial_simpanActionPerformed
 
     private void formAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_formAncestorAdded
-        // TODO add your handling code here:
-        loadTable2();
-        JCombo();
+        try {
+            // TODO add your handling code here:
+            loadTable2();
+            JCombo();
+        } catch (SQLException ex) {
+            Logger.getLogger(Anggota.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_formAncestorAdded
 
     private void searchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchKeyPressed
@@ -914,28 +907,21 @@ public class Anggota extends javax.swing.JPanel {
     }//GEN-LAST:event_dial_nisnKeyTyped
 
     private void f_genderItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_f_genderItemStateChanged
-        // TODO add your handling code here:
-        loadTable2();
+        try {
+            // TODO add your handling code here:
+            loadTable2();
+        } catch (SQLException ex) {
+            Logger.getLogger(Anggota.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_f_genderItemStateChanged
 
-    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
-        // TODO add your handling code here:
-        JCombo();
-    }//GEN-LAST:event_formComponentShown
-
-    private void J_jurusanItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_J_jurusanItemStateChanged
-        // TODO add your handling code here:
-
-    }//GEN-LAST:event_J_jurusanItemStateChanged
-
-    private void J_jurusanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_J_jurusanMouseClicked
-        // TODO add your handling code here:
-
-    }//GEN-LAST:event_J_jurusanMouseClicked
-
     private void J_jurusanPopupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_J_jurusanPopupMenuWillBecomeInvisible
-        // TODO add your handling code here:
-        loadTable2();
+        try {
+            // TODO add your handling code here:
+            loadTable2();
+        } catch (SQLException ex) {
+            Logger.getLogger(Anggota.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_J_jurusanPopupMenuWillBecomeInvisible
 
 
