@@ -15,6 +15,7 @@ import Navbar.koneksi;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -43,7 +44,7 @@ public class Admin extends javax.swing.JPanel {
         initComponents();
         loadTabel();
         Jdialog();
-        jcombo();
+//        jcombo();
         jPanel1.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         popup.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         popup2.putClientProperty(FlatClientProperties.STYLE, "arc:30");
@@ -64,12 +65,11 @@ public class Admin extends javax.swing.JPanel {
         jDialog1.setBackground(new Color(0, 0, 0, 0));
     }
 
-    private void jcombo() {
-        if (dial_status.getSelectedItem() == null) {
-            dial_status.setSelectedItem("Pilih Status");
-        }
-    }
-
+//    private void jcombo() {
+//        if (dial_status.getSelectedItem() == null) {
+//            dial_status.setSelectedItem("Pilih Status");
+//        }
+//    }
     private void loadTabel() throws SQLException {
         tabel.clearSelection();
         DefaultTableModel model = new DefaultTableModel() {
@@ -119,22 +119,8 @@ public class Admin extends javax.swing.JPanel {
             System.out.println("searchTable" + e);
         }
     }
-    
     // Method untuk memeriksa apakah sudah ada pengguna dengan status admin
-private boolean alreadyHasAdmin() {
-    boolean hasAdmin = false;
-    try {
-        pst = con.prepareStatement("SELECT COUNT(*) FROM users WHERE status = 'Admin'");
-        rs = pst.executeQuery();
-        if (rs.next()) {
-            int adminCount = rs.getInt(1);
-            hasAdmin = (adminCount > 0);
-        }
-    } catch (SQLException e) {
-        System.out.println("Error while checking admin status: " + e);
-    }
-    return hasAdmin;
-}
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -157,8 +143,8 @@ private boolean alreadyHasAdmin() {
         jLabel8 = new javax.swing.JLabel();
         dial_simpan = new javax.swing.JButton();
         dial_batal = new javax.swing.JButton();
-        dial_status = new javax.swing.JComboBox<>();
         dial_password = new javax.swing.JTextField();
+        dial_status = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         search = new javax.swing.JTextField();
@@ -242,8 +228,6 @@ private boolean alreadyHasAdmin() {
             }
         });
 
-        dial_status.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Admin", "Petugas" }));
-
         javax.swing.GroupLayout popupLayout = new javax.swing.GroupLayout(popup);
         popup.setLayout(popupLayout);
         popupLayout.setHorizontalGroup(
@@ -266,12 +250,12 @@ private boolean alreadyHasAdmin() {
                                 .addGap(8, 8, 8)
                                 .addComponent(jLabel3)))
                         .addGap(84, 84, 84)
-                        .addGroup(popupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(dial_password, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(popupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(dial_password, javax.swing.GroupLayout.DEFAULT_SIZE, 267, Short.MAX_VALUE)
                             .addGroup(popupLayout.createSequentialGroup()
                                 .addGap(12, 12, 12)
                                 .addComponent(jLabel8))
-                            .addComponent(dial_status, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(dial_status)))
                     .addGroup(popupLayout.createSequentialGroup()
                         .addGap(213, 213, 213)
                         .addComponent(dial_batal, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -492,22 +476,42 @@ private boolean alreadyHasAdmin() {
     }//GEN-LAST:event_searchActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        // TODO add your handling code here:
-        dial_id.setText(null);
-    dial_username.setText(null);
-    dial_password.setText(null);
-    
-    // Menghapus semua item sebelum menambahkan "Petugas" jika sudah ada admin
-    if (alreadyHasAdmin()) {
-        dial_status.removeAllItems();
-        dial_status.addItem("Petugas");
-    } else {
-        dial_status.setSelectedItem(null); // Atau tidak mengatur apa-apa jika tidak ada admin
-    }
 
-    dial_id.setEnabled(true);
-    jDialog1.setVisible(true);
+        dial_id.setText(null);
+        dial_username.setText(null);
+        dial_password.setText(null);
+        dial_status.setText(null); // Menambahkan ini untuk membersihkan field status
+
+        // Menangani field status berdasarkan keberadaan admin
+        if (alreadyHasAdmin()) {
+            dial_status.setText("Petugas");
+            dial_status.setEditable(false); // Membuat field tidak dapat diubah jika admin sudah ada
+        } else {
+            dial_status.setEditable(true); // Membuat field dapat diubah jika tidak ada admin
+        }
+
+        // Mengaktifkan field ID dan menampilkan dialog
+        dial_id.setEnabled(true);
+        jDialog1.setVisible(true);
+
+
     }//GEN-LAST:event_addButtonActionPerformed
+private boolean alreadyHasAdmin() {
+    // Misalkan Anda menggunakan JDBC untuk mengakses database
+    String query = "SELECT COUNT(*) FROM users WHERE status = 'admin'";
+    try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/perpusmu", "root", "");
+         PreparedStatement stmt = conn.prepareStatement(query);
+         ResultSet rs = stmt.executeQuery()) {
+        
+        if (rs.next()) {
+            int count = rs.getInt(1);
+            return count > 0; // Kembalikan true jika ada admin
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+}
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
         // TODO add your handling code here:
@@ -524,7 +528,7 @@ private boolean alreadyHasAdmin() {
                     dial_id.setText(ID_users);
                     dial_username.setText(username);
                     dial_password.setText(password);
-                    dial_status.setSelectedItem(status);
+                    dial_status.setText(status);
                     dial_id.enable(false);
 
                     jDialog1.setVisible(true);
@@ -588,8 +592,10 @@ private boolean alreadyHasAdmin() {
             // TODO add your handling code here:
             loadTabel();
             Jdialog();
+
         } catch (SQLException ex) {
-            Logger.getLogger(Admin.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Admin.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jPanel1AncestorAdded
 
@@ -598,7 +604,7 @@ private boolean alreadyHasAdmin() {
         dial_id.setText(null);
         dial_username.setText(null);
         dial_password.setText(null);
-        dial_status.setSelectedItem(this);
+        dial_status.setText(null);
 
         ID_users = null;
         jDialog1.dispose();
@@ -616,7 +622,7 @@ private boolean alreadyHasAdmin() {
         String Id = dial_id.getText();
         String Username = dial_username.getText();
         String Password = dial_password.getText();
-        String Status = (String) dial_status.getSelectedItem();
+        String Status = (String) dial_status.getText();
 
         if (Id.equals("") || Username.equals("") || Password.equals("") || Status.equals("")) {
             JOptionPane.showMessageDialog(jDialog1, "Anda Harus Mengisi Semua Data Terlebih Dahulu");
@@ -660,8 +666,10 @@ private boolean alreadyHasAdmin() {
         try {
             // TODO add your handling code here:
             loadTabel();
+
         } catch (SQLException ex) {
-            Logger.getLogger(Admin.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Admin.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_formAncestorAdded
 
@@ -670,8 +678,10 @@ private boolean alreadyHasAdmin() {
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             try {
                 searchList();
+
             } catch (SQLException ex) {
-                Logger.getLogger(Admin.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Admin.class
+                        .getName()).log(Level.SEVERE, null, ex);
             }
         }
     }//GEN-LAST:event_searchKeyPressed
@@ -684,7 +694,7 @@ private boolean alreadyHasAdmin() {
     private javax.swing.JTextField dial_id;
     private javax.swing.JTextField dial_password;
     private javax.swing.JButton dial_simpan;
-    private javax.swing.JComboBox<String> dial_status;
+    private javax.swing.JTextField dial_status;
     private javax.swing.JTextField dial_username;
     private javax.swing.JButton editButton;
     private javax.swing.JDialog jDialog1;
