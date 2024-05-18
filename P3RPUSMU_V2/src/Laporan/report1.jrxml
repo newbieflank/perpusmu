@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ee3f81f2-862e-478a-9b6e-77ed1758e6ad">
 	<property name="ireport.zoom" value="1.2100000000000026"/>
-	<property name="ireport.x" value="51"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="tgl1" class="java.util.Date">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -127,7 +127,7 @@ WHERE
 			<staticText>
 				<reportElement x="245" y="0" width="64" height="34" uuid="141c460f-8c43-44ef-a2a3-94753b90bf81"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Status Siswa]]></text>
 			</staticText>
@@ -146,8 +146,8 @@ WHERE
 				<text><![CDATA[kategori]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="542" y="0" width="58" height="34" uuid="36ceed1a-0aa6-4358-9df3-399750648731"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<reportElement x="542" y="0" width="58" height="23" uuid="36ceed1a-0aa6-4358-9df3-399750648731"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Status Buku]]></text>
@@ -155,7 +155,7 @@ WHERE
 			<staticText>
 				<reportElement x="600" y="0" width="65" height="34" uuid="36ce0d9f-8d50-44d7-933e-a7c9716cd94e"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Kondisi Buku]]></text>
 			</staticText>
@@ -175,8 +175,8 @@ WHERE
 			</staticText>
 			<staticText>
 				<reportElement x="665" y="0" width="71" height="34" uuid="7a7d61cb-c374-460b-8379-e84b0224d561"/>
-				<textElement textAlignment="Center">
-					<font isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Jumlah Pengembalian]]></text>
 			</staticText>
@@ -220,9 +220,9 @@ WHERE
 				<textFieldExpression><![CDATA[$F{nama}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="181" y="0" width="64" height="20" uuid="b1da2aed-c2e4-41c9-943c-898a38f59b25"/>
+				<reportElement x="182" y="0" width="64" height="20" uuid="b1da2aed-c2e4-41c9-943c-898a38f59b25"/>
 				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA[$F{angkatan}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("yyyy").format($F{angkatan})]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="245" y="0" width="64" height="20" uuid="baea091b-b525-4834-9ccf-7d61c17b1a7d"/>
@@ -258,7 +258,9 @@ WHERE
 			</textField>
 			<textField>
 				<reportElement x="452" y="0" width="89" height="20" uuid="427a5633-3900-464e-9e71-616e1ca2ee7c"/>
-				<textFieldExpression><![CDATA[$F{tanggal}]]></textFieldExpression>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("dd-MM-yyyy").format($F{tanggal})
+]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="665" y="0" width="71" height="20" uuid="7ee344ca-593c-4c01-b5d7-1d2bc6762607"/>
