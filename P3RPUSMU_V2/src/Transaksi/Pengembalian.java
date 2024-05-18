@@ -506,7 +506,7 @@ public class Pengembalian extends javax.swing.JPanel {
         txt_nama.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         txt_nama.setEnabled(false);
 
-        btn_tambah.setBackground(new java.awt.Color(0, 255, 0));
+        btn_tambah.setBackground(new java.awt.Color(10, 169, 50));
         btn_tambah.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         btn_tambah.setText("Submit");
         btn_tambah.addActionListener(new java.awt.event.ActionListener() {
@@ -720,12 +720,14 @@ public class Pengembalian extends javax.swing.JPanel {
                                         .addComponent(telat_hilang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(btn_tambah, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(rusak, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(pengembalianLayout.createSequentialGroup()
-                                        .addComponent(kondisi_rusak, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(kondisi_hilang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(0, 0, Short.MAX_VALUE)))))
+                                        .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(rusak, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGroup(pengembalianLayout.createSequentialGroup()
+                                                .addComponent(kondisi_rusak, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(kondisi_hilang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addGap(0, 164, Short.MAX_VALUE)))))
                         .addGap(158, 158, 158)
                         .addGroup(pengembalianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel14)

@@ -749,7 +749,7 @@ private boolean judulBukuSudahDipinjam(String judulBuku) {
             }
         });
 
-        jButton20.setBackground(new java.awt.Color(0, 255, 0));
+        jButton20.setBackground(new java.awt.Color(10, 169, 50));
         jButton20.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         jButton20.setForeground(new java.awt.Color(255, 255, 255));
         jButton20.setText("SIMPAN");
@@ -934,7 +934,7 @@ private boolean judulBukuSudahDipinjam(String judulBuku) {
             tabel_peminjaman.getColumnModel().getColumn(6).setResizable(false);
         }
 
-        jButton5.setBackground(new java.awt.Color(0, 255, 0));
+        jButton5.setBackground(new java.awt.Color(10, 169, 50));
         jButton5.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         jButton5.setForeground(new java.awt.Color(255, 255, 255));
         jButton5.setText("SIMPAN");
@@ -1179,10 +1179,8 @@ private boolean judulBukuSudahDipinjam(String judulBuku) {
             String tanggalkembaliFormatted = dateFormat.format(tanggalkembali);
 
             // Tambahkan baris baru ke dalam tabel hanya jika tidak ada notifikasi yang ditampilkan
-            if (!judulBukuSudahDipinjam(judulbuku)) {
-                Object[] row = {kodepeminjaman, tanggalpinjamFormatted, tanggalkembaliFormatted, nama,  totalpeminjaman, judulbuku, username};
-                model.addRow(row);
-            }
+            Object[] row = {kodepeminjaman, tanggalpinjamFormatted, tanggalkembaliFormatted, nama, totalpeminjaman, judulbuku, username};
+            model.addRow(row);
             clear();
             txt_kode_buku.requestFocusInWindow();
         }
@@ -1265,7 +1263,7 @@ private boolean judulBukuSudahDipinjam(String judulBuku) {
                             kurangiStokBuku(conn, kodeBuku, jumlahPeminjaman);
 
                             // Insert ke dalam tabel detail_peminjaman
-                            String detailPeminjamanSql = "INSERT INTO detail_peminjaman (kode_peminjaman, jumlah_peminjaman, status_peminjaman, tanggal_peminjaman, tanggal_kembali, No_buku) VALUES (?, ?, ?, ?, ?, (SELECT No_buku FROM buku WHERE judul_buku = ?))";
+                            String detailPeminjamanSql = "INSERT INTO detail_peminjaman (kode_peminjaman, jumlah_peminjaman, status_peminjaman, tanggal_peminjaman, tanggal_kembali, No_buku) VALUES (?, ?, ?, ?, ?, (SELECT No_buku FROM buku WHERE judul_buku = ? LIMIT 1))";
                             try (PreparedStatement pstDetailPeminjaman = conn.prepareStatement(detailPeminjamanSql)) {
                                 pstDetailPeminjaman.setString(1, kodePeminjaman);
                                 pstDetailPeminjaman.setInt(2, jumlahPeminjaman);
