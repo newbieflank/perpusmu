@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package Laporan;
+
 import java.util.Date;
 import Login.Login;
 import Navbar.Navbar;
@@ -15,6 +16,8 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import Navbar.koneksi;
 import java.awt.Color;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -24,33 +27,41 @@ import javax.swing.JOptionPane;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.view.JasperViewer;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 public class ptransaksi extends javax.swing.JPanel {
-        private Connection con;
+
+    private Connection con;
     private PreparedStatement pst, pst1;
     private ResultSet rs;
+    String FolderPath;
+
     public ptransaksi() throws SQLException {
-         con = koneksi.Koneksi();
+        con = koneksi.Koneksi();
         initComponents();
         load_table();
-       jTable1.getTableHeader().setBackground(new Color(63,148,105));
-            
+        jTable1.getTableHeader().setBackground(new Color(63, 148, 105));
+
         jTable1.getTableHeader().setForeground(Color.white);
     }
-   private void load_table() throws SQLException {
-       jTable1.clearSelection();
+
+    private void load_table() throws SQLException {
+        jTable1.clearSelection();
         jTable1.getTableHeader().setReorderingAllowed(false);
         jTable1.getTableHeader().setResizingAllowed(false);
-      DefaultTableModel model = new DefaultTableModel() {
-          
+        DefaultTableModel model = new DefaultTableModel() {
+
             @Override
             public boolean isCellEditable(int row, int column) {
-            
+
                 return false;
-           
-        }
-};
-       
-        
+
+            }
+        };
+
         model.addColumn("Kode Pengembalian");
         model.addColumn("Nama");
         model.addColumn("angkatan");
@@ -61,20 +72,21 @@ public class ptransaksi extends javax.swing.JPanel {
         model.addColumn("Status pengembalian");
         model.addColumn("Kondisi Buku");
         model.addColumn("Jumlah Kembali");
-   
+
         try {
-          pst = con.prepareStatement ("SELECT pengembalian.kode_pengembalian , anggota.nama , anggota.angkatan , anggota.status , buku.judul_buku , buku.kategori , detail_pengembalian.tanggal , detail_pengembalian.status_pengembalian,detail_pengembalian.kondisi_buku,detail_pengembalian.jumlah_pengembalian FROM detail_pengembalian JOIN pengembalian ON pengembalian.kode_pengembalian = detail_pengembalian.kode_pengembalian JOIN anggota ON anggota.NISN = detail_pengembalian.NISN JOIN buku ON buku.No_buku = detail_pengembalian.No_buku where detail_pengembalian.tanggal = current_date"); 
+            pst = con.prepareStatement("SELECT pengembalian.kode_pengembalian , anggota.nama , anggota.angkatan , anggota.status , buku.judul_buku , buku.kategori , detail_pengembalian.tanggal , detail_pengembalian.status_pengembalian,detail_pengembalian.kondisi_buku,detail_pengembalian.jumlah_pengembalian FROM detail_pengembalian JOIN pengembalian ON pengembalian.kode_pengembalian = detail_pengembalian.kode_pengembalian JOIN anggota ON anggota.NISN = detail_pengembalian.NISN JOIN buku ON buku.No_buku = detail_pengembalian.No_buku where detail_pengembalian.tanggal = current_date");
             rs = pst.executeQuery();
             while (rs.next()) {
-                model.addRow(new Object[]{rs.getString(1), rs.getString(2), rs.getInt(3), rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(7),rs.getString(8),rs.getString(9),rs.getString(10)});
+                model.addRow(new Object[]{rs.getString(1), rs.getString(2), rs.getInt(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10)});
             }
             jTable1.setModel(model);
         } catch (Exception e) {
         }
-   }
-        private void searchList() throws SQLException {    
-            jTable1.clearSelection();
-         DefaultTableModel model = new DefaultTableModel() {
+    }
+
+    private void searchList() throws SQLException {
+        jTable1.clearSelection();
+        DefaultTableModel model = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -91,20 +103,134 @@ public class ptransaksi extends javax.swing.JPanel {
         model.addColumn("Kondisi Buku");
         model.addColumn("Jumlah Kembali");
         try {
-          pst = con.prepareStatement ("SELECT pengembalian.kode_pengembalian , anggota.nama , anggota.angkatan , anggota.status , buku.judul_buku , buku.kategori , detail_pengembalian.tanggal , detail_pengembalian.status_pengembalian,detail_pengembalian.kondisi_buku,detail_pengembalian.jumlah_pengembalian FROM detail_pengembalian JOIN pengembalian ON pengembalian.kode_pengembalian = detail_pengembalian.kode_pengembalian JOIN anggota ON anggota.NISN = detail_pengembalian.NISN JOIN buku ON buku.No_buku = detail_pengembalian.No_buku where nama Like '%" + txtcari.getText() + "%' or status Like '%" + txtcari.getText() + "%' "
-                    + "or judul_buku Like '%" + txtcari.getText() + "%'"); 
+            pst = con.prepareStatement("SELECT pengembalian.kode_pengembalian , anggota.nama , anggota.angkatan , anggota.status , buku.judul_buku , buku.kategori , detail_pengembalian.tanggal , detail_pengembalian.status_pengembalian,detail_pengembalian.kondisi_buku,detail_pengembalian.jumlah_pengembalian FROM detail_pengembalian JOIN pengembalian ON pengembalian.kode_pengembalian = detail_pengembalian.kode_pengembalian JOIN anggota ON anggota.NISN = detail_pengembalian.NISN JOIN buku ON buku.No_buku = detail_pengembalian.No_buku where nama Like '%" + txtcari.getText() + "%' or status Like '%" + txtcari.getText() + "%' "
+                    + "or judul_buku Like '%" + txtcari.getText() + "%'");
             rs = pst.executeQuery();
             while (rs.next()) {
-                model.addRow(new Object[]{rs.getString(1), rs.getString(2), rs.getInt(3), rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(7),rs.getString(8),rs.getString(9),rs.getString(10)});
+                model.addRow(new Object[]{rs.getString(1), rs.getString(2), rs.getInt(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10)});
             }
             jTable1.setModel(model);
         } catch (Exception e) {
-             System.out.println("searchTable" + e);
+            System.out.println("searchTable" + e);
         }
-     
 
-   }
-       
+    }
+
+    private void XLSX() {
+        String tampilan1 = "yyyy-MM-dd";
+        SimpleDateFormat tgl1 = new SimpleDateFormat(tampilan1);
+        String tanggalawal = String.valueOf(tgl1.format(jDate.getDate()));
+
+        String tampilan2 = "yyyy-MM-dd";
+        SimpleDateFormat tgl2 = new SimpleDateFormat(tampilan2); // Fix: Use tampilan2 for tgl2
+        String tanggalakhir = String.valueOf(tgl2.format(jDate1.getDate()));
+        String exelpath = FolderPath + File.separator + generateUniqueFileName();
+        String sql;
+        if (jDate == null && jDate1 == null) {
+            sql = "SELECT pengembalian.kode_pengembalian , anggota.nama , anggota.angkatan , anggota.status ,"
+                    + " buku.judul_buku , buku.kategori , detail_pengembalian.tanggal ,"
+                    + " detail_pengembalian.status_pengembalian,detail_pengembalian.kondisi_buku,"
+                    + "detail_pengembalian.jumlah_pengembalian FROM detail_pengembalian JOIN pengembalian ON"
+                    + " pengembalian.kode_pengembalian = detail_pengembalian.kode_pengembalian JOIN"
+                    + " anggota ON anggota.NISN = detail_pengembalian.NISN JOIN buku ON buku.No_buku = detail_pengembalian.No_buku "
+                    + "where detail_pengembalian.tanggal = current_date";
+        } else if (jDate == null && jDate1 != null) {
+            sql = "SELECT pengembalian.kode_pengembalian , anggota.nama , anggota.angkatan , anggota.status ,"
+                    + " buku.judul_buku , buku.kategori , detail_pengembalian.tanggal ,"
+                    + " detail_pengembalian.status_pengembalian,detail_pengembalian.kondisi_buku,"
+                    + "detail_pengembalian.jumlah_pengembalian FROM detail_pengembalian JOIN pengembalian ON"
+                    + " pengembalian.kode_pengembalian = detail_pengembalian.kode_pengembalian JOIN"
+                    + " anggota ON anggota.NISN = detail_pengembalian.NISN JOIN buku ON buku.No_buku = detail_pengembalian.No_buku "
+                    + "where detail_pengembalian.tanggal = '" + tanggalawal + "'";
+        } else if (jDate != null && jDate1 == null) {
+            sql = "SELECT pengembalian.kode_pengembalian , anggota.nama , anggota.angkatan , anggota.status ,"
+                    + " buku.judul_buku , buku.kategori , detail_pengembalian.tanggal ,"
+                    + " detail_pengembalian.status_pengembalian,detail_pengembalian.kondisi_buku,"
+                    + "detail_pengembalian.jumlah_pengembalian FROM detail_pengembalian JOIN pengembalian ON"
+                    + " pengembalian.kode_pengembalian = detail_pengembalian.kode_pengembalian JOIN"
+                    + " anggota ON anggota.NISN = detail_pengembalian.NISN JOIN buku ON buku.No_buku = detail_pengembalian.No_buku "
+                    + "where detail_pengembalian.tanggal = '" + tanggalakhir + "'";
+        } else {
+            sql = "SELECT pengembalian.kode_pengembalian , anggota.nama , anggota.angkatan , anggota.status ,"
+                    + " buku.judul_buku , buku.kategori , detail_pengembalian.tanggal ,"
+                    + " detail_pengembalian.status_pengembalian,detail_pengembalian.kondisi_buku,"
+                    + "detail_pengembalian.jumlah_pengembalian FROM detail_pengembalian JOIN pengembalian ON"
+                    + " pengembalian.kode_pengembalian = detail_pengembalian.kode_pengembalian JOIN"
+                    + " anggota ON anggota.NISN = detail_pengembalian.NISN JOIN buku ON buku.No_buku = detail_pengembalian.No_buku "
+                    + "where detail_pengembalian.tanggal BETWEEN '" + tanggalawal + "' AND '" + tanggalakhir + "'";
+        }
+
+        try {
+            pst = con.prepareStatement(sql);
+            rs = pst.executeQuery();
+
+            try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+                XSSFSheet sheet = workbook.createSheet("report");
+
+                writeHeaderLine(sheet);
+
+                writeDataLines(rs, workbook, sheet);
+
+                FileOutputStream outputStream = new FileOutputStream(exelpath);
+                workbook.write(outputStream);
+
+                workbook.close();
+
+                pst.close();
+            }
+
+        } catch (Exception e) {
+            System.out.println("koneksi gagal " + e);
+        }
+    }
+
+    private void writeHeaderLine(XSSFSheet sheet) {
+        Row headerRow = sheet.createRow(0);
+
+        Cell headerCell = headerRow.createCell(0);
+        headerCell.setCellValue("NISN");
+
+        headerCell = headerRow.createCell(1);
+        headerCell.setCellValue("nama");
+
+        headerCell = headerRow.createCell(2);
+        headerCell.setCellValue("jenis kelamin");
+
+        headerCell = headerRow.createCell(3);
+        headerCell.setCellValue("jurusan");
+    }
+
+    private void writeDataLines(ResultSet rs, XSSFWorkbook workbook, XSSFSheet sheet) throws SQLException {
+        int rowCount = 1;
+
+        while (rs.next()) {
+            String NISN = rs.getString("NISN");
+            String nama = rs.getString("nama");
+            String jenis_kelamin = rs.getString("jenis_kelamin");
+            String jurusan = rs.getString("jurusan");
+
+            Row row = sheet.createRow(rowCount++);
+
+            int ColumnCount = 0;
+            Cell cell = row.createCell(ColumnCount++);
+            cell.setCellValue(NISN);
+
+            cell = row.createCell(ColumnCount++);
+            cell.setCellValue(nama);
+
+            cell = row.createCell(ColumnCount++);
+            cell.setCellValue(jenis_kelamin);
+
+            cell = row.createCell(ColumnCount++);
+            cell.setCellValue(jurusan);
+        }
+    }
+
+    private String generateUniqueFileName() {
+        String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        return "report_" + timestamp + ".xlsx";
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -120,6 +246,7 @@ public class ptransaksi extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
+        Export = new javax.swing.JToggleButton();
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.addAncestorListener(new javax.swing.event.AncestorListener() {
@@ -216,6 +343,15 @@ public class ptransaksi extends javax.swing.JPanel {
 
         jLabel3.setText("Tanggal Akhir");
 
+        Export.setBackground(new java.awt.Color(51, 153, 0));
+        Export.setForeground(new java.awt.Color(153, 204, 0));
+        Export.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/printer-88 2.png"))); // NOI18N
+        Export.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ExportActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -226,36 +362,41 @@ public class ptransaksi extends javax.swing.JPanel {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1599, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(txtcari, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(jDate, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(46, 46, 46)
-                                .addComponent(jDate1, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(19, 19, 19)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(0, 1283, Short.MAX_VALUE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(txtcari, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jDate, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(46, 46, 46)
+                                        .addComponent(jDate1, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel1)
+                                        .addGap(101, 101, 101)
+                                        .addComponent(jLabel3)
+                                        .addGap(49, 49, 49)))
+                                .addGap(27, 27, 27)
                                 .addComponent(jButton3)
-                                .addGap(18, 18, 18)
-                                .addComponent(jToggleButton1))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(101, 101, 101)
-                                .addComponent(jLabel3)
-                                .addGap(190, 190, 190)))))
+                                .addGap(45, 45, 45)
+                                .addComponent(Export)))
+                        .addGap(18, 18, 18)
+                        .addComponent(jToggleButton1)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
                         .addComponent(jLabel2)
                         .addGap(12, 12, 12)
                         .addComponent(txtcari, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(41, 41, 41)
+                    .addComponent(jToggleButton1, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
                             .addComponent(jLabel3))
@@ -263,11 +404,8 @@ public class ptransaksi extends javax.swing.JPanel {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jDate1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jToggleButton1, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING))))
+                    .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(Export, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
                 .addGap(173, 173, 173))
@@ -297,7 +435,7 @@ public class ptransaksi extends javax.swing.JPanel {
 
     private void txtcariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtcariKeyReleased
 
-             String key = txtcari.getText().trim();
+        String key = txtcari.getText().trim();
         try {
             searchList();
         } catch (Exception e) {
@@ -305,66 +443,66 @@ public class ptransaksi extends javax.swing.JPanel {
     }//GEN-LAST:event_txtcariKeyReleased
 
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
-          // TODO add your handling code here:
-     int dialogResult = JOptionPane.showConfirmDialog(null, "Apakah Anda sudah atur tanggal?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+        // TODO add your handling code here:
+        int dialogResult = JOptionPane.showConfirmDialog(null, "Apakah Anda sudah atur tanggal?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
 
-if (dialogResult == JOptionPane.YES_OPTION) {
-   
-    try {
-        this.disable();
-        
-        String reportPath = "src/Laporan/report1.jasper";
-        Connection conn = koneksi.Koneksi();
+        if (dialogResult == JOptionPane.YES_OPTION) {
 
-        HashMap<String, Object> parameters = new HashMap<>();
-        parameters.put("tgl1", jDate.getDate());
-        parameters.put("tgl2", jDate1.getDate());
-        JasperPrint print = JasperFillManager.fillReport(reportPath, parameters, conn);
-        JasperViewer viewer = new JasperViewer(print, false);
-        viewer.setVisible(true);
+            try {
+                this.disable();
 
-        conn.close(); // Menutup koneksi setelah selesai menggunakan
+                String reportPath = "src/Laporan/report1.jasper";
+                Connection conn = koneksi.Koneksi();
 
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Error displaying report: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-    }
-} else if (dialogResult == JOptionPane.NO_OPTION) {
-    JOptionPane.showMessageDialog(null, "Anda harus atur tanggal dahulu.", "Info", JOptionPane.INFORMATION_MESSAGE);
-}
+                HashMap<String, Object> parameters = new HashMap<>();
+                parameters.put("tgl1", jDate.getDate());
+                parameters.put("tgl2", jDate1.getDate());
+                JasperPrint print = JasperFillManager.fillReport(reportPath, parameters, conn);
+                JasperViewer viewer = new JasperViewer(print, false);
+                viewer.setVisible(true);
+
+                conn.close(); // Menutup koneksi setelah selesai menggunakan
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Error displaying report: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else if (dialogResult == JOptionPane.NO_OPTION) {
+            JOptionPane.showMessageDialog(null, "Anda harus atur tanggal dahulu.", "Info", JOptionPane.INFORMATION_MESSAGE);
+        }
 
     }//GEN-LAST:event_jToggleButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-       String tampilan1 = "yyyy-MM-dd";
-SimpleDateFormat tgl1 = new SimpleDateFormat(tampilan1);
-String tanggalawal = String.valueOf(tgl1.format(jDate.getDate()));
+        String tampilan1 = "yyyy-MM-dd";
+        SimpleDateFormat tgl1 = new SimpleDateFormat(tampilan1);
+        String tanggalawal = String.valueOf(tgl1.format(jDate.getDate()));
 
-String tampilan2 = "yyyy-MM-dd";
-SimpleDateFormat tgl2 = new SimpleDateFormat(tampilan2); // Fix: Use tampilan2 for tgl2
-String tanggalakhir = String.valueOf(tgl2.format(jDate1.getDate()));
-System.out.println(tanggalawal + tanggalakhir);
-try {
-    int No = 1;
-   String sql ="SELECT pengembalian.kode_pengembalian , anggota.nama , anggota.angkatan , anggota.status , buku.judul_buku , buku.kategori , detail_pengembalian.tanggal , detail_pengembalian.status_pengembalian,detail_pengembalian.kondisi_buku,detail_pengembalian.jumlah_pengembalian FROM detail_pengembalian JOIN pengembalian ON pengembalian.kode_pengembalian = detail_pengembalian.kode_pengembalian JOIN anggota ON anggota.NISN = detail_pengembalian.NISN JOIN buku ON buku.No_buku = detail_pengembalian.No_buku WHERE  tanggal BETWEEN '"+tanggalawal+"' AND '"+tanggalakhir+"';";
-   java.sql.Connection conn = (Connection) koneksi.Koneksi();
-    // Create a Statement
-    java.sql.Statement stm = conn.createStatement();
-   
-    java.sql.ResultSet res = stm.executeQuery(sql);// Fix: Add WHERE clause
-    DefaultTableModel table = (DefaultTableModel) jTable1.getModel();
-    table.setRowCount(0);
-    while (res.next()) {
-       
-       table.addRow(new Object[]{res.getString(1), res.getString(2), res.getInt(3), res.getString(4),res.getString(5),res.getString(6),
-           res.getString(7),res.getString(8),res.getString(9),res.getString(10)});
-}
-} catch (Exception e) {
-    Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, e);
-}
+        String tampilan2 = "yyyy-MM-dd";
+        SimpleDateFormat tgl2 = new SimpleDateFormat(tampilan2); // Fix: Use tampilan2 for tgl2
+        String tanggalakhir = String.valueOf(tgl2.format(jDate1.getDate()));
+        System.out.println(tanggalawal + tanggalakhir);
+        try {
+            int No = 1;
+            String sql = "SELECT pengembalian.kode_pengembalian , anggota.nama , anggota.angkatan , anggota.status , buku.judul_buku , buku.kategori , detail_pengembalian.tanggal , detail_pengembalian.status_pengembalian,detail_pengembalian.kondisi_buku,detail_pengembalian.jumlah_pengembalian FROM detail_pengembalian JOIN pengembalian ON pengembalian.kode_pengembalian = detail_pengembalian.kode_pengembalian JOIN anggota ON anggota.NISN = detail_pengembalian.NISN JOIN buku ON buku.No_buku = detail_pengembalian.No_buku WHERE  tanggal BETWEEN '" + tanggalawal + "' AND '" + tanggalakhir + "';";
+            java.sql.Connection conn = (Connection) koneksi.Koneksi();
+            // Create a Statement
+            java.sql.Statement stm = conn.createStatement();
+
+            java.sql.ResultSet res = stm.executeQuery(sql);// Fix: Add WHERE clause
+            DefaultTableModel table = (DefaultTableModel) jTable1.getModel();
+            table.setRowCount(0);
+            while (res.next()) {
+
+                table.addRow(new Object[]{res.getString(1), res.getString(2), res.getInt(3), res.getString(4), res.getString(5), res.getString(6),
+                    res.getString(7), res.getString(8), res.getString(9), res.getString(10)});
+            }
+        } catch (Exception e) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, e);
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jPanel1AncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_jPanel1AncestorAdded
-          try {
+        try {
             // TODO add your handling code here:
             load_table();
         } catch (SQLException ex) {
@@ -372,8 +510,14 @@ try {
         }
     }//GEN-LAST:event_jPanel1AncestorAdded
 
+    private void ExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExportActionPerformed
+        // TODO add your handling code here:
+        XLSX();
+    }//GEN-LAST:event_ExportActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToggleButton Export;
     private javax.swing.JButton jButton3;
     private com.toedter.calendar.JDateChooser jDate;
     private com.toedter.calendar.JDateChooser jDate1;
