@@ -1224,6 +1224,7 @@ public class Pengembalian extends javax.swing.JPanel {
         int totalPeminjaman = nilaiSpinnerBaik + nilaiSpinnerRusak;
         String kodebuku1 = txt_judul_buku.getText();
         String denda;
+        String dendatotal = txt_denda_total.getText();
 
 // Mendapatkan nilai dari semua JTextField
         String nilaibaik = baik.getText();
@@ -1306,7 +1307,7 @@ public class Pengembalian extends javax.swing.JPanel {
             }
 
             // Tambahkan logika untuk memasukkan data ke tabel 'denda' jika jumlah denda tidak sama dengan nol
-            if (!denda.equals("0")) {
+            if (!dendatotal.equals("0")) {
                 // Cek apakah ada entri denda dengan NISN yang sama
                 String sqlCheckExistingDenda = "SELECT COUNT(*) FROM denda WHERE NISN = (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1)";
                 try (PreparedStatement pstCheckExistingDenda = con.prepareStatement(sqlCheckExistingDenda)) {
@@ -1318,7 +1319,7 @@ public class Pengembalian extends javax.swing.JPanel {
                         // Jika ada, update jumlah denda yang ada dengan jumlah denda yang baru ditambahkan
                         String sqlUpdateDenda = "UPDATE denda SET jumlah_denda = jumlah_denda + ? WHERE NISN = (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1)";
                         try (PreparedStatement pstUpdateDenda = con.prepareStatement(sqlUpdateDenda)) {
-                            pstUpdateDenda.setString(1, denda);
+                            pstUpdateDenda.setString(1, dendatotal);
                             pstUpdateDenda.setString(2, nama); // Gunakan NISN atau nama sesuai kebutuhan Anda
                             pstUpdateDenda.executeUpdate();
                         }
@@ -1326,7 +1327,7 @@ public class Pengembalian extends javax.swing.JPanel {
                         // Jika tidak ada, masukkan data baru ke tabel 'denda'
                         String sqlInsertDenda = "INSERT INTO denda (jumlah_denda, status_denda, total_pembayaran, NISN, No_buku, kode_pengembalian) VALUES (?, ?, ?, (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1), (SELECT No_buku FROM buku WHERE judul_buku = ? LIMIT 1), ?)";
                         try (PreparedStatement pstInsertDenda = con.prepareStatement(sqlInsertDenda)) {
-                            pstInsertDenda.setString(1, denda);
+                            pstInsertDenda.setString(1, dendatotal);
                             pstInsertDenda.setString(2, "Belum Lunas"); // Mengasumsikan status awal adalah 'Belum Lunas'
                             pstInsertDenda.setString(3, "0"); // Mengasumsikan total_pembayaran awal sama dengan jumlah_denda
                             pstInsertDenda.setString(4, nama);
@@ -1757,7 +1758,9 @@ public class Pengembalian extends javax.swing.JPanel {
         if (evt.getKeyCode() == KeyEvent.VK_F9) {
             // Jika tombol Enter ditekan, tekan tombol jButton2
             btn_clear.doClick();
-        }
+        } else if (evt.getKeyCode() == KeyEvent.VK_F10) {
+            // Jika tombol F5 ditekan, pindah fokus ke txt_jumlah
+            btn_clear2.doClick();}
     }//GEN-LAST:event_txt_searchKeyPressed
 
     private void btn_clearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_clearActionPerformed
@@ -1772,10 +1775,12 @@ public class Pengembalian extends javax.swing.JPanel {
 
     private void txt_search1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_search1KeyPressed
         // TODO add your handling code here:
-        if (evt.getKeyCode() == KeyEvent.VK_F10) {
+        if (evt.getKeyCode() == KeyEvent.VK_F9) {
             // Jika tombol Enter ditekan, tekan tombol jButton2
-            btn_clear2.doClick();
-        }
+            btn_clear.doClick();
+        } else if (evt.getKeyCode() == KeyEvent.VK_F10) {
+            // Jika tombol F5 ditekan, pindah fokus ke txt_jumlah
+            btn_clear2.doClick();}
     }//GEN-LAST:event_txt_search1KeyPressed
 
     DefaultTableModel model = new DefaultTableModel() {
