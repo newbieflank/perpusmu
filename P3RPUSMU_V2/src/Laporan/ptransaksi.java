@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -115,6 +116,22 @@ public class ptransaksi extends javax.swing.JPanel {
         }
 
     }
+    
+    private void FolderExp() {
+        JFileChooser folderChooser = new JFileChooser();
+        folderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+        int result = folderChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFolder = folderChooser.getSelectedFile();
+            FolderPath = selectedFolder.getAbsolutePath();
+            try {
+                XLSX();
+            } catch (Exception e) {
+                System.out.println("Import " + e);
+            }
+        }
+    }
 
     private void XLSX() {
         String tampilan1 = "yyyy-MM-dd";
@@ -163,7 +180,7 @@ public class ptransaksi extends javax.swing.JPanel {
         try {
             pst = con.prepareStatement(sql);
             rs = pst.executeQuery();
-
+            System.out.println(pst);
             try (XSSFWorkbook workbook = new XSSFWorkbook()) {
                 XSSFSheet sheet = workbook.createSheet("report");
 
@@ -188,26 +205,50 @@ public class ptransaksi extends javax.swing.JPanel {
         Row headerRow = sheet.createRow(0);
 
         Cell headerCell = headerRow.createCell(0);
-        headerCell.setCellValue("NISN");
+        headerCell.setCellValue("Kode Pengembalian");
 
         headerCell = headerRow.createCell(1);
-        headerCell.setCellValue("nama");
+        headerCell.setCellValue("Nama");
 
         headerCell = headerRow.createCell(2);
-        headerCell.setCellValue("jenis kelamin");
+        headerCell.setCellValue("Angkatan");
 
         headerCell = headerRow.createCell(3);
-        headerCell.setCellValue("jurusan");
+        headerCell.setCellValue("Status");
+        
+        headerCell = headerRow.createCell(4);
+        headerCell.setCellValue("Judul Buku");
+        
+        headerCell = headerRow.createCell(5);
+        headerCell.setCellValue("Kategori");
+        
+        headerCell = headerRow.createCell(6);
+        headerCell.setCellValue("Tanggal");
+        
+        headerCell = headerRow.createCell(7);
+        headerCell.setCellValue("Status Pengembalian");
+        
+        headerCell = headerRow.createCell(8);
+        headerCell.setCellValue("Kondisi Buku");
+        
+        headerCell = headerRow.createCell(9);
+        headerCell.setCellValue("Jumlah Pengembalian");
     }
 
     private void writeDataLines(ResultSet rs, XSSFWorkbook workbook, XSSFSheet sheet) throws SQLException {
         int rowCount = 1;
 
         while (rs.next()) {
-            String NISN = rs.getString("NISN");
+            String NISN = rs.getString("kode_Pengembalian");
             String nama = rs.getString("nama");
-            String jenis_kelamin = rs.getString("jenis_kelamin");
-            String jurusan = rs.getString("jurusan");
+            String angkatan = rs.getString("angkatan");
+            String status = rs.getString("status");
+            String judul_buku = rs.getString("judul_buku");
+            String kategori = rs.getString("kategori");
+            String tanggal = rs.getString("tanggal");
+            String status_pengembalian = rs.getString("status_pengembalian");
+            String kondisi_buku = rs.getString("kondisi_buku");
+            String jumlah_pengembalian = rs.getString("jumlah_pengembalian");
 
             Row row = sheet.createRow(rowCount++);
 
@@ -219,10 +260,28 @@ public class ptransaksi extends javax.swing.JPanel {
             cell.setCellValue(nama);
 
             cell = row.createCell(ColumnCount++);
-            cell.setCellValue(jenis_kelamin);
+            cell.setCellValue(angkatan);
 
             cell = row.createCell(ColumnCount++);
-            cell.setCellValue(jurusan);
+            cell.setCellValue(status);
+            
+            cell = row.createCell(ColumnCount++);
+            cell.setCellValue(judul_buku);
+            
+            cell = row.createCell(ColumnCount++);
+            cell.setCellValue(kategori);
+            
+            cell = row.createCell(ColumnCount++);
+            cell.setCellValue(tanggal);
+            
+            cell = row.createCell(ColumnCount++);
+            cell.setCellValue(status_pengembalian);
+            
+            cell = row.createCell(ColumnCount++);
+            cell.setCellValue(kondisi_buku);
+            
+            cell = row.createCell(ColumnCount++);
+            cell.setCellValue(jumlah_pengembalian);
         }
     }
 
@@ -512,7 +571,7 @@ public class ptransaksi extends javax.swing.JPanel {
 
     private void ExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExportActionPerformed
         // TODO add your handling code here:
-        XLSX();
+        FolderExp();
     }//GEN-LAST:event_ExportActionPerformed
 
 
