@@ -18,6 +18,7 @@ import java.awt.Color;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -38,32 +39,51 @@ public class pdenda extends javax.swing.JPanel {
 
     }
 
-    private void load_table() throws SQLException {
-           jTable2.clearSelection();
-        jTable2.getTableHeader().setReorderingAllowed(false);
-        jTable2.getTableHeader().setResizingAllowed(false);
-        DefaultTableModel model = new DefaultTableModel() {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                //all cells false
-                return false;
-            }
-        };
-        model.addColumn("Nama");
-        model.addColumn("Jumlah Denda");
-        model.addColumn("Status Denda");
-        model.addColumn("Total Dembayaran");
-
-        try {
-             pst = con.prepareStatement ( "SELECT anggota.nama, denda.jumlah_denda, denda.status_denda, denda.total_pembayaran, detail_pengembalian.tanggal FROM denda JOIN anggota ON anggota.NISN = denda.NISN JOIN detail_pengembalian ON detail_pengembalian.kode_pengembalian = denda.kode_pengembalian  where detail_pengembalian.tanggal = current_date");
-           rs = pst.executeQuery();
-            while (rs.next()) {
-                model.addRow(new Object[]{rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4)});
-            } 
-            jTable2.setModel(model);
-        } catch (Exception e) {
+   private void load_table() throws SQLException {
+    jTable2.clearSelection();
+    jTable2.getTableHeader().setResizingAllowed(false);
+    DefaultTableModel model = new DefaultTableModel() {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            // All cells false
+            return false;
         }
-   }
+    };
+    model.addColumn("Nama");
+    model.addColumn("Jumlah Denda");
+    model.addColumn("Status Denda");
+    model.addColumn("Total Pembayaran");
+
+    String sql = "SELECT anggota.nama, denda.jumlah_denda, denda.status_denda, denda.total_pembayaran " +
+                 "FROM denda " +
+                 "JOIN anggota ON anggota.NISN = denda.NISN " +
+                 "JOIN detail_pengembalian ON detail_pengembalian.kode_pengembalian = denda.kode_pengembalian " +
+                 "WHERE detail_pengembalian.tanggal = current_date";
+
+    try (PreparedStatement pst = con.prepareStatement(sql);
+         ResultSet rs = pst.executeQuery()) {
+        
+        Map<String, String[]> anggotaData = new HashMap<>();
+        
+        while (rs.next()) {
+            String nama = rs.getString("nama");
+            String jumlahDenda = rs.getString("jumlah_denda");
+            String statusDenda = rs.getString("status_denda");
+            String totalPembayaran = rs.getString("total_pembayaran");
+
+            anggotaData.put(nama, new String[]{jumlahDenda, statusDenda, totalPembayaran});
+        }
+        
+        for (Map.Entry<String, String[]> entry : anggotaData.entrySet()) {
+            model.addRow(new Object[]{entry.getKey(), entry.getValue()[0], entry.getValue()[1], entry.getValue()[2]});
+        }
+        
+        jTable2.setModel(model);
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
 
         private void searchList() throws SQLException {    
             jTable2.clearSelection();

@@ -1308,38 +1308,37 @@ public class Pengembalian extends javax.swing.JPanel {
                 insertDetailPengembalian(pstInsertDetailPengembalian, kodepengembalian, statusDetailPengembalian, waktupengembalian, "Hilang", tanggalPinjamSQL, nilaiSpinnerHilang, kodebuku, hilang.getText(), nama);
             }
 
-            // Tambahkan logika untuk memasukkan data ke tabel 'denda' jika jumlah denda tidak sama dengan nol
             if (!dendatotal.equals("0")) {
-                // Cek apakah ada entri denda dengan NISN yang sama
-                String sqlCheckExistingDenda = "SELECT COUNT(*) FROM denda WHERE NISN = (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1)";
-                try (PreparedStatement pstCheckExistingDenda = con.prepareStatement(sqlCheckExistingDenda)) {
-                    pstCheckExistingDenda.setString(1, nama); // Gunakan NISN atau nama sesuai kebutuhan Anda
-                    ResultSet rs = pstCheckExistingDenda.executeQuery();
-                    rs.next();
-                    int rowCount = rs.getInt(1);
-                    if (rowCount > 0) {
-                        // Jika ada, update jumlah denda yang ada dengan jumlah denda yang baru ditambahkan
-                        String sqlUpdateDenda = "UPDATE denda SET jumlah_denda = jumlah_denda + ? WHERE NISN = (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1)";
-                        try (PreparedStatement pstUpdateDenda = con.prepareStatement(sqlUpdateDenda)) {
-                            pstUpdateDenda.setString(1, dendatotal);
-                            pstUpdateDenda.setString(2, nama); // Gunakan NISN atau nama sesuai kebutuhan Anda
-                            pstUpdateDenda.executeUpdate();
-                        }
-                    } else {
-                        // Jika tidak ada, masukkan data baru ke tabel 'denda'
-                        String sqlInsertDenda = "INSERT INTO denda (jumlah_denda, status_denda, total_pembayaran, NISN, No_buku, kode_pengembalian) VALUES (?, ?, ?, (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1), (SELECT No_buku FROM buku WHERE judul_buku = ? LIMIT 1), ?)";
-                        try (PreparedStatement pstInsertDenda = con.prepareStatement(sqlInsertDenda)) {
-                            pstInsertDenda.setString(1, dendatotal);
-                            pstInsertDenda.setString(2, "Belum Lunas"); // Mengasumsikan status awal adalah 'Belum Lunas'
-                            pstInsertDenda.setString(3, "0"); // Mengasumsikan total_pembayaran awal sama dengan jumlah_denda
-                            pstInsertDenda.setString(4, nama);
-                            pstInsertDenda.setString(5, kodebuku1);
-                            pstInsertDenda.setString(6, kodepengembalian);
-                            pstInsertDenda.executeUpdate();
-                        }
-                    }
-                }
+    // Cek apakah ada entri denda dengan NISN yang sama
+    String sqlCheckExistingDenda = "SELECT COUNT(*) FROM denda WHERE NISN = (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1)";
+    try (PreparedStatement pstCheckExistingDenda = con.prepareStatement(sqlCheckExistingDenda)) {
+        pstCheckExistingDenda.setString(1, nama);
+        ResultSet rs = pstCheckExistingDenda.executeQuery();
+        rs.next();
+        int rowCount = rs.getInt(1);
+        if (rowCount > 0) {
+            // Jika ada, update jumlah denda yang ada dengan jumlah denda yang baru ditambahkan
+            String sqlUpdateDenda = "UPDATE denda SET jumlah_denda = jumlah_denda + ? WHERE NISN = (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1)";
+            try (PreparedStatement pstUpdateDenda = con.prepareStatement(sqlUpdateDenda)) {
+                pstUpdateDenda.setInt(1, Integer.parseInt(dendatotal));
+                pstUpdateDenda.setString(2, nama);
+                pstUpdateDenda.executeUpdate();
             }
+        } else {
+            // Jika tidak ada, masukkan data baru ke tabel 'denda'
+            String sqlInsertDenda = "INSERT INTO denda (jumlah_denda, status_denda, total_pembayaran, NISN, No_buku, kode_pengembalian) VALUES (?, ?, ?, (SELECT NISN FROM anggota WHERE nama = ? LIMIT 1), (SELECT No_buku FROM buku WHERE judul_buku = ? LIMIT 1), ?)";
+            try (PreparedStatement pstInsertDenda = con.prepareStatement(sqlInsertDenda)) {
+                pstInsertDenda.setInt(1, Integer.parseInt(dendatotal));
+                pstInsertDenda.setString(2, "Belum Lunas"); // Mengasumsikan status awal adalah 'Belum Lunas'
+                pstInsertDenda.setInt(3, 0); // Mengasumsikan total_pembayaran awal sama dengan jumlah_denda
+                pstInsertDenda.setString(4, nama);
+                pstInsertDenda.setString(5, kodebuku1);
+                pstInsertDenda.setString(6, kodepengembalian);
+                pstInsertDenda.executeUpdate();
+            }
+        }
+    }
+}
 
             // Jika tabel 'denda' kosong, atur ID_denda ke 1
             String sqlCheckEmptyDenda = "SELECT COUNT(*) FROM denda";
