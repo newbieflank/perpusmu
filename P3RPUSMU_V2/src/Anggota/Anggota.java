@@ -644,7 +644,7 @@ public class Anggota extends javax.swing.JPanel {
         jLabel10.setText("Jenis Kelamin :");
 
         ImportData.setBackground(new java.awt.Color(255, 227, 130));
-        ImportData.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/image 15 (1).png"))); // NOI18N
+        ImportData.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_10/Vector 20.png"))); // NOI18N
         ImportData.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ImportDataActionPerformed(evt);
