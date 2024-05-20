@@ -293,8 +293,8 @@ public class Anggota extends javax.swing.JPanel {
         jLabel8 = new javax.swing.JLabel();
         dial_simpan = new javax.swing.JButton();
         dial_batal = new javax.swing.JButton();
-        dial_jenis = new javax.swing.JComboBox<>();
-        dial_status = new javax.swing.JComboBox<>();
+        dial_jenis = new javax.swing.JComboBox<String>();
+        dial_status = new javax.swing.JComboBox<String>();
         dial_jurusan = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -304,8 +304,8 @@ public class Anggota extends javax.swing.JPanel {
         addButton = new javax.swing.JButton();
         editButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
-        f_gender = new javax.swing.JComboBox<>();
-        J_jurusan = new javax.swing.JComboBox<>();
+        f_gender = new javax.swing.JComboBox<String>();
+        J_jurusan = new javax.swing.JComboBox<String>();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         ImportData = new javax.swing.JButton();
@@ -363,27 +363,21 @@ public class Anggota extends javax.swing.JPanel {
         });
 
         jLabel3.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
         jLabel3.setText("Nama");
 
         jLabel4.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
         jLabel4.setText("NISN");
 
         jLabel5.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(0, 0, 0));
         jLabel5.setText("Jenis Kelamin");
 
         jLabel6.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(0, 0, 0));
         jLabel6.setText("Jurusan");
 
         jLabel7.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(0, 0, 0));
         jLabel7.setText("Angkatan");
 
         jLabel8.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(0, 0, 0));
         jLabel8.setText("Status");
 
         dial_simpan.setBackground(new java.awt.Color(63, 148, 105));
@@ -406,9 +400,9 @@ public class Anggota extends javax.swing.JPanel {
             }
         });
 
-        dial_jenis.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Laki-Laki", "Perempuan" }));
+        dial_jenis.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Laki-Laki", "Perempuan" }));
 
-        dial_status.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Aktif", "Lulus" }));
+        dial_status.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Aktif", "Lulus" }));
 
         javax.swing.GroupLayout popupLayout = new javax.swing.GroupLayout(popup);
         popup.setLayout(popupLayout);
@@ -507,10 +501,10 @@ public class Anggota extends javax.swing.JPanel {
 
         setBackground(new java.awt.Color(204, 204, 204));
         addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
             public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
                 formAncestorAdded(evt);
-            }
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
             }
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
             }
@@ -524,17 +518,16 @@ public class Anggota extends javax.swing.JPanel {
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setToolTipText("");
         jPanel1.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
             public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
                 jPanel1AncestorAdded(evt);
-            }
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
             }
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
             }
         });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("LIST DATA ANGGOTA");
 
         search.setToolTipText("");
@@ -580,7 +573,6 @@ public class Anggota extends javax.swing.JPanel {
             }
         });
         tabel.setGridColor(new java.awt.Color(0, 0, 0));
-        tabel.setShowGrid(true);
         tabel.getTableHeader().setReorderingAllowed(false);
         tabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -627,14 +619,14 @@ public class Anggota extends javax.swing.JPanel {
             }
         });
 
-        f_gender.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Semua", "Laki-Laki", "Perempuan" }));
+        f_gender.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Semua", "Laki-Laki", "Perempuan" }));
         f_gender.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 f_genderItemStateChanged(evt);
             }
         });
 
-        J_jurusan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        J_jurusan.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         J_jurusan.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
             public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
             }
@@ -652,7 +644,7 @@ public class Anggota extends javax.swing.JPanel {
         jLabel10.setText("Jenis Kelamin :");
 
         ImportData.setBackground(new java.awt.Color(255, 227, 130));
-        ImportData.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/edit_1160515 3.png"))); // NOI18N
+        ImportData.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/image 15 (1).png"))); // NOI18N
         ImportData.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ImportDataActionPerformed(evt);
@@ -711,11 +703,11 @@ public class Anggota extends javax.swing.JPanel {
                                 .addComponent(jLabel10)
                                 .addComponent(f_gender, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(9, 9, 9)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 507, Short.MAX_VALUE)
-                        .addContainerGap())
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 507, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(ImportData, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         search.getAccessibleContext().setAccessibleName("");
