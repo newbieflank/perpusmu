@@ -69,7 +69,7 @@ public class Dashboard1 extends javax.swing.JPanel {
         //   chart.addLegend("Jumlah Peminjaman", Color.black, Color.black);
         try {
             List<ModelData> lists = getdata();
-            for (int i = lists.size() - 1; i >= 0; i--) {
+            for (int i = lists.size() - 1; i >= 1; i--) {
                 ModelData d = lists.get(i);
                 chart.addData(new ModelChart(d.getMonth(), new double[]{d.getAmount(), d.getCost()/*, d.getProfit()*/}));
             }
