@@ -20,6 +20,18 @@ import javax.swing.JOptionPane;
 import javax.swing.table.TableModel;
 import com.mysql.cj.jdbc.result.ResultSetMetaData;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JRDesignQuery;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 public class Buku extends javax.swing.JPanel {
 
@@ -520,6 +532,7 @@ public class Buku extends javax.swing.JPanel {
         btn_edit = new javax.swing.JButton();
         btn_hapus = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
+        btn_barcode = new javax.swing.JButton();
 
         Tambah.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         Tambah.setUndecorated(true);
@@ -1068,6 +1081,9 @@ public class Buku extends javax.swing.JPanel {
             }
         });
         txt_search.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_searchKeyPressed(evt);
+            }
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txt_searchKeyReleased(evt);
             }
@@ -1145,6 +1161,14 @@ public class Buku extends javax.swing.JPanel {
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel4.setText("Search");
 
+        btn_barcode.setBackground(new java.awt.Color(255, 227, 130));
+        btn_barcode.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/edit_1160515 3.png"))); // NOI18N
+        btn_barcode.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_barcodeActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -1162,6 +1186,8 @@ public class Buku extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btn_barcode, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_edit, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btn_hapus, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1174,16 +1200,21 @@ public class Buku extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(btn_edit, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btn_tambah, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btn_hapus, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
-                .addGap(13, 13, 13)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(btn_edit, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btn_tambah, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btn_hapus, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4))
+                        .addGap(13, 13, 13)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(btn_barcode, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         txt_search.getAccessibleContext().setAccessibleName("");
@@ -1393,11 +1424,58 @@ public class Buku extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_edit_referensiKeyTyped
 
+    private void txt_searchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_searchKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_searchKeyPressed
+
+    private void btn_barcodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_barcodeActionPerformed
+        try {
+            int row = JTabel1.getSelectedRow();
+            if (row == -1) {
+                JOptionPane.showMessageDialog(this, "Please select a row first.");
+                return;
+            }
+
+            String No_buku = JTabel1.getValueAt(row, 1).toString();
+            String sqlQuery = "SELECT * FROM buku WHERE No_buku = '" + No_buku + "'";
+            String pathi = "src/iReportdata/exportbarcode.jrxml";
+
+            JasperDesign jasperDesign = JRXmlLoader.load(pathi);
+            JRDesignQuery newQuery = new JRDesignQuery();
+            newQuery.setText(sqlQuery);
+            jasperDesign.setQuery(newQuery);
+
+            JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
+            Map<String, Object> parameters = new HashMap<>();
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, koneksi.getConnection());
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
+            String tanggalWaktu = dateFormat.format(new Date());
+            String namaFile = "satu_br-" + tanggalWaktu + ".pdf";
+
+            String path = System.getProperty("user.home") + "/Documents/exportbarcode/";
+            File directory = new File(path);
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+
+            JasperExportManager.exportReportToPdfFile(jasperPrint, path + namaFile);
+            JOptionPane.showMessageDialog(null, "Data berhasil disimpan di " + path);
+
+        } catch (JRException ex) {
+            Logger.getLogger(Buku.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "An error occurred: " + ex.getMessage());
+        }
+
+    }//GEN-LAST:event_btn_barcodeActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDialog Edit;
     private javax.swing.JTable JTabel1;
     private javax.swing.JDialog Tambah;
+    private javax.swing.JButton btn_barcode;
     private javax.swing.JButton btn_cancel;
     private javax.swing.JButton btn_cancel1;
     private javax.swing.JButton btn_edit;
