@@ -24,7 +24,9 @@ import javax.swing.table.DefaultTableModel;
 import raven.chart.ModelChart;
 import javax.swing.Timer;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  *
@@ -64,15 +66,16 @@ public class Dashboard1 extends javax.swing.JPanel {
     }
 
     private void init() {
+        
         chart.addLegend("Jumlah Buku Dipinjam", Color.decode("#000000"), Color.decode("#000000"));
         chart.addLegend("Jumlah Transaksi", Color.decode("#00FF00"), Color.decode(("#00FF00")));
         //   chart.addLegend("Jumlah Peminjaman", Color.black, Color.black);
         try {
             List<ModelData> lists = getdata();
-            for (int i = lists.size() - 1; i >= 1; i--) {
+            for (int i = lists.size() - 1; i >= 0; i--) {
                 ModelData d = lists.get(i);
                 chart.addData(new ModelChart(d.getMonth(), new double[]{d.getAmount(), d.getCost()/*, d.getProfit()*/}));
-            }
+            }   
         } catch (Exception e) {
             System.err.println(e);
         }
@@ -80,20 +83,38 @@ public class Dashboard1 extends javax.swing.JPanel {
     }
 
     private List<ModelData> getdata() throws SQLException {
-        List<ModelData> lists = new ArrayList<>();
-        String sql = "SELECT DATE_FORMAT(tanggal_peminjaman,'%M') AS Month, SUM(jumlah_peminjaman) AS Am, COUNT(kode_peminjaman) AS Bm FROM detail_peminjaman GROUP BY DATE_FORMAT(tanggal_peminjaman,'%m%Y') ORDER BY tanggal_peminjaman DESC;";
-        PreparedStatement p = con.prepareStatement(sql);
-        ResultSet r = p.executeQuery();
-        while (r.next()) {
-            String month = r.getString("Month");
-            Double Am = r.getDouble("Am");
-            Double Bm = r.getDouble("Bm");
-            lists.add(new ModelData(month, Am, Bm));
-        }
-        r.close();
-        p.close();
-        return lists;
+    List<ModelData> lists = new ArrayList<>();
+    // Buat array untuk nama bulan
+    String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+    // Buat peta untuk menyimpan data sementara
+        Map<String, ModelData> tempData = new HashMap<>();
+
+    String sql = "SELECT DATE_FORMAT(tanggal_peminjaman, '%M') AS Month, SUM(jumlah_peminjaman) AS Am, COUNT(kode_peminjaman) AS Bm FROM detail_peminjaman GROUP BY DATE_FORMAT(tanggal_peminjaman, '%m%Y') ORDER BY tanggal_peminjaman DESC;";
+    PreparedStatement p = con.prepareStatement(sql);
+    ResultSet r = p.executeQuery();
+
+    while (r.next()) {
+        String month = r.getString("Month");
+        Double Am = r.getDouble("Am");
+        Double Bm = r.getDouble("Bm");
+        tempData.put(month, new ModelData(month, Am, Bm));
     }
+
+    r.close();
+    p.close();
+
+    // Tambahkan data dari bulan 1-12
+    for (String month : months) {
+        if (tempData.containsKey(month)) {
+            lists.add(tempData.get(month));
+        } else {
+            lists.add(new ModelData(month, 0.0, 0.0));
+        }
+    }
+
+    return lists;
+}
+
 
     private void Notif1() throws SQLException {
         DefaultTableModel tb1 = new DefaultTableModel();
