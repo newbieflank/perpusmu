@@ -12,7 +12,6 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import Navbar.koneksi;
 import com.mysql.cj.jdbc.result.ResultSetMetaData;
-import com.sun.org.apache.bcel.internal.generic.IFEQ;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
@@ -70,7 +69,7 @@ public class Anggota extends javax.swing.JPanel {
     private void JCombo() {
         J_jurusan.removeAllItems();
         try {
-            pst = con.prepareStatement("select jurusan from anggota");
+            pst = con.prepareStatement("select distinct jurusan from anggota");
             rs = pst.executeQuery();
 
             J_jurusan.addItem("Semua");
@@ -744,7 +743,7 @@ public class Anggota extends javax.swing.JPanel {
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
         // TODO add your handling code here:
         try {
-            pst = con.prepareStatement("select * from view_anggota where NISN = " + nisn);
+            pst = con.prepareStatement("select * from anggota where NISN = " + nisn);
             rs = pst.executeQuery();
             rs.next();
             String ag_nama = rs.getString("nama");
