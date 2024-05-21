@@ -28,7 +28,7 @@ public class history extends javax.swing.JPanel {
     private PreparedStatement pst;
     private ResultSet rs;
     private int tgl, thn, bln;
-    String thn_get, bln_get, hari_get;
+    String thn_get, bln_get, hari_get, perstwa;
 
     private ArrayList<String> Tahun = new ArrayList<>();
 
@@ -109,6 +109,19 @@ public class history extends javax.swing.JPanel {
         }
     }
 
+    private void peristiwa() {
+        try {
+            if (J_peristiwa.getSelectedIndex() != 0) {
+                String Pers = (String) J_peristiwa.getSelectedItem();
+                perstwa = " AND peristiwa='" + Pers + "'";
+            } else {
+                perstwa = "";
+            }
+        } catch (Exception e) {
+            System.out.println("error Peristiwa: " + e);
+        }
+    }
+
     private void loadTabel2() {
         tabel.clearSelection();
         tabel.getTableHeader().setReorderingAllowed(false);
@@ -122,13 +135,14 @@ public class history extends javax.swing.JPanel {
         getTahun();
         getBulan();
         getHari();
+        peristiwa();
         String query = "select * from data_history where ";
 
         try {
-            if (bulan.getSelectedIndex() == 0 && hari.getSelectedIndex() == 0) {
+            if (bulan.getSelectedIndex() == 0 && hari.getSelectedIndex() == 0 && J_peristiwa.getSelectedIndex() == 0) {
                 query = query + thn_get;
             } else {
-                query = query + thn_get + bln_get + hari_get;
+                query = query + thn_get + bln_get + hari_get + perstwa;
             }
 
             pst = con.prepareStatement(query);
@@ -225,6 +239,8 @@ public class history extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        J_peristiwa = new javax.swing.JComboBox<>();
 
         setBackground(new java.awt.Color(204, 204, 204));
         addAncestorListener(new javax.swing.event.AncestorListener() {
@@ -309,7 +325,17 @@ public class history extends javax.swing.JPanel {
         jLabel3.setText("Bulan");
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel4.setText("Hari");
+        jLabel4.setText("Tanggal");
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel5.setText("Peristiwa");
+
+        J_peristiwa.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Semua", "Masuk", "Hilang" }));
+        J_peristiwa.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                J_peristiwaItemStateChanged(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -332,8 +358,12 @@ public class history extends javax.swing.JPanel {
                         .addGap(36, 36, 36)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(hari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(526, Short.MAX_VALUE))
+                        .addComponent(hari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(27, 27, 27)
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(J_peristiwa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(347, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
                     .addContainerGap()
@@ -353,7 +383,9 @@ public class history extends javax.swing.JPanel {
                     .addComponent(bulan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel3)
-                    .addComponent(jLabel4))
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel5)
+                    .addComponent(J_peristiwa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(537, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -406,14 +438,21 @@ public class history extends javax.swing.JPanel {
         loadTabel2();
     }//GEN-LAST:event_formComponentShown
 
+    private void J_peristiwaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_J_peristiwaItemStateChanged
+        // TODO add your handling code here:
+        loadTabel2();
+    }//GEN-LAST:event_J_peristiwaItemStateChanged
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> J_peristiwa;
     private javax.swing.JComboBox<String> bulan;
     private javax.swing.JComboBox<String> hari;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tabel;
