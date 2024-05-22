@@ -4,7 +4,7 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<queryString>
-		<![CDATA[select * from buku where referensi]]>
+		<![CDATA[select * from buku where kode_buku]]>
 	</queryString>
 	<field name="No_buku" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -49,7 +49,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<detail>
-		<band height="125" splitType="Stretch">
+		<band height="89" splitType="Stretch">
 			<componentElement>
 				<reportElement uuid="2d1fef4d-43bb-4e5e-a646-f8901a6a3444" x="14" y="0" width="200" height="50"/>
 				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39 (Extended)" drawText="false" checksumRequired="false">
@@ -57,7 +57,7 @@
 				</jr:barbecue>
 			</componentElement>
 			<textField>
-				<reportElement uuid="c2973fe9-f94c-48ac-aade-35b8a6f2d8ab" x="72" y="50" width="76" height="20"/>
+				<reportElement uuid="c2973fe9-f94c-48ac-aade-35b8a6f2d8ab" x="73" y="30" width="76" height="20"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>

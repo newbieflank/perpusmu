@@ -152,7 +152,7 @@ public class history extends javax.swing.JPanel {
 
             // Add columns to the DefaultTableModel excluding 'id_history'
             for (int i = 1; i <= columnCount; i++) {
-                if (!rsmd.getColumnName(i).equalsIgnoreCase("id_history")) {
+                if (!rsmd.getColumnName(i).equalsIgnoreCase("id history")) {
                     model.addColumn(rsmd.getColumnName(i));
                 }
             }
@@ -162,7 +162,7 @@ public class history extends javax.swing.JPanel {
                 Object[] rowData = new Object[columnCount - 1];
                 int columnIndex = 0;
                 for (int i = 1; i <= columnCount; i++) {
-                    if (!rsmd.getColumnName(i).equalsIgnoreCase("id_history")) {
+                    if (!rsmd.getColumnName(i).equalsIgnoreCase("id history")) {
                         rowData[columnIndex++] = rs.getObject(i);
                     }
                 }
@@ -192,9 +192,9 @@ public class history extends javax.swing.JPanel {
         } else {
             try {
                 if (bulan.getSelectedIndex() == 0 && hari.getSelectedIndex() == 0) {
-                    query = query + thn_get + " AND Judul_buku Like '%" + key + "%'";
+                    query = query + thn_get + " AND Judul buku Like '%" + key + "%'";
                 } else {
-                    query = query + thn_get + bln_get + hari_get + " AND Judul_buku Like '%" + key + "%'";
+                    query = query + thn_get + bln_get + hari_get + " AND Judul buku Like '%" + key + "%'";
                 }
                 pst = con.prepareStatement(query);
                 rs = pst.executeQuery();

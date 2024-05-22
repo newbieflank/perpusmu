@@ -1429,16 +1429,21 @@ public class Buku extends javax.swing.JPanel {
     }//GEN-LAST:event_txt_searchKeyPressed
 
     private void btn_barcodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_barcodeActionPerformed
+
         try {
             int row = JTabel1.getSelectedRow();
+             String sqlQuery;
+             String s;
+
             if (row == -1) {
-                JOptionPane.showMessageDialog(this, "Please select a row first.");
-                return;
+                 sqlQuery = "SELECT * FROM buku";
+
+            } else {
+                s = JTabel1.getValueAt(row, 1).toString();
+                 sqlQuery = "SELECT * FROM buku WHERE referensi = '" + s + "'";
             }
 
-            String No_buku = JTabel1.getValueAt(row, 1).toString();
-            String sqlQuery = "SELECT * FROM buku WHERE No_buku = '" + No_buku + "'";
-            String pathi = "src/iReportdata/exportbarcode.jrxml";
+            String pathi = "src/Buku/report1.jrxml";
 
             JasperDesign jasperDesign = JRXmlLoader.load(pathi);
             JRDesignQuery newQuery = new JRDesignQuery();
@@ -1447,13 +1452,13 @@ public class Buku extends javax.swing.JPanel {
 
             JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
             Map<String, Object> parameters = new HashMap<>();
-            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, koneksi.getConnection());
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, con);
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
             String tanggalWaktu = dateFormat.format(new Date());
             String namaFile = "satu_br-" + tanggalWaktu + ".pdf";
 
-            String path = System.getProperty("user.home") + "/Documents/exportbarcode/";
+            String path = System.getProperty("user.home") + "/Documents/barcode/";
             File directory = new File(path);
             if (!directory.exists()) {
                 directory.mkdirs();
