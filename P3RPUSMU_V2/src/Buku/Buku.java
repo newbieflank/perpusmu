@@ -1162,7 +1162,7 @@ public class Buku extends javax.swing.JPanel {
         jLabel4.setText("Search");
 
         btn_barcode.setBackground(new java.awt.Color(255, 227, 130));
-        btn_barcode.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/edit_1160515 3.png"))); // NOI18N
+        btn_barcode.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/image 15 (1).png"))); // NOI18N
         btn_barcode.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_barcodeActionPerformed(evt);
@@ -1210,11 +1210,11 @@ public class Buku extends javax.swing.JPanel {
                             .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel4))
                         .addGap(13, 13, 13)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE)
-                        .addContainerGap())
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(btn_barcode, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         txt_search.getAccessibleContext().setAccessibleName("");

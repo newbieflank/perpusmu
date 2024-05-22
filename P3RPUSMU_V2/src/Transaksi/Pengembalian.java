@@ -1400,6 +1400,7 @@ public class Pengembalian extends javax.swing.JPanel {
 
             // Selesai transaksi
             con.commit();
+            JOptionPane.showMessageDialog(null, "Update berhasil");
         } catch (SQLException e) {
             // Tangani kesalahan dengan membatalkan transaksi jika terjadi kesalahan
             try {
@@ -1423,7 +1424,6 @@ public class Pengembalian extends javax.swing.JPanel {
             txt_denda_total.setText("0");
             txt_search.requestFocusInWindow();
         }
-        JOptionPane.showMessageDialog(null, "Update berhasil");
     }//GEN-LAST:event_btn_tambahActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
