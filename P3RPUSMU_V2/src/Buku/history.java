@@ -15,7 +15,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -28,7 +30,7 @@ public class history extends javax.swing.JPanel {
     private PreparedStatement pst;
     private ResultSet rs;
     private int tgl, thn, bln;
-    String thn_get, bln_get, hari_get, perstwa;
+    String thn_get, bln_get, hari_get, perstwa, pjng;
 
     private ArrayList<String> Tahun = new ArrayList<>();
 
@@ -37,7 +39,12 @@ public class history extends javax.swing.JPanel {
         con = koneksi.Koneksi();
         jPanel1.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         txtcari.putClientProperty(FlatClientProperties.STYLE, "arc:30");
+        tahun.putClientProperty(FlatClientProperties.STYLE, "arc:30");
+        bulan.putClientProperty(FlatClientProperties.STYLE, "arc:30");
+        hari.putClientProperty(FlatClientProperties.STYLE, "arc:30");
+        J_peristiwa.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         txtcari.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Cari");
+        hari.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Tanggal");
         JcomboTahun();
         loadTabel2();
 
@@ -69,9 +76,9 @@ public class history extends javax.swing.JPanel {
 
     private void getHari() {
         try {
-            String selected = (String) hari.getSelectedItem();
-            if (hari.getSelectedIndex() != 0) {
-                tgl = Integer.parseInt(selected);
+            pjng = hari.getText();
+            if (pjng.length() != 0) {
+                tgl = Integer.parseInt(pjng);
                 hari_get = " AND day(tanggal) = " + tgl;
             } else {
                 hari_get = ""; // Reset the condition if no day is selected
@@ -139,7 +146,7 @@ public class history extends javax.swing.JPanel {
         String query = "select * from data_history where ";
 
         try {
-            if (bulan.getSelectedIndex() == 0 && hari.getSelectedIndex() == 0 && J_peristiwa.getSelectedIndex() == 0) {
+            if (bulan.getSelectedIndex() == 0 && pjng.length() == 0 && J_peristiwa.getSelectedIndex() == 0) {
                 query = query + thn_get;
             } else {
                 query = query + thn_get + bln_get + hari_get + perstwa;
@@ -157,17 +164,16 @@ public class history extends javax.swing.JPanel {
                 }
             }
 
-            // Add rows to the DefaultTableModel
             while (rs.next()) {
-                Object[] rowData = new Object[columnCount - 1];
-                int columnIndex = 0;
+                List<Object> rowDataList = new ArrayList<>();
                 for (int i = 1; i <= columnCount; i++) {
                     if (!rsmd.getColumnName(i).equalsIgnoreCase("id history")) {
-                        rowData[columnIndex++] = rs.getObject(i);
+                        rowDataList.add(rs.getObject(i));
                     }
                 }
-                model.addRow(rowData);
+                model.addRow(rowDataList.toArray());
             }
+
             tabel.setModel(model);
         } catch (Exception e) {
             System.out.println("loadTable" + e);
@@ -191,10 +197,10 @@ public class history extends javax.swing.JPanel {
             loadTabel2();
         } else {
             try {
-                if (bulan.getSelectedIndex() == 0 && hari.getSelectedIndex() == 0) {
-                    query = query + thn_get + " AND Judul buku Like '%" + key + "%'";
+                if (bulan.getSelectedIndex() == 0 && pjng.length() == 0 && J_peristiwa.getSelectedIndex() == 0) {
+                    query = query + thn_get + " AND judul_buku Like '%" + key + "%'";
                 } else {
-                    query = query + thn_get + bln_get + hari_get + " AND Judul buku Like '%" + key + "%'";
+                    query = query + thn_get + bln_get + hari_get + perstwa + " AND judul_buku Like '%" + key + "%'";
                 }
                 pst = con.prepareStatement(query);
                 rs = pst.executeQuery();
@@ -204,13 +210,14 @@ public class history extends javax.swing.JPanel {
                     model1.addColumn(rsmd.getColumnName(i));
                 }
 
-                // Add rows to the DefaultTableModel
                 while (rs.next()) {
-                    Object[] rowData = new Object[columnCount];
+                    List<Object> rowDataList = new ArrayList<>();
                     for (int i = 1; i <= columnCount; i++) {
-                        rowData[i - 1] = rs.getObject(i);
+                        if (!rsmd.getColumnName(i).equalsIgnoreCase("id history")) {
+                            rowDataList.add(rs.getObject(i));
+                        }
                     }
-                    model1.addRow(rowData);
+                    model1.addRow(rowDataList.toArray());
                 }
                 tabel.setModel(model1);
             } catch (Exception e) {
@@ -234,13 +241,13 @@ public class history extends javax.swing.JPanel {
         txtcari = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         tahun = new javax.swing.JComboBox<>();
-        hari = new javax.swing.JComboBox<>();
         bulan = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         J_peristiwa = new javax.swing.JComboBox<>();
+        hari = new javax.swing.JTextField();
 
         setBackground(new java.awt.Color(204, 204, 204));
         addAncestorListener(new javax.swing.event.AncestorListener() {
@@ -304,13 +311,6 @@ public class history extends javax.swing.JPanel {
             }
         });
 
-        hari.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Semua", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", " " }));
-        hari.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                hariItemStateChanged(evt);
-            }
-        });
-
         bulan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Semua", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember" }));
         bulan.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -337,6 +337,15 @@ public class history extends javax.swing.JPanel {
             }
         });
 
+        hari.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                hariKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                hariKeyTyped(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -359,11 +368,11 @@ public class history extends javax.swing.JPanel {
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(hari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(27, 27, 27)
+                        .addGap(37, 37, 37)
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(J_peristiwa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(347, Short.MAX_VALUE))
+                .addContainerGap(345, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
                     .addContainerGap()
@@ -379,13 +388,13 @@ public class history extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtcari, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(tahun, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(hari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(bulan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel3)
                     .addComponent(jLabel4)
                     .addComponent(jLabel5)
-                    .addComponent(J_peristiwa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(J_peristiwa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(hari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(537, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -417,11 +426,6 @@ public class history extends javax.swing.JPanel {
         loadTabel2();
     }//GEN-LAST:event_bulanItemStateChanged
 
-    private void hariItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_hariItemStateChanged
-        // TODO add your handling code here:
-        loadTabel2();
-    }//GEN-LAST:event_hariItemStateChanged
-
     private void tahunPopupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_tahunPopupMenuWillBecomeInvisible
         // TODO add your handling code here:
         loadTabel2();
@@ -443,11 +447,27 @@ public class history extends javax.swing.JPanel {
         loadTabel2();
     }//GEN-LAST:event_J_peristiwaItemStateChanged
 
+    private void hariKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_hariKeyTyped
+        // TODO add your handling code here:
+        if ((Character.isAlphabetic(evt.getKeyChar())) || (Character.isWhitespace(evt.getKeyChar()))) {
+            JOptionPane.showMessageDialog(this, "Hanya bisa di Isi Angka");
+            evt.consume();
+        } else if (pjng.length() > 2) {
+            JOptionPane.showMessageDialog(this, "Maksimal 2 angka");
+            evt.consume();
+        }
+    }//GEN-LAST:event_hariKeyTyped
+
+    private void hariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_hariKeyReleased
+        // TODO add your handling code here:
+        loadTabel2();
+    }//GEN-LAST:event_hariKeyReleased
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> J_peristiwa;
     private javax.swing.JComboBox<String> bulan;
-    private javax.swing.JComboBox<String> hari;
+    private javax.swing.JTextField hari;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
