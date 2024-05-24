@@ -292,8 +292,8 @@ public class Anggota extends javax.swing.JPanel {
         jLabel8 = new javax.swing.JLabel();
         dial_simpan = new javax.swing.JButton();
         dial_batal = new javax.swing.JButton();
-        dial_jenis = new javax.swing.JComboBox<String>();
-        dial_status = new javax.swing.JComboBox<String>();
+        dial_jenis = new javax.swing.JComboBox<>();
+        dial_status = new javax.swing.JComboBox<>();
         dial_jurusan = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -303,8 +303,8 @@ public class Anggota extends javax.swing.JPanel {
         addButton = new javax.swing.JButton();
         editButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
-        f_gender = new javax.swing.JComboBox<String>();
-        J_jurusan = new javax.swing.JComboBox<String>();
+        f_gender = new javax.swing.JComboBox<>();
+        J_jurusan = new javax.swing.JComboBox<>();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         ImportData = new javax.swing.JButton();
@@ -399,9 +399,9 @@ public class Anggota extends javax.swing.JPanel {
             }
         });
 
-        dial_jenis.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Laki-Laki", "Perempuan" }));
+        dial_jenis.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Laki-Laki", "Perempuan" }));
 
-        dial_status.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Aktif", "Lulus" }));
+        dial_status.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Aktif", "Lulus" }));
 
         javax.swing.GroupLayout popupLayout = new javax.swing.GroupLayout(popup);
         popup.setLayout(popupLayout);
@@ -500,10 +500,10 @@ public class Anggota extends javax.swing.JPanel {
 
         setBackground(new java.awt.Color(204, 204, 204));
         addAncestorListener(new javax.swing.event.AncestorListener() {
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
-            }
             public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
                 formAncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
             }
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
             }
@@ -517,10 +517,10 @@ public class Anggota extends javax.swing.JPanel {
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setToolTipText("");
         jPanel1.addAncestorListener(new javax.swing.event.AncestorListener() {
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
-            }
             public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
                 jPanel1AncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
             }
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
             }
@@ -618,14 +618,14 @@ public class Anggota extends javax.swing.JPanel {
             }
         });
 
-        f_gender.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Semua", "Laki-Laki", "Perempuan" }));
+        f_gender.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Semua", "Laki-Laki", "Perempuan" }));
         f_gender.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 f_genderItemStateChanged(evt);
             }
         });
 
-        J_jurusan.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        J_jurusan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         J_jurusan.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
             public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
             }
@@ -643,7 +643,7 @@ public class Anggota extends javax.swing.JPanel {
         jLabel10.setText("Jenis Kelamin :");
 
         ImportData.setBackground(new java.awt.Color(255, 227, 130));
-        ImportData.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_10/Vector 20.png"))); // NOI18N
+        ImportData.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_10/folder 2 (3).png"))); // NOI18N
         ImportData.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ImportDataActionPerformed(evt);

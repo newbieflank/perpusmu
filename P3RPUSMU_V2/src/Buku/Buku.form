@@ -1189,7 +1189,7 @@
               <Color blue="82" green="e3" red="ff" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/img_15/image_button/image 15 (1).png"/>
+              <Image iconType="3" name="/img_10/barcode 1.png"/>
             </Property>
           </Properties>
           <Events>

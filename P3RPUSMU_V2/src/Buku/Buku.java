@@ -1162,7 +1162,7 @@ public class Buku extends javax.swing.JPanel {
         jLabel4.setText("Search");
 
         btn_barcode.setBackground(new java.awt.Color(255, 227, 130));
-        btn_barcode.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_15/image_button/image 15 (1).png"))); // NOI18N
+        btn_barcode.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_10/barcode 1.png"))); // NOI18N
         btn_barcode.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_barcodeActionPerformed(evt);

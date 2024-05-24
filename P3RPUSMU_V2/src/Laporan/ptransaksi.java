@@ -309,10 +309,10 @@ public class ptransaksi extends javax.swing.JPanel {
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.addAncestorListener(new javax.swing.event.AncestorListener() {
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
-            }
             public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
                 jPanel1AncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
             }
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
             }
@@ -404,7 +404,7 @@ public class ptransaksi extends javax.swing.JPanel {
 
         Export.setBackground(new java.awt.Color(51, 153, 0));
         Export.setForeground(new java.awt.Color(153, 204, 0));
-        Export.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_10/Vector 20 (2).png"))); // NOI18N
+        Export.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_10/file-download 1.png"))); // NOI18N
         Export.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ExportActionPerformed(evt);
