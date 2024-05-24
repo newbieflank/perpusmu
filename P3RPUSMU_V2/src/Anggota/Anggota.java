@@ -171,8 +171,7 @@ public class Anggota extends javax.swing.JPanel {
             }
         };
         String cari = search.getText();
-        
-        
+
         if (!cari.equals("")) {
             String query;
             try {
@@ -213,8 +212,7 @@ public class Anggota extends javax.swing.JPanel {
             }
         }
     }
-    
-    
+
     private void changeFolderPath() {
         JFileChooser folderChooser = new JFileChooser();
         folderChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -268,6 +266,18 @@ public class Anggota extends javax.swing.JPanel {
         }
         loadTable2();
     }
+
+    private void delete() {
+        try {
+            pst = con.prepareStatement("delete from anggota where NISN = " + nisn);
+            pst.execute();
+            loadTable2();
+            JOptionPane.showMessageDialog(jDialog1, "Data Berhasil di hapus");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(jDialog1, "Data Gagal di hapus");
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -783,30 +793,26 @@ public class Anggota extends javax.swing.JPanel {
                             + "peminjaman Join detail_peminjaman on detail_peminjaman.kode_peminjaman = peminjaman.kode_peminjaman "
                             + "where peminjaman.NISN =  " + nisn);
                     rs = pst.executeQuery();
-                    if (rs.next()) {
-                        JOptionPane.showMessageDialog(jDialog1, "Anggota Sedang Meminjam Buku");
-                    } else {
+                    if (!rs.next()) {
                         try {
                             pst = con.prepareStatement("select jumlah_denda, status_denda from denda where NISN = " + nisn);
                             rs = pst.executeQuery();
-                            rs.next();
-                            String SD = rs.getString("status_denda");
-                            int jumlha = rs.getInt("jumlah_denda");
-                            if (SD.equalsIgnoreCase("Belum Lunas")) {
-                                JOptionPane.showMessageDialog(jDialog1, "Anggota Masih Memiliki Tanggungan Denda Sebesar: Rp." + jumlha);
-                            } else {
-                                try {
-                                    pst = con.prepareStatement("delete from anggota where NISN = " + nisn);
-                                    pst.execute();
-                                    loadTable2();
-                                    JOptionPane.showMessageDialog(jDialog1, "Data Berhasil di hapus");
-                                } catch (Exception e) {
-                                    JOptionPane.showMessageDialog(jDialog1, "Data Gagal di hapus");
+                            if (rs.next()) {
+                                String SD = rs.getString("status_denda");
+                                int jumlha = rs.getInt("jumlah_denda");
+                                if (rs.next() && SD.equalsIgnoreCase("Belum Lunas")) {
+                                    JOptionPane.showMessageDialog(jDialog1, "Anggota Masih Memiliki Tanggungan Denda Sebesar: Rp." + jumlha);
+                                } else {
+                                    delete();
                                 }
+                            } else {
+                                delete();
                             }
                         } catch (Exception e) {
                             System.out.println("SD" + e);
                         }
+                    } else {
+                        JOptionPane.showMessageDialog(jDialog1, "Anggota Sedang Meminjam Buku");
                     }
                 } catch (Exception e) {
                     System.out.println("data hapus" + e);
