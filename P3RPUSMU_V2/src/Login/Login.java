@@ -311,6 +311,7 @@ public class Login extends javax.swing.JFrame {
         jLabel14.setMinimumSize(new java.awt.Dimension(290, 24));
 
         jButton3.setBackground(new java.awt.Color(255, 0, 0));
+        jButton3.setForeground(new java.awt.Color(255, 255, 255));
         jButton3.setText("X");
         jButton3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jButton3.addActionListener(new java.awt.event.ActionListener() {
