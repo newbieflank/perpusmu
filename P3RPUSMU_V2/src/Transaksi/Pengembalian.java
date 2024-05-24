@@ -508,6 +508,7 @@ public class Pengembalian extends javax.swing.JPanel {
 
         btn_tambah.setBackground(new java.awt.Color(10, 169, 50));
         btn_tambah.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        btn_tambah.setForeground(new java.awt.Color(255, 255, 255));
         btn_tambah.setText("Submit");
         btn_tambah.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -520,6 +521,7 @@ public class Pengembalian extends javax.swing.JPanel {
 
         jButton1.setBackground(new java.awt.Color(240, 0, 0));
         jButton1.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Cancel");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
