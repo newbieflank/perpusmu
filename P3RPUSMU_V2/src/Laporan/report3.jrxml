@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8a07879b-21c6-4a5a-ab0e-dc304190cba3">
-	<property name="ireport.zoom" value="1.771561000000002"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f45b8c74-6e91-493c-8a04-9d229225c9a7">
+	<property name="ireport.zoom" value="2.357947691000003"/>
+	<property name="ireport.x" value="501"/>
+	<property name="ireport.y" value="157"/>
 	<parameter name="tgl1" class="java.util.Date">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
@@ -10,8 +10,7 @@
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[SELECT anggota.nama, denda.jumlah_denda, denda.status_denda, denda.total_pembayaran, detail_pengembalian.tanggal FROM denda JOIN anggota ON anggota.NISN = denda.NISN JOIN detail_pengembalian ON detail_pengembalian.kode_pengembalian = denda.kode_pengembalian WHERE 
-    detail_pengembalian.tanggal BETWEEN $P{tgl1} AND $P{tgl2} AND detail_pengembalian.tanggal BETWEEN $P{tgl1} AND $P{tgl2};]]>
+		<![CDATA[SELECT anggota.nama, denda.jumlah_denda, denda.status_denda, denda.total_pembayaran, detail_pengembalian.tanggal FROM denda JOIN anggota ON anggota.NISN = denda.NISN JOIN detail_pengembalian ON detail_pengembalian.kode_pengembalian = denda.kode_pengembalian where detail_pengembalian.tanggal between $P{tgl1} And $P{tgl2}]]>
 	</queryString>
 	<field name="nama" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -32,26 +31,26 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="82" splitType="Stretch">
+		<band height="92" splitType="Stretch">
 			<rectangle>
-				<reportElement x="74" y="1" width="399" height="81" uuid="0393b9a1-e6d8-4ba4-8b21-147c440679a0"/>
+				<reportElement x="76" y="11" width="400" height="81" uuid="1ff01024-474c-4762-9f97-f46e7e3e4d3c"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="151" y="4" width="300" height="32" uuid="c738cd3d-150a-4590-8ab6-622f534c5653"/>
+				<reportElement x="153" y="14" width="300" height="32" uuid="8fe71d92-d6b5-4a23-842d-8fe50c493ce0"/>
 				<textElement>
 					<font size="23" isBold="true"/>
 				</textElement>
 				<text><![CDATA[SMK MANBAUL ULUM]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="130" y="30" width="321" height="22" uuid="1e8546ef-b61b-4b3f-ba06-0af1acbb63de"/>
+				<reportElement x="132" y="40" width="321" height="22" uuid="f76fb0a9-d3aa-4f58-a29a-968840c36821"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
 				<text><![CDATA[JL. Raya Situbondo - Wonosari, Tangsil Wetan, 68282, Kapunduk]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="152" y="44" width="250" height="38" uuid="f636ed27-aa76-45b0-adcd-074e3b521cad"/>
+				<reportElement x="154" y="54" width="250" height="38" uuid="2a320393-e91d-4f75-96ac-b4c02a46e463"/>
 				<textElement textAlignment="Center">
 					<font size="12"/>
 				</textElement>
@@ -62,34 +61,34 @@
 	<columnHeader>
 		<band height="20" splitType="Stretch">
 			<rectangle>
-				<reportElement x="74" y="0" width="100" height="20" uuid="bd2247cd-f1ab-4232-b66d-440e3fcd3299"/>
+				<reportElement x="76" y="0" width="100" height="20" uuid="49c2a945-9b22-40ef-a371-32ce344e875c"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="174" y="0" width="100" height="20" uuid="390f6578-ce8f-47ff-8c5b-9c65ef38016e"/>
+				<reportElement x="176" y="0" width="100" height="20" uuid="2a5eacae-6216-4c7b-acb0-eb61cb6b8041"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="274" y="0" width="100" height="20" uuid="d59e0846-3c2c-4ed4-94e8-71cc586b21ce"/>
+				<reportElement x="276" y="0" width="100" height="20" uuid="6e96b4eb-c5dc-4786-ba01-eeef311123c2"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="374" y="0" width="100" height="20" uuid="728efb18-ec41-438b-b493-ab7ad40989b7"/>
+				<reportElement x="376" y="0" width="100" height="20" uuid="a7238d78-f45c-4781-8349-d37f2f717e47"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="74" y="0" width="100" height="20" uuid="6390305a-dad1-475b-a0cb-2ada5824c9d3"/>
+				<reportElement x="76" y="0" width="100" height="20" uuid="f5c82393-d8db-4efc-86ba-c4cb528f0bdb"/>
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[Nama]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="174" y="0" width="100" height="20" uuid="ce2b2fbe-34e7-487a-84e8-2f565da5f7a4"/>
+				<reportElement x="176" y="0" width="100" height="20" uuid="d70fb0ea-41bc-47ee-bf76-86d6c7a415b8"/>
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[Jumlah Denda]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="274" y="0" width="100" height="20" uuid="55443dba-2a7f-40cd-abb1-8aacae2324aa"/>
+				<reportElement x="276" y="0" width="100" height="20" uuid="e8014672-dddc-4ea2-b1b7-98ddcecf5aac"/>
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[Status Denda]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="374" y="0" width="100" height="20" uuid="f4b3eb0a-c070-4cce-82c0-f9864cc748c0"/>
+				<reportElement x="376" y="0" width="100" height="20" uuid="d6b1a9a2-aafe-4f53-a7c9-4ce0bbd4e47c"/>
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[Total Pembayaran]]></text>
 			</staticText>
@@ -98,34 +97,34 @@
 	<detail>
 		<band height="20" splitType="Stretch">
 			<rectangle>
-				<reportElement x="74" y="0" width="100" height="20" uuid="39d8592b-dc77-474f-8122-bc190b3b2260"/>
+				<reportElement x="76" y="0" width="100" height="20" uuid="94a717c7-0951-46b0-8790-819aa9c1c6ea"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="174" y="0" width="100" height="20" uuid="1fd01a2b-764f-45ef-8efa-9bedd6a6c829"/>
+				<reportElement x="176" y="0" width="100" height="20" uuid="ae749eb6-3785-4d93-84ff-ac98ee047510"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="274" y="0" width="100" height="20" uuid="41118713-dd76-4338-aedd-42b9e8e6eff6"/>
+				<reportElement x="276" y="0" width="100" height="20" uuid="8d29b00e-221d-44e8-ab2f-bf8a7b09f5a2"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="374" y="0" width="100" height="20" uuid="fcc590f1-c2b1-4ffa-aa68-fdefb69fbbdf"/>
+				<reportElement x="376" y="0" width="100" height="20" uuid="4187881d-e486-4d24-8779-c1597b915c05"/>
 			</rectangle>
 			<textField>
-				<reportElement x="74" y="0" width="100" height="20" uuid="83010de8-5bb4-4658-b3b7-5008dc64c983"/>
+				<reportElement x="76" y="0" width="100" height="20" uuid="b873116c-d416-443e-851f-e2756c65103f"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{nama}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="174" y="0" width="100" height="20" uuid="cc2a6412-018c-4a7a-a046-bf1cf6d3475e"/>
+				<reportElement x="176" y="0" width="100" height="20" uuid="17370b3f-2f55-4db1-b897-222c634c9658"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{jumlah_denda}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="274" y="0" width="100" height="20" uuid="224208b5-0a0c-466e-b312-f8c267f9cf81"/>
+				<reportElement x="276" y="0" width="100" height="20" uuid="b838ff40-5e36-432b-9480-a7254e0e5ad0"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{status_denda}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="374" y="0" width="100" height="20" uuid="c91d0c9a-fee0-494a-a99e-624b86e94bee"/>
+				<reportElement x="376" y="0" width="100" height="20" uuid="ab7b2f6c-2c57-486c-bb43-c23459c75c37"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{total_pembayaran}]]></textFieldExpression>
 			</textField>
@@ -134,6 +133,9 @@
 	<columnFooter>
 		<band height="45" splitType="Stretch"/>
 	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
 	<summary>
 		<band height="42" splitType="Stretch"/>
 	</summary>

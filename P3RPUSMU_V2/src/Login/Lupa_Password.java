@@ -59,6 +59,7 @@ public void setUsernameText(String username) {
         jPanel1.setPreferredSize(new java.awt.Dimension(789, 518));
 
         jButton2.setBackground(new java.awt.Color(255, 0, 0));
+        jButton2.setForeground(new java.awt.Color(255, 255, 255));
         jButton2.setText("X");
         jButton2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jButton2.addActionListener(new java.awt.event.ActionListener() {
