@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import Navbar.koneksi;
+import com.mysql.cj.jdbc.result.ResultSetMetaData;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -114,6 +115,41 @@ public class Denda extends javax.swing.JPanel {
         } catch (Exception e) {
             System.out.println("loadTable" + e);
         }
+    }
+    
+    private void pencarian(String key) {
+        DefaultTableModel model = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                //all cells false
+                return false;
+            }
+        };
+        String sql = "SELECT anggota.nama , denda.jumlah_denda, denda.status_denda, denda.total_pembayaran "
+                    + "from pengembalian join denda on pengembalian.kode_pengembalian = denda.kode_pengembalian join"
+                    + " anggota on anggota.NISN = denda.NISN "
+                    + "where denda.status_denda = 'Belum Lunas' AND nama like '&" + key + "&'";
+        try {
+                pst = con.prepareStatement(sql);
+                rs = pst.executeQuery();
+                ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
+                int columnCount = rsmd.getColumnCount();
+                for (int i = 1; i <= columnCount; i++) {
+                    model.addColumn(rsmd.getColumnName(i));
+                }
+
+                // Add rows to the DefaultTableModel
+                while (rs.next()) {
+                    Object[] rowData = new Object[columnCount];
+                    for (int i = 1; i <= columnCount; i++) {
+                        rowData[i - 1] = rs.getObject(i);
+                    }
+                    model.addRow(rowData);
+                }
+                tabel.setModel(model);
+            } catch (Exception e) {
+                System.out.println("loadTable = " + e);
+            }
     }
 
     /**
@@ -570,10 +606,7 @@ public class Denda extends javax.swing.JPanel {
     private void searchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchKeyReleased
         // TODO add your handling code here:
         String key = search.getText().trim();
-        try {
-            pst = con.prepareStatement("select * from denda where nama like '&" + key + "&'");
-        } catch (Exception e) {
-        }
+        pencarian(key);
     }//GEN-LAST:event_searchKeyReleased
 
     private void formAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_formAncestorAdded
