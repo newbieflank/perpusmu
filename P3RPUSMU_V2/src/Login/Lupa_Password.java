@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 public class Lupa_Password extends javax.swing.JFrame {
@@ -22,6 +23,12 @@ public void setUsernameText(String username) {
     public Lupa_Password() {
         initComponents();
         hide.setVisible(false);
+        icon();
+    }
+    
+    private void icon() {
+        ImageIcon icon = new ImageIcon(getClass().getResource("/img_15.image_button/icon.png"));
+        this.setIconImage(icon.getImage());
     }
 
     @SuppressWarnings("unchecked")

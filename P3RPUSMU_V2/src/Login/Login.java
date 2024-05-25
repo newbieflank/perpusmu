@@ -21,6 +21,7 @@ import javax.smartcardio.TerminalFactory;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.smartcardio.*;
+import javax.swing.ImageIcon;
 
 public class Login extends javax.swing.JFrame {
 
@@ -40,6 +41,12 @@ public class Login extends javax.swing.JFrame {
         jPanel2.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         hide.setVisible(false);
         txt_username.requestFocusInWindow();
+        icon();
+    }
+    
+    private void icon() {
+        ImageIcon icon = new ImageIcon(getClass().getResource("/img_15.image_button/icon.png"));
+        this.setIconImage(icon.getImage());
     }
 
     private void logid(String id) {

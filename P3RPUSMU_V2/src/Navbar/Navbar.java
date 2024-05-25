@@ -24,6 +24,7 @@ import java.awt.Toolkit;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -50,6 +51,7 @@ public class Navbar extends javax.swing.JFrame {
         main.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         card = new CardLayout();
         main.setLayout(card);
+        icon();
 
         main.add(new Anggota(), "anggota");
         main.add(new BukuMain(), "buku");
@@ -70,6 +72,11 @@ public class Navbar extends javax.swing.JFrame {
         siz();
     }
 
+    private void icon() {
+        ImageIcon icon = new ImageIcon(getClass().getResource("/img_15.image_button/icon.png"));
+        this.setIconImage(icon.getImage());
+    }
+
     private void siz() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setBounds(0, 0, screenSize.width, screenSize.height);
@@ -84,10 +91,10 @@ public class Navbar extends javax.swing.JFrame {
         UIManager.put("OptionPane.yesButtonText", "Ya");
         UIManager.put("OptionPane.noButtonText", "Tidak");
     }
-    
+
     public void setIconText(String text) {
-    icon.setText(text);
-}
+        icon.setText(text);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -412,7 +419,7 @@ public class Navbar extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                //    System.setProperty("sun.java2d.dpiaware", "false");
+                    //    System.setProperty("sun.java2d.dpiaware", "false");
                     new Navbar().setVisible(true);
                 } catch (SQLException ex) {
                     Logger.getLogger(Navbar.class.getName()).log(Level.SEVERE, null, ex);
