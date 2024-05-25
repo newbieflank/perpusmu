@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f45b8c74-6e91-493c-8a04-9d229225c9a7">
 	<property name="ireport.zoom" value="2.357947691000003"/>
-	<property name="ireport.x" value="886"/>
+	<property name="ireport.x" value="501"/>
 	<property name="ireport.y" value="157"/>
 	<parameter name="tgl1" class="java.util.Date">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -9,8 +9,8 @@
 	<parameter name="tgl2" class="java.util.Date">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
-	<queryString language="SQL">
-		<![CDATA[SELECT anggota.nama, denda.jumlah_denda, denda.status_denda, denda.total_pembayaran, detail_pengembalian.tanggal FROM denda JOIN anggota ON anggota.NISN = denda.NISN JOIN detail_pengembalian ON detail_pengembalian.kode_pengembalian = denda.kode_pengembalian]]>
+	<queryString>
+		<![CDATA[SELECT anggota.nama, denda.jumlah_denda, denda.status_denda, denda.total_pembayaran, detail_pengembalian.tanggal FROM denda JOIN anggota ON anggota.NISN = denda.NISN JOIN detail_pengembalian ON detail_pengembalian.kode_pengembalian = denda.kode_pengembalian where detail_pengembalian.tanggal between $P{tgl1} And $P{tgl2}]]>
 	</queryString>
 	<field name="nama" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
