@@ -1366,7 +1366,7 @@ public class Pengembalian extends javax.swing.JPanel {
 
             // Insert data ke tabel 'history' jika ada buku yang hilang
             if (nilaiSpinnerHilang > 0) {
-                String sqlInsertHistory = "INSERT INTO history (id_history, id_buku, peristiwa, tanggal, harga_buku, keterangan) VALUES (?, ?, ?, ?, ?, ?)";
+                String sqlInsertHistory = "INSERT INTO history (id_history, No_buku, peristiwa, tanggal, harga_buku, keterangan) VALUES (?, ?, ?, ?, ?, ?)";
                 try (PreparedStatement pstInsertHistory = con.prepareStatement(sqlInsertHistory)) {
                     // Generate a random 10-digit number for id_history
                     long idHistory = (long) (Math.random() * 100000L);
