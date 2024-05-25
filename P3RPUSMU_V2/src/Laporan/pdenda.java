@@ -229,11 +229,7 @@ private void FolderExp() {
     model.addColumn("Status Denda");
     model.addColumn("Total Pembayaran");
 
-    String sql = "SELECT anggota.nama, denda.jumlah_denda, denda.status_denda, denda.total_pembayaran " +
-                 "FROM denda " +
-                 "JOIN anggota ON anggota.NISN = denda.NISN " +
-                 "JOIN detail_pengembalian ON detail_pengembalian.kode_pengembalian = denda.kode_pengembalian " +
-                 "WHERE detail_pengembalian.tanggal = current_date";
+    String sql = "SELECT * FROM denda_view;";
 
     try (PreparedStatement pst = con.prepareStatement(sql);
          ResultSet rs = pst.executeQuery()) {
