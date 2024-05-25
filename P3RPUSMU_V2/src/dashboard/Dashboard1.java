@@ -85,7 +85,7 @@ public class Dashboard1 extends javax.swing.JPanel {
     private List<ModelData> getdata() throws SQLException {
     List<ModelData> lists = new ArrayList<>();
     // Buat array untuk nama bulan
-    String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+    String[] months = {"Desember", "November", "October", "September", "August", "July", "June", "May", "April", "March", "February", "January"};
     // Buat peta untuk menyimpan data sementara
         Map<String, ModelData> tempData = new HashMap<>();
 
@@ -196,7 +196,7 @@ public class Dashboard1 extends javax.swing.JPanel {
 
     private void Notif2() throws SQLException {
         DefaultTableModel tb1 = new DefaultTableModel();
-        tb1.addColumn("STOK BUKU MENIPIS");
+        tb1.addColumn("STOK BUKU HABIS");
         jTable2.setModel(tb1);
         String sql = "SELECT judul_buku FROM buku WHERE jumlah_stock  < 1;";
         PreparedStatement p = con.prepareStatement(sql);
