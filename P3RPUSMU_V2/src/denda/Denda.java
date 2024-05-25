@@ -125,16 +125,18 @@ public class Denda extends javax.swing.JPanel {
                 return false;
             }
         };
-        String sql = "SELECT anggota.nama , denda.jumlah_denda, denda.status_denda, denda.total_pembayaran "
-                + "from pengembalian join denda on pengembalian.kode_pengembalian = denda.kode_pengembalian join"
+        String sql = "SELECT anggota.nama as `Nama`, denda.jumlah_denda as `Jumlah Denda`, denda.status_denda as `Status Denda`, "
+                + "denda.total_pembayaran as `Total Pembayaran` from pengembalian join"
+                + " denda on pengembalian.kode_pengembalian = denda.kode_pengembalian join"
                 + " anggota on anggota.NISN = denda.NISN "
-                + "where denda.status_denda = 'Belum Lunas' AND nama like '&" + key + "&'";
+                + "where denda.status_denda = 'Belum Lunas' OR `Nama` like '&" + key + "&'";
 
         try {
             if (key.length() == 0) {
                 loadTabel();
             } else {
                 pst = con.prepareStatement(sql);
+                System.out.println(pst);
                 rs = pst.executeQuery();
                 ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
                 int columnCount = rsmd.getColumnCount();
