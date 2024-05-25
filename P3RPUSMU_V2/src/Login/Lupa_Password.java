@@ -27,7 +27,7 @@ public void setUsernameText(String username) {
     }
     
     private void icon() {
-        ImageIcon icon = new ImageIcon(getClass().getResource("/img_15.image_button/icon.png"));
+        ImageIcon icon = new ImageIcon(getClass().getResource("/img_10/icon.png"));
         this.setIconImage(icon.getImage());
     }
 
