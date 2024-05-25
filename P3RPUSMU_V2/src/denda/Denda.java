@@ -67,10 +67,10 @@ public class Denda extends javax.swing.JPanel {
     private void update() {
         int denda = Integer.parseInt(denda_total.getText());
         try {
-            pst = con.prepareStatement("UPDATE denda set jumlah_denda = jumlah_denda - "+ denda +";");
+            pst = con.prepareStatement("UPDATE denda set jumlah_denda = jumlah_denda - " + denda + ";");
             pst.execute();
             try {
-                
+
             } catch (Exception e) {
             }
             denda_total.setText(null);
@@ -78,7 +78,7 @@ public class Denda extends javax.swing.JPanel {
             System.out.println("update" + e);
         }
     }
-    
+
     private void update2() {
         try {
             pst = con.prepareStatement("Update denda set status_denda = 'Belum Lunas' where jumlah_denda != 0");
@@ -116,7 +116,7 @@ public class Denda extends javax.swing.JPanel {
             System.out.println("loadTable" + e);
         }
     }
-    
+
     private void pencarian(String key) {
         DefaultTableModel model = new DefaultTableModel() {
             @Override
@@ -125,11 +125,16 @@ public class Denda extends javax.swing.JPanel {
                 return false;
             }
         };
-        String sql = "SELECT anggota.nama , denda.jumlah_denda, denda.status_denda, denda.total_pembayaran "
-                    + "from pengembalian join denda on pengembalian.kode_pengembalian = denda.kode_pengembalian join"
-                    + " anggota on anggota.NISN = denda.NISN "
-                    + "where denda.status_denda = 'Belum Lunas' AND nama like '&" + key + "&'";
+        String sql = "SELECT anggota.nama as `Nama`, denda.jumlah_denda as `Jumlah Denda`, denda.status_denda as `Status Denda`, "
+                + "denda.total_pembayaran as `Total Pembayaran` from pengembalian join"
+                + " denda on pengembalian.kode_pengembalian = denda.kode_pengembalian join"
+                + " anggota on anggota.NISN = denda.NISN "
+                + "where denda.status_denda = 'Belum Lunas' OR `Nama` like '&" + key + "&'";
+
         try {
+            if (key.length() == 0) {
+                loadTabel();
+            } else {
                 pst = con.prepareStatement(sql);
                 rs = pst.executeQuery();
                 ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
@@ -147,9 +152,10 @@ public class Denda extends javax.swing.JPanel {
                     model.addRow(rowData);
                 }
                 tabel.setModel(model);
-            } catch (Exception e) {
-                System.out.println("loadTable = " + e);
             }
+        } catch (Exception e) {
+            System.out.println("loadTable = " + e);
+        }
     }
 
     /**
@@ -556,7 +562,7 @@ public class Denda extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        int denda= Integer.parseInt(denda_jumlah.getText());
+        int denda = Integer.parseInt(denda_jumlah.getText());
         if (denda_total.getText().equals("") || denda_jumlah.getText().equals("")) {
             JOptionPane.showMessageDialog(jDialog1, "Isi Semua Data Yang ada");
         } else {
@@ -573,7 +579,7 @@ public class Denda extends javax.swing.JPanel {
                     rs.next();
                     bayar_awal = rs.getInt(1);
                     int total_bayar = bayar_awal + Bayar;
-                   
+
                     if (Bayar > denda) {
                         JOptionPane.showMessageDialog(jDialog1, "Pastikan Harga yang di bayarkan sesusai dengan jumlah denda");
                     } else {
