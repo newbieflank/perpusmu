@@ -359,7 +359,7 @@ public class Buku extends javax.swing.JPanel {
 
     }
 
-    private void searchFunc(String keyword) {
+     private void searchFunc(String keyword) {
         JTabel1.clearSelection();
         DefaultTableModel model = new DefaultTableModel() {
             @Override
@@ -369,18 +369,10 @@ public class Buku extends javax.swing.JPanel {
             }
         };
         String sql = "SELECT * FROM buku_view "
-                + "WHERE No_buku LIKE '%" + keyword + "%' OR "
-                + "kode_buku LIKE '%" + keyword + "%' OR "
-                + "judul_buku LIKE '%" + keyword + "%' OR "
-                + "jilid LIKE '%" + keyword + "%' OR "
-                + "kategori LIKE '%" + keyword + "%' OR "
-                + "pengarang LIKE '%" + keyword + "%' OR "
-                + "lokasi LIKE '%" + keyword + "%' OR "
-                + "kondisi_buku LIKE '%" + keyword + "%' OR "
-                + "tahun_terbit LIKE '%" + keyword + "%' OR "
-                + "asal_buku LIKE '%" + keyword + "%' OR "
-                + "jumlah_stock LIKE '%" + keyword + "%' OR "
-                + "referensi Like '%" + keyword + "%'";
+                + "WHERE `No buku` LIKE '%" + keyword + "%' OR "
+                + "`judul buku` LIKE '%" + keyword + "%' OR "
+                + "`kategori` LIKE '%" + keyword + "%' OR "
+                + "`lokasi` LIKE '%" + keyword + "%'"; 
 
         try {
             pst = con.prepareStatement(sql);
