@@ -73,7 +73,7 @@ public class Buku extends javax.swing.JPanel {
         int harga_buku = Integer.parseInt(dial_harga.getText());
         int jumlah_stock = Integer.parseInt(dial_stock.getText());
 
-        String sql = "insert into history (id_buku, peristiwa, tanggal, harga_buku, keterangan) "
+        String sql = "insert into history (No_buku, peristiwa, tanggal, harga_buku, keterangan) "
                 + "values ((select No_buku from buku where kode_buku = ? and referensi = ? and judul_buku = ? and"
                 + " jilid = ? and kategori = ? and"
                 + " pengarang = ? and lokasi = ? and kondisi_buku = ? and tahun_terbit = ? and asal_buku = ? and harga =? and"
