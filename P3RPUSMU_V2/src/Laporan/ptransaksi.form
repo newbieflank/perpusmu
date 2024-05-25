@@ -63,7 +63,7 @@
                                   <EmptySpace min="25" pref="25" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="jDate1" alignment="1" min="-2" pref="147" max="-2" attributes="0"/>
                               <Group type="102" alignment="1" attributes="0">
@@ -71,11 +71,11 @@
                                   <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="jButton3" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="Export" min="-2" pref="71" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="jToggleButton1" min="-2" pref="59" max="-2" attributes="0"/>
                       </Group>
                       <Component id="jScrollPane1" pref="1628" max="32767" attributes="0"/>

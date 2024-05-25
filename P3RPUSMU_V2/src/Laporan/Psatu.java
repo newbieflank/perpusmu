@@ -18,7 +18,8 @@ public class Psatu extends javax.swing.JPanel {
     
     public Psatu() throws SQLException {
         initComponents();
-        
+        jButton1.putClientProperty("JComponent.roundRect", true);
+        jButton2.putClientProperty("JComponent.roundRect", true);
         card = new CardLayout();
         jlaporan.setLayout(card);
         jlaporan.add(new ptransaksi(), "ptransaksi");

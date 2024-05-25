@@ -45,8 +45,9 @@ public class ptransaksi extends javax.swing.JPanel {
         initComponents();
         load_table();
         jTable1.getTableHeader().setBackground(new Color(63, 148, 105));
-
+txtcari.putClientProperty("JComponent.roundRect", true);
         jTable1.getTableHeader().setForeground(Color.white);
+        txtcari.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "search");
     }
 
     private void load_table() throws SQLException {
@@ -428,17 +429,17 @@ public class ptransaksi extends javax.swing.JPanel {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addGap(25, 25, 25)))
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jDate1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel3)
                                 .addGap(49, 49, 49)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(Export, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1628, Short.MAX_VALUE))
                 .addContainerGap())
@@ -502,7 +503,7 @@ public class ptransaksi extends javax.swing.JPanel {
 
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
         // TODO add your handling code here:
-        int dialogResult = JOptionPane.showConfirmDialog(null, "Apakah Anda sudah atur tanggal?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+        int dialogResult = JOptionPane.showConfirmDialog(null, "Apakah Anda akan mencetak ", "Konfirmasi", JOptionPane.YES_NO_OPTION);
 
         if (dialogResult == JOptionPane.YES_OPTION) {
 
@@ -524,8 +525,6 @@ public class ptransaksi extends javax.swing.JPanel {
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Error displaying report: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
-        } else if (dialogResult == JOptionPane.NO_OPTION) {
-            JOptionPane.showMessageDialog(null, "Anda harus atur tanggal dahulu.", "Info", JOptionPane.INFORMATION_MESSAGE);
         }
 
     }//GEN-LAST:event_jToggleButton1ActionPerformed
