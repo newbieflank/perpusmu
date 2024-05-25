@@ -136,7 +136,6 @@ public class Denda extends javax.swing.JPanel {
                 loadTabel();
             } else {
                 pst = con.prepareStatement(sql);
-                System.out.println(pst);
                 rs = pst.executeQuery();
                 ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
                 int columnCount = rsmd.getColumnCount();
