@@ -48,6 +48,7 @@ public class Admin extends javax.swing.JPanel {
         jPanel1.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         popup.putClientProperty(FlatClientProperties.STYLE, "arc:30");
         popup2.putClientProperty(FlatClientProperties.STYLE, "arc:30");
+        search.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Cari Nama");
 
         UIManager.put("Button.arc", 15);
         search.putClientProperty("JComponent.roundRect", true);
@@ -78,7 +79,7 @@ public class Admin extends javax.swing.JPanel {
                 return false;
             }
         };
-       
+
         model.addColumn("Username");
         model.addColumn("Password");
         model.addColumn("Status");
@@ -103,7 +104,7 @@ public class Admin extends javax.swing.JPanel {
                 return false;
             }
         };
-  
+
         model.addColumn("Username");
         model.addColumn("Password");
         model.addColumn("Status");
@@ -119,37 +120,34 @@ public class Admin extends javax.swing.JPanel {
             System.out.println("searchTable" + e);
         }
     }
-    
+
     private String getIdUsersByUsername(String username) throws SQLException {
-    String idUsers = null;
-    PreparedStatement pst = null;
-    ResultSet rs = null;
+        String idUsers = null;
+        PreparedStatement pst = null;
+        ResultSet rs = null;
 
-    try {
-        String query = "SELECT ID_users FROM users WHERE username = ?";
-        pst = con.prepareStatement(query);
-        pst.setString(1, username);
-        rs = pst.executeQuery();
+        try {
+            String query = "SELECT ID_users FROM users WHERE username = ?";
+            pst = con.prepareStatement(query);
+            pst.setString(1, username);
+            rs = pst.executeQuery();
 
-        if (rs.next()) {
-            idUsers = rs.getString("ID_users");
+            if (rs.next()) {
+                idUsers = rs.getString("ID_users");
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (pst != null) {
+                pst.close();
+            }
         }
-    } finally {
-        if (rs != null) {
-            rs.close();
-        }
-        if (pst != null) {
-            pst.close();
-        }
+
+        return idUsers;
     }
 
-    return idUsers;
-}
-
-
     // Method untuk memeriksa apakah sudah ada pengguna dengan status admin
-
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -527,55 +525,53 @@ public class Admin extends javax.swing.JPanel {
 
 
     }//GEN-LAST:event_addButtonActionPerformed
-private boolean alreadyHasAdmin() {
-    // Misalkan Anda menggunakan JDBC untuk mengakses database
-    String query = "SELECT COUNT(*) FROM users WHERE status = 'admin'";
-    try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/perpusmu", "root", "");
-         PreparedStatement stmt = conn.prepareStatement(query);
-         ResultSet rs = stmt.executeQuery()) {
-        
-        if (rs.next()) {
-            int count = rs.getInt(1);
-            return count > 0; // Kembalikan true jika ada admin
+    private boolean alreadyHasAdmin() {
+        // Misalkan Anda menggunakan JDBC untuk mengakses database
+        String query = "SELECT COUNT(*) FROM users WHERE status = 'admin'";
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/perpusmu", "root", ""); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0; // Kembalikan true jika ada admin
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return false;
     }
-    return false;
-}
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
         // TODO add your handling code here:
-          if (ID_users != null) {
-        try {
-            pst = con.prepareStatement("SELECT * FROM users WHERE ID_users = ?");
-            pst.setString(1, ID_users);
-            rs = pst.executeQuery();
-            if (rs.next()) {
-                String username = rs.getString("username");
-                String password = rs.getString("password");
-                String status = rs.getString("status");
+        if (ID_users != null) {
+            try {
+                pst = con.prepareStatement("SELECT * FROM users WHERE ID_users = ?");
+                pst.setString(1, ID_users);
+                rs = pst.executeQuery();
+                if (rs.next()) {
+                    String username = rs.getString("username");
+                    String password = rs.getString("password");
+                    String status = rs.getString("status");
 
-                dial_id.setText(ID_users);
-                dial_username.setText(username);
-                dial_password.setText(password);
-                dial_status.setText(status);
-                dial_id.setEnabled(false); // Changed enable(false) to setEnabled(false)
+                    dial_id.setText(ID_users);
+                    dial_username.setText(username);
+                    dial_password.setText(password);
+                    dial_status.setText(status);
+                    dial_id.setEnabled(false); // Changed enable(false) to setEnabled(false)
 
-                jDialog1.setVisible(true);
-            } else {
-                JOptionPane.showMessageDialog(popup, "Tidak ada data yang sesuai dengan ID yang diberikan");
+                    jDialog1.setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(popup, "Tidak ada data yang sesuai dengan ID yang diberikan");
+                    jDialog1.setVisible(false);
+                }
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(popup, "Gagal mengambil data: " + e.getMessage());
+                e.printStackTrace();
                 jDialog1.setVisible(false);
             }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(popup, "Gagal mengambil data: " + e.getMessage());
-            e.printStackTrace();
+        } else {
+            JOptionPane.showMessageDialog(popup, "Pilih Dahulu Data Yang Akan Di Ubah");
             jDialog1.setVisible(false);
         }
-    } else {
-        JOptionPane.showMessageDialog(popup, "Pilih Dahulu Data Yang Akan Di Ubah");
-        jDialog1.setVisible(false);
-    }
 
 
     }//GEN-LAST:event_editButtonActionPerformed
@@ -583,24 +579,24 @@ private boolean alreadyHasAdmin() {
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         // TODO add your handling code here:
         if (ID_users != null) {
-        int result = JOptionPane.showConfirmDialog(jDialog1, "Apakah Anda Yakin Ingin Menghapus?", "Konfirmasi",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE);
-        if (result == JOptionPane.YES_OPTION) {
-            try {
-                pst = con.prepareStatement("DELETE FROM users WHERE ID_users = ?");
-                pst.setString(1, ID_users);
-                pst.executeUpdate();
-                loadTabel();
-                JOptionPane.showMessageDialog(popup, "Data berhasil dihapus");
-            } catch (SQLException e) {
-                JOptionPane.showMessageDialog(jDialog1, "Gagal menghapus data: " + e.getMessage());
-                e.printStackTrace();
+            int result = JOptionPane.showConfirmDialog(jDialog1, "Apakah Anda Yakin Ingin Menghapus?", "Konfirmasi",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+            if (result == JOptionPane.YES_OPTION) {
+                try {
+                    pst = con.prepareStatement("DELETE FROM users WHERE ID_users = ?");
+                    pst.setString(1, ID_users);
+                    pst.executeUpdate();
+                    loadTabel();
+                    JOptionPane.showMessageDialog(popup, "Data berhasil dihapus");
+                } catch (SQLException e) {
+                    JOptionPane.showMessageDialog(jDialog1, "Gagal menghapus data: " + e.getMessage());
+                    e.printStackTrace();
+                }
             }
+        } else {
+            JOptionPane.showMessageDialog(jDialog1, "Pilih Dahulu Data Yang Ingin di Hapus");
         }
-    } else {
-        JOptionPane.showMessageDialog(jDialog1, "Pilih Dahulu Data Yang Ingin di Hapus");
-    }
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void jDialog1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jDialog1FocusLost
@@ -642,16 +638,16 @@ private boolean alreadyHasAdmin() {
     }//GEN-LAST:event_dial_batalActionPerformed
 
     private void tabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelMouseClicked
-     int index = tabel.getSelectedRow();
-    TableModel model = tabel.getModel();
-    String username = model.getValueAt(index, 0).toString();
-    
-    try {
-        ID_users = getIdUsersByUsername(username);
-        System.out.println("ID_users: " + ID_users);
-    } catch (SQLException e) {
-        System.out.println("Error fetching ID_users: " + e);
-    }
+        int index = tabel.getSelectedRow();
+        TableModel model = tabel.getModel();
+        String username = model.getValueAt(index, 0).toString();
+
+        try {
+            ID_users = getIdUsersByUsername(username);
+            System.out.println("ID_users: " + ID_users);
+        } catch (SQLException e) {
+            System.out.println("Error fetching ID_users: " + e);
+        }
     }//GEN-LAST:event_tabelMouseClicked
 
     private void dial_simpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dial_simpanActionPerformed
