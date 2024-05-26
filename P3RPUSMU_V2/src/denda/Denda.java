@@ -16,6 +16,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -154,6 +155,43 @@ public class Denda extends javax.swing.JPanel {
         }
     }
 
+    private void enter(int denda) {
+        try {
+            int Bayar = Integer.parseInt(denda_total.getText());
+            int bayar_awal;
+            pst = con.prepareStatement("select total_pembayaran from denda where NISN = (select NISN from anggota where"
+                    + " nama = '" + nama + "');");
+            rs = pst.executeQuery();
+            rs.next();
+            bayar_awal = rs.getInt(1);
+            int total_bayar = bayar_awal + Bayar;
+
+            if (Bayar > denda) {
+                JOptionPane.showMessageDialog(jDialog1, "Pastikan Harga yang di bayarkan sesusai dengan jumlah denda");
+            } else {
+                try {
+                    pst = con.prepareStatement("update denda set total_pembayaran= " + total_bayar
+                            + " where NISN = (SELECT NISN FROM anggota WHERE nama = '" + nama + "');");
+                    pst.execute();
+                    update();
+                    try {
+                        pst = con.prepareStatement("update denda set status_denda = "
+                                + "'Lunas' where jumlah_denda = 0 or jumlah_denda < 0");
+                        pst.execute();
+                    } catch (Exception e) {
+                        System.out.println("Lunas" + e);
+                    }
+                    loadTabel();
+                    denda_total.setText(null);
+                } catch (Exception e) {
+                    System.out.println("2" + e);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("1" + e);
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -170,7 +208,7 @@ public class Denda extends javax.swing.JPanel {
         denda_jumlah = new javax.swing.JTextField();
         denda_nama = new javax.swing.JTextField();
         denda_total = new javax.swing.JTextField();
-        denda_status = new javax.swing.JComboBox<String>();
+        denda_status = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
@@ -220,12 +258,15 @@ public class Denda extends javax.swing.JPanel {
         });
 
         denda_total.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                denda_totalKeyPressed(evt);
+            }
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 denda_totalKeyReleased(evt);
             }
         });
 
-        denda_status.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Belum Lunas", "Lunas" }));
+        denda_status.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Belum Lunas", "Lunas" }));
 
         jLabel3.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel3.setText("Nama");
@@ -336,10 +377,10 @@ public class Denda extends javax.swing.JPanel {
 
         setBackground(new java.awt.Color(204, 204, 204));
         addAncestorListener(new javax.swing.event.AncestorListener() {
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
-            }
             public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
                 formAncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
             }
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
             }
@@ -581,40 +622,7 @@ public class Denda extends javax.swing.JPanel {
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE);
             if (result == JOptionPane.YES_OPTION) {
-                try {
-                    int Bayar = Integer.parseInt(denda_total.getText());
-                    int bayar_awal;
-                    pst = con.prepareStatement("select total_pembayaran from denda where NISN = (select NISN from anggota where"
-                            + " nama = '" + nama + "');");
-                    rs = pst.executeQuery();
-                    rs.next();
-                    bayar_awal = rs.getInt(1);
-                    int total_bayar = bayar_awal + Bayar;
-
-                    if (Bayar > denda) {
-                        JOptionPane.showMessageDialog(jDialog1, "Pastikan Harga yang di bayarkan sesusai dengan jumlah denda");
-                    } else {
-                        try {
-                            pst = con.prepareStatement("update denda set total_pembayaran= " + total_bayar
-                                    + " where NISN = (SELECT NISN FROM anggota WHERE nama = '" + nama + "');");
-                            pst.execute();
-                            update();
-                            try {
-                                pst = con.prepareStatement("update denda set status_denda = "
-                                        + "'Lunas' where jumlah_denda = 0 or jumlah_denda < 0");
-                                pst.execute();
-                            } catch (Exception e) {
-                                System.out.println("Lunas" + e);
-                            }
-                            loadTabel();
-                            denda_total.setText(null);
-                        } catch (Exception e) {
-                            System.out.println("2" + e);
-                        }
-                    }
-                } catch (Exception e) {
-                    System.out.println("1" + e);
-                }
+                enter(denda);
                 nama = null;
                 jDialog1.dispose();
             }
@@ -647,6 +655,16 @@ public class Denda extends javax.swing.JPanel {
     private void denda_jumlahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_denda_jumlahActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_denda_jumlahActionPerformed
+
+    private void denda_totalKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_denda_totalKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            int denda = Integer.parseInt(denda_jumlah.getText());
+            enter(denda);
+            nama = null;
+            jDialog1.dispose();
+        }
+    }//GEN-LAST:event_denda_totalKeyPressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
