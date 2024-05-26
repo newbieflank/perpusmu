@@ -67,13 +67,9 @@ public class Denda extends javax.swing.JPanel {
     private void update() {
         int denda = Integer.parseInt(denda_total.getText());
         try {
-            pst = con.prepareStatement("UPDATE denda set jumlah_denda = jumlah_denda - " + denda + ";");
+            pst = con.prepareStatement("UPDATE denda set jumlah_denda = jumlah_denda - " + denda + " where "
+                    + "NISN = (SELECT NISN FROM anggota WHERE nama = '" + nama + "');");
             pst.execute();
-            try {
-
-            } catch (Exception e) {
-            }
-            denda_total.setText(null);
         } catch (Exception e) {
             System.out.println("update" + e);
         }
@@ -530,9 +526,24 @@ public class Denda extends javax.swing.JPanel {
                     JOptionPane.QUESTION_MESSAGE);
             if (result == JOptionPane.YES_OPTION) {
                 try {
-                    pst = con.prepareStatement("delete from denda  where"
+                    String Debt;
+                    pst = con.prepareStatement("Select status_denda from denda where"
                             + " NISN = (SELECT NISN FROM anggota WHERE nama = '" + nama + "');");
-                    pst.execute();
+                    rs = pst.executeQuery();
+                    if (!rs.next()) {
+                        pst = con.prepareStatement("delete from denda  where"
+                                + " NISN = (SELECT NISN FROM anggota WHERE nama = '" + nama + "');");
+                        pst.execute();
+                    } else {
+                        Debt = rs.getString(1);
+                        if (Debt.equals("Belum Lunas")) {
+                            JOptionPane.showMessageDialog(jDialog1, "Anggota Masih Belum melunaskan tanggungannya");
+                        } else {
+                            pst = con.prepareStatement("delete from denda  where"
+                                    + " NISN = (SELECT NISN FROM anggota WHERE nama = '" + nama + "');");
+                            pst.execute();
+                        }
+                    }
                     loadTabel();
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(jDialog1, "Pilih Dahulu Data Yang Ingin di Hapus");
@@ -596,6 +607,7 @@ public class Denda extends javax.swing.JPanel {
                                 System.out.println("Lunas" + e);
                             }
                             loadTabel();
+                            denda_total.setText(null);
                         } catch (Exception e) {
                             System.out.println("2" + e);
                         }
