@@ -885,6 +885,8 @@ public class Anggota extends javax.swing.JPanel {
                     pst = con.prepareStatement("select * from anggota where NISN = " + NISN);
                     rs = pst.executeQuery();
                     if (rs.next()) {
+                    JOptionPane.showMessageDialog(jDialog1, "Anggota Dengan NISN (" + NISN + ") Sudah Terdaftar");
+                    if (rs.next()) {
                         pst = con.prepareStatement("update anggota set nama='" + NAMA + "', jenis_kelamin='" + JENIS + "', "
                                 + "jurusan='" + JURUSAN + "', angkatan=" + ANGKATAN + ", status='" + STATUS + "' where NISN=" + NISN);
                         pst.execute();
@@ -898,7 +900,7 @@ public class Anggota extends javax.swing.JPanel {
                         } catch (Exception r) {
                             System.out.println("insert simpan " + r);
                         }
-                    }
+                    }}
 
                     loadTable2();
                     JCombo();
