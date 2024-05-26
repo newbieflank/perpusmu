@@ -359,7 +359,7 @@ public class Buku extends javax.swing.JPanel {
 
     }
 
-     private void searchFunc(String keyword) {
+    private void searchFunc(String keyword) {
         JTabel1.clearSelection();
         DefaultTableModel model = new DefaultTableModel() {
             @Override
@@ -372,7 +372,7 @@ public class Buku extends javax.swing.JPanel {
                 + "WHERE `No buku` LIKE '%" + keyword + "%' OR "
                 + "`judul buku` LIKE '%" + keyword + "%' OR "
                 + "`kategori` LIKE '%" + keyword + "%' OR "
-                + "`lokasi` LIKE '%" + keyword + "%'"; 
+                + "`lokasi` LIKE '%" + keyword + "%'";
 
         try {
             pst = con.prepareStatement(sql);
@@ -579,6 +579,12 @@ public class Buku extends javax.swing.JPanel {
         jLabel15.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel15.setText("Jilid");
 
+        dial_jilid.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                dial_jilidKeyTyped(evt);
+            }
+        });
+
         jLabel16.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel16.setText("Kategori");
 
@@ -594,11 +600,23 @@ public class Buku extends javax.swing.JPanel {
         jLabel20.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel20.setText("Tahun Terbit");
 
+        dial_tahun.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                dial_tahunKeyTyped(evt);
+            }
+        });
+
         jLabel21.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel21.setText("Asal Buku");
 
         jLabel22.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel22.setText("Harga");
+
+        dial_harga.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                dial_hargaKeyTyped(evt);
+            }
+        });
 
         dial_kondisi.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Baik", "Rusak", "Hilang" }));
 
@@ -615,6 +633,12 @@ public class Buku extends javax.swing.JPanel {
         jLabel24.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel24.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel24.setText("Stock");
+
+        dial_stock.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                dial_stockKeyTyped(evt);
+            }
+        });
 
         btn_cancel.setBackground(new java.awt.Color(204, 0, 51));
         btn_cancel.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
@@ -826,6 +850,12 @@ public class Buku extends javax.swing.JPanel {
         jLabel25.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel25.setText("Jilid");
 
+        edit_jilid.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                edit_jilidKeyTyped(evt);
+            }
+        });
+
         jLabel26.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel26.setText("Kategori");
 
@@ -841,11 +871,23 @@ public class Buku extends javax.swing.JPanel {
         jLabel30.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel30.setText("Tahun Terbit");
 
+        edit_tahun.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                edit_tahunKeyTyped(evt);
+            }
+        });
+
         jLabel31.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel31.setText("Asal Buku");
 
         jLabel32.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel32.setText("Harga");
+
+        edit_harga.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                edit_hargaKeyTyped(evt);
+            }
+        });
 
         edit_kondisi.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Baik", "Rusak", "Hilang" }));
 
@@ -862,6 +904,12 @@ public class Buku extends javax.swing.JPanel {
         jLabel33.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel33.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel33.setText("Stock");
+
+        edit_stock.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                edit_stockKeyTyped(evt);
+            }
+        });
 
         btn_cancel1.setBackground(new java.awt.Color(204, 0, 51));
         btn_cancel1.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
@@ -1381,13 +1429,13 @@ public class Buku extends javax.swing.JPanel {
 
         // Cek panjang input
         if (batasan >= 5) {
-            JOptionPane.showMessageDialog(Tambah, "Hanya bisa 5 karakter");
+            JOptionPane.showMessageDialog(Edit, "Hanya bisa 5 karakter");
             evt.consume();
         }
 
         // Cek apakah karakter adalah huruf atau angka
         if (!(Character.isLetterOrDigit(c))) {
-            JOptionPane.showMessageDialog(Tambah, "Hanya boleh huruf dan angka");
+            JOptionPane.showMessageDialog(Edit, "Hanya boleh huruf dan angka");
             evt.consume();
         }
 
@@ -1405,13 +1453,13 @@ public class Buku extends javax.swing.JPanel {
 
         // Cek panjang input
         if (batasan >= 13) {
-            JOptionPane.showMessageDialog(Tambah, "Tidak boleh lebih dari 13 angka");
+            JOptionPane.showMessageDialog(Edit, "Tidak boleh lebih dari 13 angka");
             evt.consume();
         }
 
         // Cek apakah karakter adalah angka
         if (!Character.isDigit(c)) {
-            JOptionPane.showMessageDialog(Tambah, "Hanya boleh diisi angka");
+            JOptionPane.showMessageDialog(Edit, "Hanya boleh diisi angka");
             evt.consume();
         }
     }//GEN-LAST:event_edit_referensiKeyTyped
@@ -1424,15 +1472,15 @@ public class Buku extends javax.swing.JPanel {
 
         try {
             int row = JTabel1.getSelectedRow();
-             String sqlQuery;
-             String s;
+            String sqlQuery;
+            String s;
 
             if (row == -1) {
-                 sqlQuery = "SELECT * FROM buku";
+                sqlQuery = "SELECT * FROM buku";
 
             } else {
                 s = JTabel1.getValueAt(row, 1).toString();
-                 sqlQuery = "SELECT * FROM buku WHERE referensi = '" + s + "'";
+                sqlQuery = "SELECT * FROM buku WHERE referensi = '" + s + "'";
             }
 
             String pathi = "src/Buku/report1.jrxml";
@@ -1466,6 +1514,102 @@ public class Buku extends javax.swing.JPanel {
         }
 
     }//GEN-LAST:event_btn_barcodeActionPerformed
+
+    private void dial_jilidKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dial_jilidKeyTyped
+        // TODO add your handling code here:
+        String key = dial_jilid.getText();
+        if (key.length() == 2) {
+            JOptionPane.showMessageDialog(Tambah, "Maksimal 2 angka");
+            evt.consume();
+        } else if (!Character.isDigit(evt.getKeyChar())) {
+            JOptionPane.showMessageDialog(Tambah, "Hanya bisa Di isi Oleh angka");
+            evt.consume();
+        }
+    }//GEN-LAST:event_dial_jilidKeyTyped
+
+    private void dial_tahunKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dial_tahunKeyTyped
+        // TODO add your handling code here:
+        String key = dial_tahun.getText();
+        if (key.length() == 4) {
+            JOptionPane.showMessageDialog(Tambah, "Maksimal 4 angka");
+            evt.consume();
+        } else if (!Character.isDigit(evt.getKeyChar())) {
+            JOptionPane.showMessageDialog(Tambah, "Hanya bisa Di isi Oleh angka");
+            evt.consume();
+        }
+    }//GEN-LAST:event_dial_tahunKeyTyped
+
+    private void dial_hargaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dial_hargaKeyTyped
+        // TODO add your handling code here:
+        String key = dial_harga.getText();
+        if (key.length() == 10) {
+            JOptionPane.showMessageDialog(Tambah, "Maksimal 10 angka");
+            evt.consume();
+        } else if (!Character.isDigit(evt.getKeyChar())) {
+            JOptionPane.showMessageDialog(Tambah, "Hanya bisa Di isi Oleh angka");
+            evt.consume();
+        }
+    }//GEN-LAST:event_dial_hargaKeyTyped
+
+    private void dial_stockKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dial_stockKeyTyped
+        // TODO add your handling code here:
+        String key = dial_stock.getText();
+        if (key.length() == 4) {
+            JOptionPane.showMessageDialog(Tambah, "Maksimal 4 angka");
+            evt.consume();
+        } else if (!Character.isDigit(evt.getKeyChar())) {
+            JOptionPane.showMessageDialog(Tambah, "Hanya bisa Di isi Oleh angka");
+            evt.consume();
+        }
+    }//GEN-LAST:event_dial_stockKeyTyped
+
+    private void edit_jilidKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_edit_jilidKeyTyped
+        // TODO add your handling code here:
+        String key = edit_jilid.getText();
+        if (key.length() == 2) {
+            JOptionPane.showMessageDialog(Edit, "Maksimal 2 angka");
+            evt.consume();
+        } else if (!Character.isDigit(evt.getKeyChar())) {
+            JOptionPane.showMessageDialog(Edit, "Hanya bisa Di isi Oleh angka");
+            evt.consume();
+        }
+    }//GEN-LAST:event_edit_jilidKeyTyped
+
+    private void edit_tahunKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_edit_tahunKeyTyped
+        // TODO add your handling code here:
+        String key = edit_tahun.getText();
+        if (key.length() == 4) {
+            JOptionPane.showMessageDialog(Edit, "Maksimal 4 angka");
+            evt.consume();
+        } else if (!Character.isDigit(evt.getKeyChar())) {
+            JOptionPane.showMessageDialog(Edit, "Hanya bisa Di isi Oleh angka");
+            evt.consume();
+        }
+    }//GEN-LAST:event_edit_tahunKeyTyped
+
+    private void edit_hargaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_edit_hargaKeyTyped
+        // TODO add your handling code here:
+        String key = edit_harga.getText();
+        if (key.length() == 10) {
+            JOptionPane.showMessageDialog(Edit, "Maksimal 10 angka");
+            evt.consume();
+        } else if (!Character.isDigit(evt.getKeyChar())) {
+            JOptionPane.showMessageDialog(Edit, "Hanya bisa Di isi Oleh angka");
+            evt.consume();
+        }
+    }//GEN-LAST:event_edit_hargaKeyTyped
+
+    private void edit_stockKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_edit_stockKeyTyped
+        // TODO add your handling code here:
+        String key = edit_stock.getText();
+        if (key.length() == 4) {
+            JOptionPane.showMessageDialog(Edit, "Maksimal 4 angka");
+            evt.consume();
+        } else if (!Character.isDigit(evt.getKeyChar())) {
+            JOptionPane.showMessageDialog(Edit, "Hanya bisa Di isi Oleh angka");
+            evt.consume();
+        }
+    }//GEN-LAST:event_edit_stockKeyTyped
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -283,6 +283,9 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="dial_jilid">
+              <Events>
+                <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="dial_jilidKeyTyped"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel16">
               <Properties>
@@ -329,6 +332,9 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="dial_tahun">
+              <Events>
+                <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="dial_tahunKeyTyped"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel21">
               <Properties>
@@ -349,6 +355,9 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="dial_harga">
+              <Events>
+                <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="dial_hargaKeyTyped"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JComboBox" name="dial_kondisi">
               <Properties>
@@ -391,6 +400,9 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="dial_stock">
+              <Events>
+                <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="dial_stockKeyTyped"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="btn_cancel">
               <Properties>
@@ -732,6 +744,9 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="edit_jilid">
+              <Events>
+                <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="edit_jilidKeyTyped"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel26">
               <Properties>
@@ -778,6 +793,9 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="edit_tahun">
+              <Events>
+                <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="edit_tahunKeyTyped"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel31">
               <Properties>
@@ -798,6 +816,9 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="edit_harga">
+              <Events>
+                <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="edit_hargaKeyTyped"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JComboBox" name="edit_kondisi">
               <Properties>
@@ -840,6 +861,9 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="edit_stock">
+              <Events>
+                <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="edit_stockKeyTyped"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="btn_cancel1">
               <Properties>
