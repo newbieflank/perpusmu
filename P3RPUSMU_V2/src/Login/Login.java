@@ -222,6 +222,9 @@ public class Login extends javax.swing.JFrame {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txt_passwordKeyPressed(evt);
             }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txt_passwordKeyTyped(evt);
+            }
         });
         jPanel5.add(txt_password, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 173, 34));
 
@@ -519,6 +522,16 @@ public class Login extends javax.swing.JFrame {
             System.out.println("ANj");
         }
     }//GEN-LAST:event_txt_usernameKeyTyped
+
+    private void txt_passwordKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_passwordKeyTyped
+        // TODO add your handling code here:
+         String batas = txt_password.getText();
+        int batasan = batas.length();
+            if (batasan >= 16) {
+                JOptionPane.showMessageDialog(null, "Hanya Bisa di 10 Karakter");
+                evt.consume();
+            }
+    }//GEN-LAST:event_txt_passwordKeyTyped
 
     /**
      * @param args the command line arguments

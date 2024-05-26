@@ -200,6 +200,11 @@ public void setUsernameText(String username) {
                 txt_passwordMouseClicked(evt);
             }
         });
+        txt_password.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txt_passwordKeyTyped(evt);
+            }
+        });
         jPanel5.add(txt_password, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 173, 34));
 
         show.setBackground(new java.awt.Color(255, 255, 255));
@@ -411,6 +416,16 @@ if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
         txt_password.requestFocus();
     }
     }//GEN-LAST:event_txt_usernameKeyPressed
+
+    private void txt_passwordKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_passwordKeyTyped
+        // TODO add your handling code here:
+         String batas = txt_password.getText();
+        int batasan = batas.length();
+            if (batasan >= 16) {
+                JOptionPane.showMessageDialog(null, "Hanya Bisa di 10 Karakter");
+                evt.consume();
+            }
+    }//GEN-LAST:event_txt_passwordKeyTyped
 
     /**
      * @param args the command line arguments
