@@ -222,6 +222,12 @@ public class Admin extends javax.swing.JPanel {
                 .addGap(0, 6, Short.MAX_VALUE))
         );
 
+        dial_id.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                dial_idKeyTyped(evt);
+            }
+        });
+
         jLabel3.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel3.setText("Username");
 
@@ -251,6 +257,12 @@ public class Admin extends javax.swing.JPanel {
         dial_batal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 dial_batalActionPerformed(evt);
+            }
+        });
+
+        dial_password.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                dial_passwordKeyTyped(evt);
             }
         });
 
@@ -376,6 +388,9 @@ public class Admin extends javax.swing.JPanel {
             }
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 searchKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                searchKeyTyped(evt);
             }
         });
 
@@ -727,6 +742,30 @@ public class Admin extends javax.swing.JPanel {
             Logger.getLogger(Admin.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_searchKeyReleased
+
+    private void searchKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchKeyTyped
+        // TODO add your handling code here:
+    }//GEN-LAST:event_searchKeyTyped
+
+    private void dial_idKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dial_idKeyTyped
+        // TODO add your handling code here:
+        String batas = dial_id.getText();
+        int batasan = batas.length();
+            if (batasan >= 10) {
+                JOptionPane.showMessageDialog(jDialog1, "Hanya Bisa di 10 Karakter");
+                evt.consume();
+            }
+    }//GEN-LAST:event_dial_idKeyTyped
+
+    private void dial_passwordKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dial_passwordKeyTyped
+        // TODO add your handling code here:
+         String batas = dial_password.getText();
+        int batasan = batas.length();
+            if (batasan >= 16) {
+                JOptionPane.showMessageDialog(jDialog1, "Hanya Bisa di 16 Karakter");
+                evt.consume();
+            }
+    }//GEN-LAST:event_dial_passwordKeyTyped
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
