@@ -528,7 +528,7 @@ public class Login extends javax.swing.JFrame {
          String batas = txt_password.getText();
         int batasan = batas.length();
             if (batasan >= 16) {
-                JOptionPane.showMessageDialog(null, "Hanya Bisa di 10 Karakter");
+                JOptionPane.showMessageDialog(null, "Hanya Bisa di 16 Karakter");
                 evt.consume();
             }
     }//GEN-LAST:event_txt_passwordKeyTyped
