@@ -1002,15 +1002,15 @@ public class Anggota extends javax.swing.JPanel {
                             + "peminjaman Join detail_peminjaman on detail_peminjaman.kode_peminjaman = peminjaman.kode_peminjaman "
                             + "where peminjaman.NISN =  " + nisn);
                     rs = pst.executeQuery();
-                    if (!rs.next()) {
+                    if (!rs.next() || rs.wasNull()) {
                         try {
                             pst = con.prepareStatement("select jumlah_denda, status_denda from denda where NISN = " + nisn);
                             rs = pst.executeQuery();
                             if (rs.next()) {
                                 String SD = rs.getString("status_denda");
                                 int jumlha = rs.getInt("jumlah_denda");
-                                if (rs.next() && SD.equalsIgnoreCase("Belum Lunas")) {
-                                    JOptionPane.showMessageDialog(Tambah, "Anggota Masih Memiliki Tanggungan Denda Sebesar: Rp." + jumlha);
+                                if (SD.equalsIgnoreCase("Belum Lunas")) {
+                                    JOptionPane.showMessageDialog(this, "Anggota Masih Memiliki Tanggungan Denda Sebesar: Rp." + jumlha);
                                 } else {
                                     delete();
                                 }
