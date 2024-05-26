@@ -901,6 +901,7 @@ public class Anggota extends javax.swing.JPanel {
                     }
 
                     loadTable2();
+                    JCombo();
                 } catch (Exception e) {
                     System.out.println("nisn anggota" + e);
                 }
