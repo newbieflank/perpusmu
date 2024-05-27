@@ -427,6 +427,26 @@ public static boolean isKodebukuValid(Connection con, String kodebuku) {
         return isValid;
     }
 
+private int getJumlahStockBuku(String kodebuku) {
+    int jumlahStock = 0;
+    try {
+        String query = "SELECT jumlah_stock FROM buku WHERE kode_buku = ?";
+        PreparedStatement stmt = con.prepareStatement(query);
+        stmt.setString(1, kodebuku);
+        ResultSet rs = stmt.executeQuery();
+        
+        if (rs.next()) {
+            jumlahStock = rs.getInt("jumlah_stock");
+        }
+        
+        rs.close();
+        stmt.close();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return jumlahStock;
+}
+
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -1227,6 +1247,15 @@ public static boolean isKodebukuValid(Connection con, String kodebuku) {
     if (judulBukuSudahDipinjam(judulbuku)) {
         // Menampilkan pemberitahuan bahwa buku sudah dipinjam
         JOptionPane.showMessageDialog(null, "Buku dengan judul '" + judulbuku + "' sudah dipinjam!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    // Mengecek jumlah buku pada stok buku
+    int jumlahPeminjaman = Integer.parseInt(totalpeminjaman);
+    int jumlahStock = getJumlahStockBuku(kodebuku);
+    
+    if (jumlahPeminjaman > jumlahStock) {
+        JOptionPane.showMessageDialog(null, "Stok buku tidak mencukupi!", "Peringatan", JOptionPane.WARNING_MESSAGE);
         return;
     }
 
