@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ee3f81f2-862e-478a-9b6e-77ed1758e6ad">
-	<property name="ireport.zoom" value="1.2100000000000026"/>
+	<property name="ireport.zoom" value="0.9090909090909113"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="tgl1" class="java.util.Date">
@@ -81,13 +81,13 @@ WHERE
 	<columnHeader>
 		<band height="34" splitType="Stretch">
 			<rectangle>
-				<reportElement x="600" y="0" width="65" height="34" uuid="7e523574-ae31-45a7-a748-d2e49cf6941a"/>
+				<reportElement x="599" y="0" width="66" height="34" uuid="7e523574-ae31-45a7-a748-d2e49cf6941a"/>
 			</rectangle>
 			<rectangle>
 				<reportElement x="665" y="0" width="71" height="34" uuid="dbfc1ec6-a73e-4c6b-91d8-1f2a4e8ec815"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="542" y="0" width="58" height="34" uuid="a4afa011-ff35-4091-8e3a-d35dfe1f5947"/>
+				<reportElement x="541" y="0" width="58" height="34" uuid="a4afa011-ff35-4091-8e3a-d35dfe1f5947"/>
 			</rectangle>
 			<rectangle>
 				<reportElement x="452" y="0" width="89" height="34" uuid="6684900b-ac9d-4091-8b9f-87b5648035ed"/>
@@ -188,10 +188,10 @@ WHERE
 				<reportElement x="665" y="0" width="71" height="20" uuid="92a62340-6421-4619-892d-f1f891204f46"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="600" y="0" width="65" height="20" uuid="dbcef131-0eea-4d9c-aa52-f61fb806b25f"/>
+				<reportElement x="599" y="0" width="66" height="20" uuid="dbcef131-0eea-4d9c-aa52-f61fb806b25f"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="542" y="0" width="58" height="20" uuid="3e99a334-141b-424b-8ab2-eb8f0b5f25a9"/>
+				<reportElement x="541" y="0" width="58" height="20" uuid="3e99a334-141b-424b-8ab2-eb8f0b5f25a9"/>
 			</rectangle>
 			<rectangle>
 				<reportElement x="452" y="0" width="89" height="20" uuid="6f041254-7b96-4736-9d4d-006499bbbac2"/>
@@ -216,7 +216,9 @@ WHERE
 			</rectangle>
 			<textField>
 				<reportElement x="109" y="0" width="72" height="20" uuid="91419dc2-7eda-41ac-bcb3-388ff8156078"/>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{nama}]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -259,8 +261,7 @@ WHERE
 			<textField>
 				<reportElement x="452" y="0" width="89" height="20" uuid="427a5633-3900-464e-9e71-616e1ca2ee7c"/>
 				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("dd-MM-yyyy").format($F{tanggal})
-]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("dd-MM-yyyy").format($F{tanggal})]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="665" y="0" width="71" height="20" uuid="7ee344ca-593c-4c01-b5d7-1d2bc6762607"/>
