@@ -56,6 +56,7 @@ public class Buku extends javax.swing.JPanel {
         JTabel1.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         Tambah.setSize(570, 514);
         Edit.setSize(570, 514);
+        txt_search.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Cari");
 
     }
 
@@ -523,7 +524,6 @@ public class Buku extends javax.swing.JPanel {
         btn_tambah = new javax.swing.JButton();
         btn_edit = new javax.swing.JButton();
         btn_hapus = new javax.swing.JButton();
-        jLabel4 = new javax.swing.JLabel();
         btn_barcode = new javax.swing.JButton();
 
         Tambah.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -1198,9 +1198,6 @@ public class Buku extends javax.swing.JPanel {
             }
         });
 
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabel4.setText("Search");
-
         btn_barcode.setBackground(new java.awt.Color(51, 204, 255));
         btn_barcode.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img_10/barcode 1.png"))); // NOI18N
         btn_barcode.addActionListener(new java.awt.event.ActionListener() {
@@ -1214,16 +1211,11 @@ public class Buku extends javax.swing.JPanel {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1259, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1259, Short.MAX_VALUE)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btn_barcode, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1242,14 +1234,16 @@ public class Buku extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(btn_edit, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(btn_tambah, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(btn_hapus, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4))
-                        .addGap(13, 13, 13)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(btn_edit, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(btn_tambah, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(btn_hapus, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(13, 13, 13))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(btn_barcode, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1363,50 +1357,45 @@ public class Buku extends javax.swing.JPanel {
 
     private void dial_kodeKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dial_kodeKeyTyped
 
-        String batas = dial_kode.getText();
-        int batasan = batas.length();
-
-        // Dapatkan karakter yang diketik
         char c = evt.getKeyChar();
 
-        // Izinkan "Backspace" dan "Delete"
         if (c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE) {
             return;
         }
 
-        // Cek panjang input
-        if (batasan >= 5) {
-            JOptionPane.showMessageDialog(Tambah, "Hanya bisa 5 karakter");
+        String batas = dial_kode.getText();
+        int batasan = batas.length();
+        if (batasan >= 4) {
+            JOptionPane.showMessageDialog(Tambah, "Hanya bisa 4 karakter");
             evt.consume();
+            return;
         }
 
-        // Cek apakah karakter adalah huruf atau angka
-        if (!(Character.isLetterOrDigit(c))) {
+        if (!Character.isLetterOrDigit(c)) {
             JOptionPane.showMessageDialog(Tambah, "Hanya boleh huruf dan angka");
             evt.consume();
         }
 
+
     }//GEN-LAST:event_dial_kodeKeyTyped
 
     private void dial_referensiKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dial_referensiKeyTyped
-        String batas = dial_referensi.getText();
-        int batasan = batas.length();
-
-        // Dapatkan karakter yang diketik
         char c = evt.getKeyChar();
+
         if (c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE) {
             return;
         }
 
-        // Cek panjang input
+        String batas = dial_referensi.getText();
+        int batasan = batas.length();
         if (batasan >= 13) {
             JOptionPane.showMessageDialog(Tambah, "Tidak boleh lebih dari 13 angka");
             evt.consume();
+            return;
         }
 
-        // Cek apakah karakter adalah angka
-        if (!Character.isDigit(c)) {
-            JOptionPane.showMessageDialog(Tambah, "Hanya boleh diisi angka");
+        if (!Character.isLetterOrDigit(c)) {
+            JOptionPane.showMessageDialog(Tambah, "Hanya boleh angka");
             evt.consume();
         }
     }//GEN-LAST:event_dial_referensiKeyTyped
@@ -1416,50 +1405,44 @@ public class Buku extends javax.swing.JPanel {
     }//GEN-LAST:event_dial_kodeActionPerformed
 
     private void edit_kodeKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_edit_kodeKeyTyped
-        String batas = edit_kode.getText();
-        int batasan = batas.length();
-
-        // Dapatkan karakter yang diketik
         char c = evt.getKeyChar();
 
-        // Izinkan "Backspace" dan "Delete"
         if (c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE) {
             return;
         }
 
-        // Cek panjang input
-        if (batasan >= 5) {
-            JOptionPane.showMessageDialog(Edit, "Hanya bisa 5 karakter");
+        String batas = dial_kode.getText();
+        int batasan = batas.length();
+        if (batasan >= 4) {
+            JOptionPane.showMessageDialog(Tambah, "Hanya bisa 4 karakter");
             evt.consume();
+            return;
         }
 
-        // Cek apakah karakter adalah huruf atau angka
-        if (!(Character.isLetterOrDigit(c))) {
-            JOptionPane.showMessageDialog(Edit, "Hanya boleh huruf dan angka");
+        if (!Character.isLetterOrDigit(c)) {
+            JOptionPane.showMessageDialog(Tambah, "Hanya boleh huruf dan angka");
             evt.consume();
         }
 
     }//GEN-LAST:event_edit_kodeKeyTyped
 
     private void edit_referensiKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_edit_referensiKeyTyped
-        String batas = edit_referensi.getText();
-        int batasan = batas.length();
-
-        // Dapatkan karakter yang diketik
         char c = evt.getKeyChar();
+
         if (c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE) {
             return;
         }
 
-        // Cek panjang input
+        String batas = dial_referensi.getText();
+        int batasan = batas.length();
         if (batasan >= 13) {
-            JOptionPane.showMessageDialog(Edit, "Tidak boleh lebih dari 13 angka");
+            JOptionPane.showMessageDialog(Tambah, "Tidak boleh lebih dari 13 angka");
             evt.consume();
+            return;
         }
 
-        // Cek apakah karakter adalah angka
-        if (!Character.isDigit(c)) {
-            JOptionPane.showMessageDialog(Edit, "Hanya boleh diisi angka");
+        if (!Character.isLetterOrDigit(c)) {
+            JOptionPane.showMessageDialog(Tambah, "Hanya boleh angka");
             evt.consume();
         }
     }//GEN-LAST:event_edit_referensiKeyTyped
@@ -1517,23 +1500,49 @@ public class Buku extends javax.swing.JPanel {
 
     private void dial_jilidKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dial_jilidKeyTyped
         // TODO add your handling code here:
+        char c = evt.getKeyChar();
+
+        // Izinkan "Backspace" dan "Delete"
+        if (c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE) {
+            return;
+        }
+
+        // Dapatkan teks yang ada saat ini
         String key = dial_jilid.getText();
-        if (key.length() == 2) {
+
+        // Cek panjang input
+        if (key.length() >= 2) {
             JOptionPane.showMessageDialog(Tambah, "Maksimal 2 angka");
             evt.consume();
-        } else if (!Character.isDigit(evt.getKeyChar())) {
-            JOptionPane.showMessageDialog(Tambah, "Hanya bisa Di isi Oleh angka");
+            return;
+        }
+
+        // Cek apakah karakter adalah angka
+        if (!Character.isDigit(c)) {
+            JOptionPane.showMessageDialog(Tambah, "Hanya bisa diisi oleh angka");
             evt.consume();
         }
     }//GEN-LAST:event_dial_jilidKeyTyped
 
     private void dial_tahunKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dial_tahunKeyTyped
         // TODO add your handling code here:
+        char c = evt.getKeyChar();
+
+        // Allow "Backspace" and "Delete"
+        if (c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE) {
+            return;
+        }
+
+        // Check the length of the input
         String key = dial_tahun.getText();
-        if (key.length() == 4) {
+        if (key.length() >= 4) {
             JOptionPane.showMessageDialog(Tambah, "Maksimal 4 angka");
             evt.consume();
-        } else if (!Character.isDigit(evt.getKeyChar())) {
+            return;
+        }
+
+        // Check if the character is a digit
+        if (!Character.isDigit(c)) {
             JOptionPane.showMessageDialog(Tambah, "Hanya bisa Di isi Oleh angka");
             evt.consume();
         }
@@ -1541,72 +1550,144 @@ public class Buku extends javax.swing.JPanel {
 
     private void dial_hargaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dial_hargaKeyTyped
         // TODO add your handling code here:
+        char c = evt.getKeyChar();
+
+        // Izinkan "Backspace" dan "Delete"
+        if (c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE) {
+            return;
+        }
+
+        // Cek panjang input
         String key = dial_harga.getText();
         if (key.length() == 10) {
             JOptionPane.showMessageDialog(Tambah, "Maksimal 10 angka");
             evt.consume();
-        } else if (!Character.isDigit(evt.getKeyChar())) {
-            JOptionPane.showMessageDialog(Tambah, "Hanya bisa Di isi Oleh angka");
+            return;
+        }
+
+        // Cek apakah karakter adalah angka
+        if (!Character.isDigit(c)) {
+            JOptionPane.showMessageDialog(Tambah, "Hanya bisa diisi oleh angka");
             evt.consume();
         }
     }//GEN-LAST:event_dial_hargaKeyTyped
 
     private void dial_stockKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dial_stockKeyTyped
         // TODO add your handling code here:
+        char c = evt.getKeyChar();
+
+        // Izinkan "Backspace" dan "Delete"
+        if (c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE) {
+            return;
+        }
+
+        // Cek panjang input
         String key = dial_stock.getText();
-        if (key.length() == 4) {
+        if (key.length() >= 4) {
             JOptionPane.showMessageDialog(Tambah, "Maksimal 4 angka");
             evt.consume();
-        } else if (!Character.isDigit(evt.getKeyChar())) {
-            JOptionPane.showMessageDialog(Tambah, "Hanya bisa Di isi Oleh angka");
+            return;
+        }
+
+        // Cek apakah karakter adalah angka
+        if (!Character.isDigit(c)) {
+            JOptionPane.showMessageDialog(Tambah, "Hanya bisa diisi oleh angka");
             evt.consume();
         }
     }//GEN-LAST:event_dial_stockKeyTyped
 
     private void edit_jilidKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_edit_jilidKeyTyped
         // TODO add your handling code here:
-        String key = edit_jilid.getText();
-        if (key.length() == 2) {
-            JOptionPane.showMessageDialog(Edit, "Maksimal 2 angka");
+        char c = evt.getKeyChar();
+
+        // Izinkan "Backspace" dan "Delete"
+        if (c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE) {
+            return;
+        }
+
+        // Dapatkan teks yang ada saat ini
+        String key = dial_jilid.getText();
+
+        // Cek panjang input
+        if (key.length() >= 2) {
+            JOptionPane.showMessageDialog(Tambah, "Maksimal 2 angka");
             evt.consume();
-        } else if (!Character.isDigit(evt.getKeyChar())) {
-            JOptionPane.showMessageDialog(Edit, "Hanya bisa Di isi Oleh angka");
+            return;
+        }
+
+        // Cek apakah karakter adalah angka
+        if (!Character.isDigit(c)) {
+            JOptionPane.showMessageDialog(Tambah, "Hanya bisa diisi oleh angka");
             evt.consume();
         }
     }//GEN-LAST:event_edit_jilidKeyTyped
 
     private void edit_tahunKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_edit_tahunKeyTyped
         // TODO add your handling code here:
-        String key = edit_tahun.getText();
-        if (key.length() == 4) {
-            JOptionPane.showMessageDialog(Edit, "Maksimal 4 angka");
+        char c = evt.getKeyChar();
+
+        // Allow "Backspace" and "Delete"
+        if (c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE) {
+            return;
+        }
+
+        // Check the length of the input
+        String key = dial_tahun.getText();
+        if (key.length() >= 4) {
+            JOptionPane.showMessageDialog(Tambah, "Maksimal 4 angka");
             evt.consume();
-        } else if (!Character.isDigit(evt.getKeyChar())) {
-            JOptionPane.showMessageDialog(Edit, "Hanya bisa Di isi Oleh angka");
+            return;
+        }
+
+        // Check if the character is a digit
+        if (!Character.isDigit(c)) {
+            JOptionPane.showMessageDialog(Tambah, "Hanya bisa Di isi Oleh angka");
             evt.consume();
         }
     }//GEN-LAST:event_edit_tahunKeyTyped
 
     private void edit_hargaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_edit_hargaKeyTyped
-        // TODO add your handling code here:
-        String key = edit_harga.getText();
+        char c = evt.getKeyChar();
+
+        // Izinkan "Backspace" dan "Delete"
+        if (c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE) {
+            return;
+        }
+
+        // Cek panjang input
+        String key = dial_harga.getText();
         if (key.length() == 10) {
-            JOptionPane.showMessageDialog(Edit, "Maksimal 10 angka");
+            JOptionPane.showMessageDialog(Tambah, "Maksimal 10 angka");
             evt.consume();
-        } else if (!Character.isDigit(evt.getKeyChar())) {
-            JOptionPane.showMessageDialog(Edit, "Hanya bisa Di isi Oleh angka");
+            return;
+        }
+
+        // Cek apakah karakter adalah angka
+        if (!Character.isDigit(c)) {
+            JOptionPane.showMessageDialog(Tambah, "Hanya bisa diisi oleh angka");
             evt.consume();
         }
     }//GEN-LAST:event_edit_hargaKeyTyped
 
     private void edit_stockKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_edit_stockKeyTyped
-        // TODO add your handling code here:
-        String key = edit_stock.getText();
-        if (key.length() == 4) {
-            JOptionPane.showMessageDialog(Edit, "Maksimal 4 angka");
+        char c = evt.getKeyChar();
+
+        // Izinkan "Backspace" dan "Delete"
+        if (c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE) {
+            return;
+        }
+
+        // Cek panjang input
+        String key = dial_stock.getText();
+        if (key.length() >= 4) {
+            JOptionPane.showMessageDialog(Tambah, "Maksimal 4 angka");
             evt.consume();
-        } else if (!Character.isDigit(evt.getKeyChar())) {
-            JOptionPane.showMessageDialog(Edit, "Hanya bisa Di isi Oleh angka");
+            return;
+        }
+
+        // Cek apakah karakter adalah angka
+        if (!Character.isDigit(c)) {
+            JOptionPane.showMessageDialog(Tambah, "Hanya bisa diisi oleh angka");
             evt.consume();
         }
     }//GEN-LAST:event_edit_stockKeyTyped
@@ -1671,7 +1752,6 @@ public class Buku extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel31;
     private javax.swing.JLabel jLabel32;
     private javax.swing.JLabel jLabel33;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
