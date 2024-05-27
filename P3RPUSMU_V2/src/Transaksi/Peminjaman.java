@@ -391,6 +391,42 @@ private boolean judulBukuSudahDipinjam(String judulBuku) {
     return false; // Mengembalikan false jika judul buku belum ada dalam daftar peminjaman
 }
 
+public static boolean isNameValid(Connection con, String name) {
+        boolean isValid = false;
+        try {
+            String query = "SELECT COUNT(*) FROM anggota WHERE nama = ?";
+            try (PreparedStatement stmt = con.prepareStatement(query)) {
+                stmt.setString(1, name);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        isValid = rs.getInt(1) > 0;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return isValid;
+    }
+
+public static boolean isKodebukuValid(Connection con, String kodebuku) {
+        boolean isValid = false;
+        try {
+            String query = "SELECT COUNT(*) FROM buku WHERE kode_buku = ?";
+            try (PreparedStatement stmt = con.prepareStatement(query)) {
+                stmt.setString(1, kodebuku);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        isValid = rs.getInt(1) > 0;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return isValid;
+    }
+
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -1139,6 +1175,7 @@ private boolean judulBukuSudahDipinjam(String judulBuku) {
     String judulbuku = txt_judul_buku.getText();
     String totalpeminjaman = txt_jumlah_pinjam.getText();
     String username = txt_petugas.getText();
+    String kodebuku = txt_kode_buku.getText();
 
     // Mendapatkan tanggal_pinjam dan tanggal_kembali
     Date tanggalpinjam = tanggal_pinjam.getDate();
@@ -1148,43 +1185,61 @@ private boolean judulBukuSudahDipinjam(String judulBuku) {
     if (kodepeminjaman.isEmpty() || nama.isEmpty() || judulbuku.isEmpty() || totalpeminjaman.isEmpty() || username.isEmpty() || tanggalpinjam == null || tanggalkembali == null) {
         // Tampilkan pesan bahwa semua field harus diisi
         JOptionPane.showMessageDialog(null, "Semua field harus diisi!", "Peringatan", JOptionPane.WARNING_MESSAGE);
-    } else {
-        // Buat objek Calendar untuk tanggal pinjam dan tanggal kembali
-        Calendar calTanggalPinjam = Calendar.getInstance();
-        Calendar calTanggalKembali = Calendar.getInstance();
-        calTanggalPinjam.setTime(tanggalpinjam);
-        calTanggalKembali.setTime(tanggalkembali);
-
-        // Atur jam, menit, detik menjadi 0 untuk kedua objek Calendar
-        calTanggalPinjam.set(Calendar.HOUR_OF_DAY, 0);
-        calTanggalPinjam.set(Calendar.MINUTE, 0);
-        calTanggalPinjam.set(Calendar.SECOND, 0);
-        calTanggalPinjam.set(Calendar.MILLISECOND, 0);
-        calTanggalKembali.set(Calendar.HOUR_OF_DAY, 0);
-        calTanggalKembali.set(Calendar.MINUTE, 0);
-        calTanggalKembali.set(Calendar.SECOND, 0);
-        calTanggalKembali.set(Calendar.MILLISECOND, 0);
-
-        // Memeriksa apakah tanggal kembali sebelum tanggal pinjam
-        if (calTanggalKembali.before(calTanggalPinjam)) {
-            // Tampilkan notifikasi bahwa tanggal pengembalian tidak boleh mundur dari tanggal pinjam
-            JOptionPane.showMessageDialog(null, "Tanggal pengembalian tidak boleh mundur dari tanggal pinjam!", "Peringatan", JOptionPane.WARNING_MESSAGE);
-        } else if (judulBukuSudahDipinjam(judulbuku)) {
-            // Menampilkan pemberitahuan bahwa buku sudah dipinjam
-            JOptionPane.showMessageDialog(null, "Buku dengan judul '" + judulbuku + "' sudah dipinjam!", "Peringatan", JOptionPane.WARNING_MESSAGE);
-        } else {
-            // Format tanggal_pinjam dan tanggal_kembali menjadi string
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            String tanggalpinjamFormatted = dateFormat.format(tanggalpinjam);
-            String tanggalkembaliFormatted = dateFormat.format(tanggalkembali);
-
-            // Tambahkan baris baru ke dalam tabel hanya jika tidak ada notifikasi yang ditampilkan
-            Object[] row = {kodepeminjaman, tanggalpinjamFormatted, tanggalkembaliFormatted, nama, totalpeminjaman, judulbuku, username};
-            model.addRow(row);
-            clear();
-            txt_kode_buku.requestFocusInWindow();
-        }
+        return;
     }
+
+    // Validasi nama
+    if (!Peminjaman.isNameValid(con, nama)) {
+        JOptionPane.showMessageDialog(this, "Harap Masukkan Nama Yang Sesuai", "Nama Tidak Valid", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    // Validasi kode buku
+    if (!Peminjaman.isKodebukuValid(con, kodebuku)) { // Assuming you have a similar method for kode buku validation
+        JOptionPane.showMessageDialog(this, "Harap Masukkan Kode Yang Sesuai", "Kode Tidak Valid", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    // Buat objek Calendar untuk tanggal pinjam dan tanggal kembali
+    Calendar calTanggalPinjam = Calendar.getInstance();
+    Calendar calTanggalKembali = Calendar.getInstance();
+    calTanggalPinjam.setTime(tanggalpinjam);
+    calTanggalKembali.setTime(tanggalkembali);
+
+    // Atur jam, menit, detik menjadi 0 untuk kedua objek Calendar
+    calTanggalPinjam.set(Calendar.HOUR_OF_DAY, 0);
+    calTanggalPinjam.set(Calendar.MINUTE, 0);
+    calTanggalPinjam.set(Calendar.SECOND, 0);
+    calTanggalPinjam.set(Calendar.MILLISECOND, 0);
+    calTanggalKembali.set(Calendar.HOUR_OF_DAY, 0);
+    calTanggalKembali.set(Calendar.MINUTE, 0);
+    calTanggalKembali.set(Calendar.SECOND, 0);
+    calTanggalKembali.set(Calendar.MILLISECOND, 0);
+
+    // Memeriksa apakah tanggal kembali sebelum tanggal pinjam
+    if (calTanggalKembali.before(calTanggalPinjam)) {
+        // Tampilkan notifikasi bahwa tanggal pengembalian tidak boleh mundur dari tanggal pinjam
+        JOptionPane.showMessageDialog(null, "Tanggal pengembalian tidak boleh mundur dari tanggal pinjam!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    // Memeriksa apakah buku sudah dipinjam
+    if (judulBukuSudahDipinjam(judulbuku)) {
+        // Menampilkan pemberitahuan bahwa buku sudah dipinjam
+        JOptionPane.showMessageDialog(null, "Buku dengan judul '" + judulbuku + "' sudah dipinjam!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    // Format tanggal_pinjam dan tanggal_kembali menjadi string
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    String tanggalpinjamFormatted = dateFormat.format(tanggalpinjam);
+    String tanggalkembaliFormatted = dateFormat.format(tanggalkembali);
+
+    // Tambahkan baris baru ke dalam tabel hanya jika tidak ada notifikasi yang ditampilkan
+    Object[] row = {kodepeminjaman, tanggalpinjamFormatted, tanggalkembaliFormatted, nama, totalpeminjaman, judulbuku, username};
+    model.addRow(row);
+    clear();
+    txt_kode_buku.requestFocusInWindow();
     }//GEN-LAST:event_jButton20ActionPerformed
 
     private void tabel_peminjamanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabel_peminjamanMouseClicked

@@ -10,6 +10,7 @@ import Navbar.koneksi;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -1192,6 +1193,12 @@ public class Pengembalian extends javax.swing.JPanel {
 
     private void btn_tambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tambahActionPerformed
         int jumlahpeminjaman = (int) spinner_pinjam.getValue();
+         if (jumlahpeminjaman < 0) {
+        // Klik tombol batal dan keluar dari metode ini
+        jButton1ActionPerformed(evt);
+        JOptionPane.showMessageDialog(null, "Transaksi Gagal Karena Nilai Pengembalian Anda Tidak Sesuai Jumlah Pinjam");
+        return;
+    }
         String kodebuku = txt_judul_buku.getText();
         String kodepeminjaman = txt_kode_peminjaman.getText();
         String kodepengembalian = txt_kode_pengembalian.getText();
@@ -1572,11 +1579,17 @@ public class Pengembalian extends javax.swing.JPanel {
     }//GEN-LAST:event_txt_denda_totalAncestorAdded
 
     private void spinner_pinjamStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spinner_pinjamStateChanged
-
+   int jumlahpeminjaman = (int) spinner_pinjam.getValue();
+    if (jumlahpeminjaman < 0) {
+        // Klik tombol batal dan keluar dari metode ini
+        //jButton1ActionPerformed(new java.awt.event.ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+        JOptionPane.showMessageDialog(null, "Kembalikan Buku Sesuai Jumlah Peminjaman");
+        return;
+    }
     }//GEN-LAST:event_spinner_pinjamStateChanged
 
     private void spinner_baikStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spinner_baikStateChanged
-        // TODO add your handling code here:  
+        // TODO add your handling code here: 
         // Mendapatkan nilai spinner_baik yang baru
         int nilaiSpinnerBaikBaru = (int) spinner_baik.getValue();
 
