@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import Navbar.koneksi;
+import com.mysql.cj.jdbc.result.ResultSetMetaData;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,7 +22,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -42,11 +45,11 @@ public class pdenda extends javax.swing.JPanel {
     public pdenda() throws SQLException {
         con = koneksi.Koneksi();
         initComponents();
-        load_table();
+        
         jTable2.getTableHeader().setBackground(new Color(63, 148, 105));
         jTable2.getTableHeader().setForeground(Color.white);
-txtcari.putClientProperty("JComponent.roundRect", true);
-      txtcari.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "search");
+keyword.putClientProperty("JComponent.roundRect", true);
+      keyword.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "search");
     }
 private void FolderExp() {
         JFileChooser folderChooser = new JFileChooser();
@@ -229,7 +232,7 @@ private void FolderExp() {
     model.addColumn("Status Denda");
     model.addColumn("Total Pembayaran");
 
-    String sql = "SELECT * FROM denda_view;";
+    String sql = "SELECT * FROM denda_view";
 
     try (PreparedStatement pst = con.prepareStatement(sql);
          ResultSet rs = pst.executeQuery()) {
@@ -256,30 +259,60 @@ private void FolderExp() {
 }
 
 
-        private void searchList() throws SQLException {    
-            jTable2.clearSelection();
-         DefaultTableModel model = new DefaultTableModel() {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
+//        private void searchList() throws SQLException {    
+//            jTable2.clearSelection();
+//         DefaultTableModel model = new DefaultTableModel() {
+//            @Override
+//            public boolean isCellEditable(int row, int column) {
+//                return false;
+//            }
+//        };
+//          model.addColumn("Nama");
+//        model.addColumn("Jumlah Denda");
+//        model.addColumn("Status Denda");
+//        model.addColumn("Total Dembayaran");
+   private void searchList(String keyword) {
+    jTable2.clearSelection();
+    DefaultTableModel model = new DefaultTableModel() {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            // All cells false
+            return false;
+        }
+    };
+
+    String sql = "SELECT * FROM denda_view WHERE `nama` LIKE ?";
+
+    try (PreparedStatement pst = con.prepareStatement(sql)) {
+        pst.setString(1, "%" + keyword + "%");
+
+        try (ResultSet rs = pst.executeQuery()) {
+            java.sql.ResultSetMetaData rsmd = rs.getMetaData();
+            int columnCount = rsmd.getColumnCount();
+            for (int i = 1; i <= columnCount; i++) {
+                model.addColumn(rsmd.getColumnName(i));
             }
-        };
-          model.addColumn("Nama");
-        model.addColumn("Jumlah Denda");
-        model.addColumn("Status Denda");
-        model.addColumn("Total Dembayaran");
-        try {
-             pst = con.prepareStatement ( "SELECT anggota.nama, denda.jumlah_denda, denda.status_denda, denda.total_pembayaran, detail_pengembalian.tanggal FROM denda JOIN anggota ON anggota.NISN = denda.NISN JOIN detail_pengembalian ON detail_pengembalian.kode_pengembalian = denda.kode_pengembalian where nama Like '%" + txtcari.getText() + "%' or status_denda Like '%" + txtcari.getText() + "%'");
-           rs = pst.executeQuery();
+
+            Set<String> uniqueNames = new HashSet<>();
+
+            // Add rows to the DefaultTableModel
             while (rs.next()) {
-                model.addRow(new Object[]{rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4)});
-            } 
+                String name = rs.getString("nama");
+                if (!uniqueNames.contains(name)) {
+                    uniqueNames.add(name);
+                    Object[] rowData = new Object[columnCount];
+                    for (int i = 1; i <= columnCount; i++) {
+                        rowData[i - 1] = rs.getObject(i);
+                    }
+                    model.addRow(rowData);
+                }
+            }
             jTable2.setModel(model);
-        } catch (Exception e) {
-              System.out.println("searchTable" + e);
         }
-        }
-        
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, e.getMessage());
+    }
+}
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -287,7 +320,7 @@ private void FolderExp() {
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
-        txtcari = new javax.swing.JTextField();
+        keyword = new javax.swing.JTextField();
         jToggleButton1 = new javax.swing.JToggleButton();
         jDate = new com.toedter.calendar.JDateChooser();
         jDate1 = new com.toedter.calendar.JDateChooser();
@@ -330,14 +363,14 @@ private void FolderExp() {
         jTable2.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(jTable2);
 
-        txtcari.addActionListener(new java.awt.event.ActionListener() {
+        keyword.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtcariActionPerformed(evt);
+                keywordActionPerformed(evt);
             }
         });
-        txtcari.addKeyListener(new java.awt.event.KeyAdapter() {
+        keyword.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtcariKeyReleased(evt);
+                keywordKeyReleased(evt);
             }
         });
 
@@ -387,7 +420,7 @@ private void FolderExp() {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtcari, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(keyword, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -416,7 +449,7 @@ private void FolderExp() {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtcari, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(keyword, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
@@ -450,18 +483,18 @@ private void FolderExp() {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtcariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtcariActionPerformed
+    private void keywordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_keywordActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtcariActionPerformed
+    }//GEN-LAST:event_keywordActionPerformed
 
-    private void txtcariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtcariKeyReleased
+    private void keywordKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_keywordKeyReleased
 //      
-         String key = txtcari.getText().trim();
+         String key = keyword.getText().trim();
         try {
-            searchList();
+            searchList(key);
         } catch (Exception e) {
         }
-    }//GEN-LAST:event_txtcariKeyReleased
+    }//GEN-LAST:event_keywordKeyReleased
 
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
            int dialogResult = JOptionPane.showConfirmDialog(null, "Apakah Anda akan mencetak", "Konfirmasi", JOptionPane.YES_NO_OPTION);
@@ -580,6 +613,6 @@ if (dialogResult == JOptionPane.YES_OPTION) {
     private javax.swing.JTable jTable2;
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JToggleButton jToggleButton2;
-    private javax.swing.JTextField txtcari;
+    private javax.swing.JTextField keyword;
     // End of variables declaration//GEN-END:variables
 }
