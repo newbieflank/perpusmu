@@ -594,11 +594,23 @@ public class Admin extends javax.swing.JPanel {
                     JOptionPane.QUESTION_MESSAGE);
             if (result == JOptionPane.YES_OPTION) {
                 try {
-                    pst = con.prepareStatement("DELETE FROM users WHERE ID_users = ?");
+                    // Check if the user is an admin
+                    pst = con.prepareStatement("SELECT status FROM users WHERE ID_users = ?");
                     pst.setString(1, ID_users);
-                    pst.executeUpdate();
-                    loadTabel();
-                    JOptionPane.showMessageDialog(popup, "Data berhasil dihapus");
+                    ResultSet rs = pst.executeQuery();
+                    if (rs.next()) {
+                        String status = rs.getString("status");
+                        if ("admin".equalsIgnoreCase(status)) {
+                            JOptionPane.showMessageDialog(jDialog1, "Admin tidak dapat dihapus");
+                        } else {
+                            // Proceed with deletion
+                            pst = con.prepareStatement("DELETE FROM users WHERE ID_users = ?");
+                            pst.setString(1, ID_users);
+                            pst.executeUpdate();
+                            loadTabel();
+                            JOptionPane.showMessageDialog(popup, "Data berhasil dihapus");
+                        }
+                    }
                 } catch (SQLException e) {
                     JOptionPane.showMessageDialog(jDialog1, "Gagal menghapus data: " + e.getMessage());
                     e.printStackTrace();
@@ -743,7 +755,7 @@ public class Admin extends javax.swing.JPanel {
     }//GEN-LAST:event_searchKeyTyped
 
     private void dial_idKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dial_idKeyTyped
-       char c = evt.getKeyChar();
+        char c = evt.getKeyChar();
 
         // Allow "Backspace" and "Delete"
         if (c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE) {
