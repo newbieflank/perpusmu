@@ -1309,7 +1309,7 @@ public class Pengembalian extends javax.swing.JPanel {
                     waktupengembalian = "Tidak Diketahui";
                 }
 
-                java.sql.Date tanggalPinjamSQL = new java.sql.Date(tanggal_pinjam.getDate().getTime());
+                java.sql.Date tanggalPinjamSQL = new java.sql.Date(tanggal_kembali_akhir.getDate().getTime());
 
                 // Menggunakan metode insertDetailPengembalian untuk setiap kondisi buku
                 insertDetailPengembalian(pstInsertDetailPengembalian, kodepengembalian, statusDetailPengembalian, waktupengembalian, "Baik", tanggalPinjamSQL, nilaiSpinnerBaik, kodebuku, "0", nama);
