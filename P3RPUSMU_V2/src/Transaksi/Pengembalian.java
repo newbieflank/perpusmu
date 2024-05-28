@@ -7,6 +7,7 @@ package Transaksi;
 
 import Login.Config;
 import Navbar.koneksi;
+import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -91,6 +92,12 @@ public class Pengembalian extends javax.swing.JPanel {
                 });
             }
         });
+        
+        txt_search.putClientProperty("JComponent.roundRect", true);
+        txt_search.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "search");
+        
+        txt_search1.putClientProperty("JComponent.roundRect", true);
+        txt_search1.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "search");
 
     }
 
