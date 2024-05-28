@@ -486,7 +486,7 @@ public class Pengembalian extends javax.swing.JPanel {
         jDialog1.setUndecorated(true);
 
         pengembalian.setBackground(new java.awt.Color(255, 255, 255));
-        pengembalian.setBorder(new javax.swing.border.MatteBorder(null));
+        pengembalian.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         pengembalian.setPreferredSize(new java.awt.Dimension(990, 700));
 
         jLabel1.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
