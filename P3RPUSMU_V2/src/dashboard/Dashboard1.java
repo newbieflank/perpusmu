@@ -68,7 +68,7 @@ public class Dashboard1 extends javax.swing.JPanel {
     private void init() {
         
         chart.addLegend("Jumlah Buku Dipinjam", Color.decode("#000000"), Color.decode("#000000"));
-        chart.addLegend("Jumlah Transaksi", Color.decode("#00FF00"), Color.decode(("#00FF00")));
+        chart.addLegend(" ", Color.decode("#FFFFFF"), Color.decode(("#FFFFFF")));
         //   chart.addLegend("Jumlah Peminjaman", Color.black, Color.black);
         try {
             List<ModelData> lists = getdata();
@@ -85,11 +85,11 @@ public class Dashboard1 extends javax.swing.JPanel {
     private List<ModelData> getdata() throws SQLException {
     List<ModelData> lists = new ArrayList<>();
     // Buat array untuk nama bulan
-    String[] months = {"Desember", "November", "October", "September", "August", "July", "June", "May", "April", "March", "February", "January"};
+    String[] months = {"Desember 24", "November 24", "October 24", "September 24", "August 24", "July 24", "June 24", "May 24", "April 24", "March 24", "February 24", "January 24"};
     // Buat peta untuk menyimpan data sementara
         Map<String, ModelData> tempData = new HashMap<>();
 
-    String sql = "SELECT DATE_FORMAT(tanggal_peminjaman, '%M') AS Month, SUM(jumlah_peminjaman) AS Am, COUNT(kode_peminjaman) AS Bm FROM detail_peminjaman GROUP BY DATE_FORMAT(tanggal_peminjaman, '%m%Y') ORDER BY tanggal_peminjaman DESC;";
+    String sql = "SELECT DATE_FORMAT(tanggal_peminjaman, '%M %y') AS Month, SUM(jumlah_peminjaman) AS Am, COUNT(kode_peminjaman) AS Bm FROM detail_peminjaman GROUP BY DATE_FORMAT(tanggal_peminjaman, '%m%Y') ORDER BY tanggal_peminjaman DESC;";
     PreparedStatement p = con.prepareStatement(sql);
     ResultSet r = p.executeQuery();
 
@@ -381,8 +381,6 @@ public class Dashboard1 extends javax.swing.JPanel {
         jLabel16 = new javax.swing.JLabel();
         pengembalian = new javax.swing.JLabel();
         labelTanggal = new javax.swing.JLabel();
-        jSlider1 = new javax.swing.JSlider();
-        jButton1 = new javax.swing.JButton();
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel1.setText("DASHBOARD");
@@ -562,6 +560,15 @@ public class Dashboard1 extends javax.swing.JPanel {
         panelShadow1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         chart.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        chart.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                chartAncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
 
         javax.swing.GroupLayout panelShadow1Layout = new javax.swing.GroupLayout(panelShadow1);
         panelShadow1.setLayout(panelShadow1Layout);
@@ -672,14 +679,6 @@ public class Dashboard1 extends javax.swing.JPanel {
         labelTanggal.setFont(new java.awt.Font("DialogInput", 1, 18)); // NOI18N
         labelTanggal.setText("Ini Tanggal");
 
-        jButton1.setText("Refresh");
-        jButton1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -698,19 +697,12 @@ public class Dashboard1 extends javax.swing.JPanel {
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(25, 25, 25)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(25, 25, 25)
-                                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(25, 25, 25)
-                                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(25, 25, 25))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jButton1)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(332, 332, 332)))
+                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(25, 25, 25)
+                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(25, 25, 25)
+                                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(25, 25, 25)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(labelTanggal)
                                     .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
@@ -721,12 +713,8 @@ public class Dashboard1 extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel1)
-                        .addComponent(jButton1))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(labelTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jLabel1)
+                    .addComponent(labelTanggal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -742,10 +730,9 @@ public class Dashboard1 extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void chartAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_chartAncestorAdded
         // TODO add your handling code here:
-        chart.clear();
-                try {
+        chart.clear();        try {
             List<ModelData> lists = getdata();
             for (int i = lists.size() - 1; i >= 0; i--) {
                 ModelData d = lists.get(i);
@@ -755,14 +742,13 @@ public class Dashboard1 extends javax.swing.JPanel {
             System.err.println(e);
         }
         chart.start();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_chartAncestorAdded
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private static javax.swing.JLabel anggota;
     private static javax.swing.JLabel buku;
     private raven.chart.CurveLineChart chart;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -787,7 +773,6 @@ public class Dashboard1 extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JSlider jSlider1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
     private javax.swing.JLabel labelTanggal;
