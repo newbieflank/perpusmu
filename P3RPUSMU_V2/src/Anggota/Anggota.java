@@ -228,7 +228,14 @@ public class Anggota extends javax.swing.JPanel {
             File selectedFolder = folderChooser.getSelectedFile();
             FileExcelPath = selectedFolder.getAbsolutePath();
             try {
-                importData();
+                int option = JOptionPane.showConfirmDialog(Tambah, "Apakah Anda Yakin Ingin Menambahkan Data?", "Konfirmasi",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+                if (option == JOptionPane.YES_OPTION) {
+                    importData();
+
+                    JCombo();
+                }
             } catch (Exception e) {
                 System.out.println("Import " + e);
             }
@@ -255,18 +262,61 @@ public class Anggota extends javax.swing.JPanel {
                 String column6 = row.getCell(5).getStringCellValue();
                 // Read other columns as needed
 
-                String sql = "INSERT INTO anggota (NISN, nama, jenis_kelamin, jurusan, angkatan, status) Values (?, ?, ?, ?, ?, ?)";
-                try (PreparedStatement pst = con.prepareStatement(sql)) {
+                String query = "select * from anggota where NISN = ?";
+                try {
+                    pst = con.prepareStatement(query);
                     pst.setString(1, Integer.toString(column1));
-                    pst.setString(2, column2);
-                    pst.setString(3, column3);
-                    pst.setString(4, column4);
-                    pst.setInt(5, column5);
-                    pst.setString(6, column6);
-                    // Set other columns as needed
-                    System.out.println(pst);
+                    rs = pst.executeQuery();
+                    if (!rs.next() || rs.wasNull()) {
+                        String sql = "INSERT INTO anggota (NISN, nama, jenis_kelamin, jurusan, angkatan, status) Values (?, ?, ?, ?, ?, ?)";
+                        try (PreparedStatement pst = con.prepareStatement(sql)) {
+                            pst.setString(1, Integer.toString(column1));
+                            pst.setString(2, column2);
+                            pst.setString(3, column3);
+                            pst.setString(4, column4);
+                            pst.setInt(5, column5);
+                            pst.setString(6, column6);
 
-                    pst.executeUpdate();
+                            pst.executeUpdate();
+                            JOptionPane.showMessageDialog(jPanel1, "Data Berhasil di tambahkan");
+                        } catch (Exception e) {
+                            int option = JOptionPane.showConfirmDialog(Tambah, "Ada Masalah Ketika Manambah Data  \n"
+                                    + "Apakah Anda Ingin Melanjutkan?", "Konfirmasi",
+                                    JOptionPane.YES_NO_OPTION,
+                                    JOptionPane.QUESTION_MESSAGE);
+                            if (option == JOptionPane.NO_OPTION) {
+                                JOptionPane.showMessageDialog(jPanel1, "Perhatikan Kembali dan Format data yang ada masukan");
+                                return;
+                            }
+                        }
+                    } else {
+                        int option = JOptionPane.showConfirmDialog(Tambah, "Data Yang Anda Masukan sudah terdaftar,  \n"
+                                + "Apakah Anda Ingin Melanjutkan?", "Konfirmasi",
+                                JOptionPane.YES_NO_OPTION,
+                                JOptionPane.QUESTION_MESSAGE);
+                        if (option == JOptionPane.NO_OPTION) {
+                            JOptionPane.showMessageDialog(jPanel1, "Pastikan data yang ingin anda masukan  \n"
+                                    + "masih belum terdaftar");
+                            return;
+                        } else if (option == JOptionPane.YES_OPTION) {
+                            try {
+                                String sql = "INSERT INTO anggota (NISN, nama, jenis_kelamin, jurusan, angkatan, status) Values (?, ?, ?, ?, ?, ?)";
+                                pst = con.prepareStatement(sql);
+                                pst.setString(1, Integer.toString(column1));
+                                pst.setString(2, column2);
+                                pst.setString(3, column3);
+                                pst.setString(4, column4);
+                                pst.setInt(5, column5);
+                                pst.setString(6, column6);
+
+                                pst.executeUpdate();
+                                JOptionPane.showMessageDialog(jPanel1, "Data Berhasil di tambahkan");
+                            } catch (Exception e) {
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    System.out.println("Data Import 1: " + e);
                 }
             }
         }
@@ -278,6 +328,7 @@ public class Anggota extends javax.swing.JPanel {
             pst = con.prepareStatement("delete from anggota where NISN = " + nisn);
             pst.execute();
             loadTable2();
+            JCombo();
             JOptionPane.showMessageDialog(Tambah, "Data Berhasil di hapus");
         } catch (Exception e) {
             JOptionPane.showMessageDialog(Tambah, "Data Gagal di hapus");
