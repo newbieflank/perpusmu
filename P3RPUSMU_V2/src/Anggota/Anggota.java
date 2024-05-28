@@ -535,7 +535,6 @@ public class Anggota extends javax.swing.JPanel {
         Edit.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         Edit.setBackground(new java.awt.Color(255, 255, 255));
         Edit.setIconImage(null);
-        Edit.setMaximumSize(new java.awt.Dimension(658, 395));
         Edit.setMinimumSize(new java.awt.Dimension(658, 395));
         Edit.setUndecorated(true);
         Edit.setResizable(false);
@@ -791,6 +790,7 @@ public class Anggota extends javax.swing.JPanel {
             }
         });
         tabel.setGridColor(new java.awt.Color(0, 0, 0));
+        tabel.setShowGrid(true);
         tabel.getTableHeader().setReorderingAllowed(false);
         tabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {

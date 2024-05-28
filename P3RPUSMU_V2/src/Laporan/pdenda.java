@@ -360,6 +360,8 @@ private void FolderExp() {
                 return canEdit [columnIndex];
             }
         });
+        jTable2.setGridColor(new java.awt.Color(0, 0, 0));
+        jTable2.setShowGrid(true);
         jTable2.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(jTable2);
 
@@ -462,8 +464,8 @@ private void FolderExp() {
                     .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jToggleButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
-                .addGap(207, 207, 207))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

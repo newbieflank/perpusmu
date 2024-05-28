@@ -103,8 +103,8 @@
                       <Component id="jToggleButton2" min="-2" pref="39" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jScrollPane1" pref="133" max="32767" attributes="0"/>
-                  <EmptySpace min="-2" pref="207" max="-2" attributes="0"/>
+                  <Component id="jScrollPane1" pref="334" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -151,6 +151,10 @@
                     </Column>
                   </TableColumnModel>
                 </Property>
+                <Property name="gridColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="0" red="0" type="rgb"/>
+                </Property>
+                <Property name="showGrid" type="boolean" value="true"/>
                 <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                   <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
                 </Property>

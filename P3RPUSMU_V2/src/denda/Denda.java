@@ -432,6 +432,7 @@ public class Denda extends javax.swing.JPanel {
             }
         });
         tabel.setGridColor(new java.awt.Color(0, 0, 0));
+        tabel.setShowGrid(true);
         tabel.getTableHeader().setReorderingAllowed(false);
         tabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
