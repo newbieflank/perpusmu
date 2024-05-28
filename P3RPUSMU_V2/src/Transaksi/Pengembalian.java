@@ -11,6 +11,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -30,6 +31,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.smartcardio.*;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -77,6 +79,18 @@ public class Pengembalian extends javax.swing.JPanel {
 
         jDialog1.setSize(1000, 700);
         setVisible(true);
+        
+        // Menambahkan key listener untuk mendeteksi perubahan teks
+        txt_search.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                // Memastikan kursor tetap terlihat di akhir teks
+                SwingUtilities.invokeLater(() -> {
+                    txt_search.setCaretPosition(txt_search.getText().length());
+                    txt_search.requestFocusInWindow();
+                });
+            }
+        });
 
     }
 
@@ -955,6 +969,15 @@ public class Pengembalian extends javax.swing.JPanel {
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        txt_search.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                txt_searchAncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
         txt_search.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txt_searchActionPerformed(evt);
@@ -1468,7 +1491,7 @@ public class Pengembalian extends javax.swing.JPanel {
 
     private void txt_searchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_searchKeyReleased
         String keyword = txt_search.getText().trim();
-        String sql = "SELECT peminjaman.kode_peminjaman, anggota.nama, users.username, detail_peminjaman.tanggal_peminjaman, detail_peminjaman.tanggal_kembali, detail_peminjaman.jumlah_peminjaman, buku.kode_buku, buku.judul_buku FROM peminjaman INNER JOIN detail_peminjaman ON peminjaman.kode_peminjaman = detail_peminjaman.kode_peminjaman LEFT JOIN anggota ON peminjaman.NISN = anggota.NISN LEFT JOIN buku ON detail_peminjaman.No_buku = buku.No_buku LEFT JOIN users ON peminjaman.ID_users = users.ID_users WHERE peminjaman.kode_peminjaman LIKE '%" + keyword + "%'";
+        String sql = "SELECT peminjaman.kode_peminjaman, anggota.nama, users.username, detail_peminjaman.tanggal_peminjaman, detail_peminjaman.tanggal_kembali, detail_peminjaman.jumlah_peminjaman, buku.kode_buku, buku.judul_buku FROM peminjaman INNER JOIN detail_peminjaman ON peminjaman.kode_peminjaman = detail_peminjaman.kode_peminjaman LEFT JOIN anggota ON peminjaman.NISN = anggota.NISN LEFT JOIN buku ON detail_peminjaman.No_buku = buku.No_buku LEFT JOIN users ON peminjaman.ID_users = users.ID_users WHERE peminjaman.kode_peminjaman LIKE '%" + keyword + "%' OR anggota.nama LIKE '%" + keyword + "%'";
 
         try {
 //            java.sql.Connection con = (java.sql.Connection) Config.configDB();
@@ -1798,6 +1821,10 @@ public class Pengembalian extends javax.swing.JPanel {
             // Jika tombol F5 ditekan, pindah fokus ke txt_jumlah
             btn_clear2.doClick();}
     }//GEN-LAST:event_txt_search1KeyPressed
+
+    private void txt_searchAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_txt_searchAncestorAdded
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_searchAncestorAdded
 
     DefaultTableModel model = new DefaultTableModel() {
         public boolean isCellEditable(int row, int column) {
