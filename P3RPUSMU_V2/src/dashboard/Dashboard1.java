@@ -89,7 +89,7 @@ public class Dashboard1 extends javax.swing.JPanel {
     // Buat peta untuk menyimpan data sementara
         Map<String, ModelData> tempData = new HashMap<>();
 
-    String sql = "SELECT DATE_FORMAT(tanggal_peminjaman, '%M %y') AS Month, SUM(jumlah_peminjaman) AS Am, COUNT(kode_peminjaman) AS Bm FROM detail_peminjaman GROUP BY DATE_FORMAT(tanggal_peminjaman, '%m%Y') ORDER BY tanggal_peminjaman DESC;";
+    String sql = "SELECT DATE_FORMAT(tanggal, '%M %y') AS Month, SUM(jumlah_pengembalian) AS Am, COUNT(kode_pengembalian) AS Bm FROM detail_pengembalian GROUP BY DATE_FORMAT(tanggal, '%m%Y') ORDER BY tanggal DESC;";
     PreparedStatement p = con.prepareStatement(sql);
     ResultSet r = p.executeQuery();
 
