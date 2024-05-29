@@ -385,8 +385,10 @@ txtcari.putClientProperty("JComponent.roundRect", true);
         });
 
         jDate.setDate(new Date());
+        jDate.setDateFormatString("dd-MM-yyyy");
 
         jDate1.setDate(new Date());
+        jDate1.setDateFormatString("dd-MM-yyyy");
 
         jButton3.setBackground(new java.awt.Color(0, 153, 51));
         jButton3.setForeground(new java.awt.Color(255, 255, 255));

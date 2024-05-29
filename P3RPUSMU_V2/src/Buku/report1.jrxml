@@ -57,7 +57,7 @@
 				</jr:barbecue>
 			</componentElement>
 			<textField>
-				<reportElement uuid="c2973fe9-f94c-48ac-aade-35b8a6f2d8ab" x="73" y="30" width="76" height="20"/>
+				<reportElement uuid="c2973fe9-f94c-48ac-aade-35b8a6f2d8ab" x="75" y="50" width="76" height="20"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>

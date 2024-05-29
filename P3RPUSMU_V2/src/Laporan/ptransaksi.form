@@ -239,6 +239,7 @@
             <Property name="date" type="java.util.Date" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="new Date()" type="code"/>
             </Property>
+            <Property name="dateFormatString" type="java.lang.String" value="dd-MM-yyyy"/>
           </Properties>
         </Component>
         <Component class="com.toedter.calendar.JDateChooser" name="jDate1">
@@ -246,6 +247,7 @@
             <Property name="date" type="java.util.Date" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="new Date()" type="code"/>
             </Property>
+            <Property name="dateFormatString" type="java.lang.String" value="dd-MM-yyyy"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="jButton3">
