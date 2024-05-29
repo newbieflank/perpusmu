@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="226" pageHeight="425" columnWidth="198" leftMargin="14" rightMargin="14" topMargin="20" bottomMargin="20" uuid="70560ddf-2eb1-41e8-baa3-12ec132f86c3">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="271"/>
+	<property name="ireport.y" value="269"/>
 	<parameter name="kode" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
@@ -122,11 +122,11 @@ JOIN buku ON buku.No_buku = detail_peminjaman.No_buku where detail_peminjaman.ko
 				<textFieldExpression><![CDATA[$F{kode_peminjaman}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="1" y="77" width="87" height="21" uuid="10a2713e-c88e-468c-8599-233b887c69ad"/>
+				<reportElement x="0" y="77" width="87" height="21" uuid="10a2713e-c88e-468c-8599-233b887c69ad"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Tanggal Kembali bb]]></text>
+				<text><![CDATA[Tanggal Kembali]]></text>
 			</staticText>
 			<line>
 				<reportElement x="0" y="6" width="198" height="1" uuid="7b3acbd8-12b1-414f-aa26-43f37e36aba3"/>
