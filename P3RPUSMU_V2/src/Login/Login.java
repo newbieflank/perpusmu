@@ -81,36 +81,6 @@ public class Login extends javax.swing.JFrame {
         }
     }
 
-    private void readRFID() {
-        // Inisialisasi context untuk Smart Card IO API
-        CardTerminals terminals = TerminalFactory.getDefault().terminals();
-
-        try {
-            // Cari pembaca RFID yang tersedia
-            for (CardTerminal terminal : terminals.list()) {
-                // Lakukan koneksi ke pembaca RFID
-                terminal.waitForCardPresent(0);
-                Card card = terminal.connect("*");
-                CardChannel channel = card.getBasicChannel();
-
-                // Perintah APDU untuk membaca data dari tag RFID
-                byte[] command = {(byte) 0xFF, (byte) 0xCA, (byte) 0x00, (byte) 0x00, (byte) 0x00};
-                ResponseAPDU response = channel.transmit(new CommandAPDU(command));
-
-                // Mendapatkan data yang dibaca dari tag RFID sebagai string
-                String rfidData = new String(response.getData());
-
-                // Menampilkan ID RFID pada JTextField
-                txt_username.setText(rfidData);
-
-                // Putuskan koneksi dari pembaca RFID
-                card.disconnect(false);
-            }
-        } catch (CardException ex) {
-            ex.printStackTrace();
-        }
-    }
-
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
